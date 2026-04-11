@@ -39,6 +39,34 @@ ul { list-style: none; }
 img { display: block; max-width: 100%; }
 button { border: none; background: none; font-family: inherit; cursor: none; }
 
+/* ─── ANNOUNCEMENT BANNER ────────────────────────────────────────── */
+.top-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
+  height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 48px;
+  background: linear-gradient(90deg, rgba(127,119,221,0.18) 0%, rgba(29,158,117,0.15) 50%, rgba(127,119,221,0.18) 100%);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(127,119,221,0.15);
+}
+.banner-text {
+  font-size: 12.5px; font-weight: 500; color: rgba(255,255,255,0.85);
+  letter-spacing: .02em; text-align: center;
+}
+.banner-text a {
+  color: var(--accent2); font-weight: 700; text-decoration: underline;
+  text-underline-offset: 2px; transition: color 0.2s;
+}
+.banner-text a:hover { color: #fff; }
+.banner-close {
+  position: absolute; right: 16px;
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  padding: 6px 8px; border-radius: 6px; cursor: none;
+  transition: color 0.2s, background 0.2s; line-height: 1;
+}
+.banner-close:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.nav.with-banner { top: 40px; }
+
 /* ─── GRADIENT TEXT UTILITY ──────────────────────────────────────── */
 .grad-text {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
@@ -81,38 +109,8 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 
 /* ─── LAYOUT ─────────────────────────────────────────────────────── */
 .container { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
-.section { padding: 108px 0; position: relative; overflow: hidden; }
+.section { padding: 108px 0; position: relative; }
 .section-alt { background: var(--bg-alt); }
-
-/* Subtle radial mesh per section */
-#about::before {
-  content: '';
-  position: absolute; top: -200px; right: -200px;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(127,119,221,0.04) 0%, transparent 70%);
-  pointer-events: none;
-}
-#experience::before {
-  content: '';
-  position: absolute; bottom: -150px; left: -150px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(29,158,117,0.05) 0%, transparent 70%);
-  pointer-events: none;
-}
-#research::before {
-  content: '';
-  position: absolute; top: -100px; right: -100px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(29,158,117,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-#skills::before {
-  content: '';
-  position: absolute; top: -150px; left: -150px;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(127,119,221,0.05) 0%, transparent 70%);
-  pointer-events: none;
-}
 
 .section-header { margin-bottom: 60px; position: relative; }
 .section-num {
@@ -204,6 +202,21 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 .hamburger { display: none; flex-direction: column; gap: 5px; padding: 6px; cursor: none; }
 .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
 
+/* Pulsing status dot on nav logo */
+.nav-status-dot {
+  display: inline-block;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent2);
+  margin-left: 5px; vertical-align: middle;
+  box-shadow: 0 0 6px var(--accent2-glow);
+  animation: navDotPulse 2.4s ease-in-out infinite;
+  position: relative; top: -1px;
+}
+@keyframes navDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 6px var(--accent2-glow); }
+  50% { opacity: 0.6; transform: scale(1.35); box-shadow: 0 0 12px var(--accent2-glow); }
+}
+
 /* ─── HERO ───────────────────────────────────────────────────────── */
 .hero {
   position: relative; min-height: 100vh;
@@ -263,6 +276,15 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 }
 .btn-primary:hover { box-shadow: 0 0 36px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.4); transform: translateY(-2px); }
 .btn-primary:hover::before { opacity: 1; }
+
+/* Persistent glow on Chat button */
+.btn-glow { animation: btnGlowPulse 3s ease-in-out infinite; }
+@keyframes btnGlowPulse {
+  0%, 100% { box-shadow: 0 0 18px rgba(127,119,221,0.5), 0 0 44px rgba(127,119,221,0.22); }
+  50% { box-shadow: 0 0 30px rgba(127,119,221,0.75), 0 0 64px rgba(127,119,221,0.35); }
+}
+.btn-glow:hover { animation: none; }
+
 .btn-ghost {
   font-size: 14px; font-weight: 600; padding: 13px 32px; border-radius: 10px;
   border: 1.5px solid rgba(127,119,221,0.35); color: var(--text); letter-spacing: .04em;
@@ -430,11 +452,12 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 /* ─── PROJECTS ───────────────────────────────────────────────────── */
 .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 
-/* Featured project — glowing gradient border */
+/* Featured project — hero card */
 .project-featured {
-  background: var(--bg-card);
-  position: relative; padding: 32px;
+  background: linear-gradient(135deg, #111122 0%, #0d1420 100%);
+  position: relative; padding: 40px;
   border-radius: var(--radius); overflow: hidden;
+  box-shadow: 0 20px 60px rgba(127,119,221,0.15), 0 0 0 0 transparent;
 }
 .project-featured::before {
   content: '';
@@ -562,28 +585,42 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   position: relative; overflow: hidden;
   transition: transform 0.2s, box-shadow 0.3s;
 }
-/* Each stat card gets a unique gradient */
+/* Animated gradient border via pseudo-element */
+.research-stat-card::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: var(--radius);
+  padding: 1px;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  background-size: 300% 300%;
+  animation: statBorderSpin 3.5s linear infinite;
+}
+@keyframes statBorderSpin {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 .research-stat-card:nth-child(1) {
   background: linear-gradient(135deg, rgba(127,119,221,0.12) 0%, rgba(8,8,15,0) 60%), var(--bg-card);
-  border: 1px solid rgba(127,119,221,0.2);
+}
+.research-stat-card:nth-child(1)::before {
+  background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent));
 }
 .research-stat-card:nth-child(2) {
   background: linear-gradient(135deg, rgba(29,158,117,0.12) 0%, rgba(8,8,15,0) 60%), var(--bg-card);
-  border: 1px solid rgba(29,158,117,0.2);
+}
+.research-stat-card:nth-child(2)::before {
+  background: linear-gradient(135deg, var(--accent2), var(--accent), var(--accent2));
 }
 .research-stat-card:nth-child(3) {
   background: linear-gradient(135deg, rgba(201,168,76,0.1) 0%, rgba(8,8,15,0) 60%), var(--bg-card);
-  border: 1px solid rgba(201,168,76,0.18);
 }
-.research-stat-card:nth-child(1):hover {
-  box-shadow: 0 0 36px rgba(127,119,221,0.2); transform: translateY(-3px);
+.research-stat-card:nth-child(3)::before {
+  background: linear-gradient(135deg, var(--gold), var(--accent), var(--gold));
 }
-.research-stat-card:nth-child(2):hover {
-  box-shadow: 0 0 36px rgba(29,158,117,0.2); transform: translateY(-3px);
-}
-.research-stat-card:nth-child(3):hover {
-  box-shadow: 0 0 36px rgba(201,168,76,0.15); transform: translateY(-3px);
-}
+.research-stat-card:nth-child(1):hover { box-shadow: 0 0 36px rgba(127,119,221,0.25); transform: translateY(-3px); }
+.research-stat-card:nth-child(2):hover { box-shadow: 0 0 36px rgba(29,158,117,0.25); transform: translateY(-3px); }
+.research-stat-card:nth-child(3):hover { box-shadow: 0 0 36px rgba(201,168,76,0.2); transform: translateY(-3px); }
 .rstat-num {
   font-family: var(--font-display);
   font-size: clamp(2.2rem, 4vw, 2.8rem); font-weight: 700;
@@ -802,6 +839,8 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   body { cursor: auto; }
   button { cursor: pointer; }
   a { cursor: pointer; }
+  .banner-close { cursor: pointer; }
+  .nav.with-banner { top: 40px; }
   .footer-inner { flex-direction: column; text-align: center; gap: 6px; }
   .section-header::before { display: none; }
 }

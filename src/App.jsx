@@ -103,21 +103,6 @@ const PROJECTS = [
     award: null,
   },
   {
-    id: 'firetamer',
-    featured: false,
-    icon: '🔥',
-    title: 'FireTamer',
-    subtitle: 'Drone-Based Wildfire Management System',
-    context: 'PES University · Simulation Research',
-    description: 'Simulation-based research exploring autonomous drone-controlled burning for large-scale wildfire containment using Unity 3D, Python, fuzzy logic, and OpenCV.',
-    bullets: [
-      '60% reduction in simulated fire spread using proactive controlled burn lines',
-      'Real-time 3D visualization with dynamic drone response and environmental feedback loops',
-    ],
-    tags: ['Unity 3D', 'Python', 'OpenCV', 'Fuzzy Logic', 'Drone Simulation'],
-    award: null,
-  },
-  {
     id: 'uav',
     featured: false,
     icon: '🚁',
@@ -187,7 +172,7 @@ const RESEARCH = {
     {
       title: 'Bridging the Accuracy-Explainability Gap: A Hybrid ARIMA-LLM Architecture for Demand Forecasting',
       authors: 'Yashaswi Alur Prasannakumar, Dr. Nada R. Sanders',
-      venue: 'Under Review · Targeting INFORMS 2027 & POMS 2027',
+      venue: 'Under Review · Targeting INFORMS & POMS',
       status: 'under-review',
       description: 'A novel hybrid forecasting architecture integrating ARIMA\'s statistical rigor with LLM explainability — addressing the critical gap in enterprise supply chain tools where black-box predictions impede trust and adoption. Achieved statistical equivalence to pure ARIMA (40.61% vs. 38.44% MAPE, p=0.0524) while adding natural language explanations. Particularly strong on high-volatility items: +13.18 pp improvement over baseline.',
       highlights: [
@@ -200,7 +185,7 @@ const RESEARCH = {
     {
       title: 'Multi-Dimensional Trust Calibration for Human-in-the-Loop AI Decision Systems: Evidence from Supply Chain Planning',
       authors: 'Yashaswi Alur Prasannakumar, Dr. Nada R. Sanders',
-      venue: 'Under Review · Targeting INFORMS 2027 & POMS 2027',
+      venue: 'Under Review · Targeting INFORMS & POMS',
       status: 'under-review',
       description: 'Investigates how trust in AI-assisted decision systems can be systematically calibrated across multiple dimensions in supply chain planning contexts. Examines the interplay between model transparency, human oversight, and decision quality in high-stakes operational settings.',
       highlights: [],
@@ -321,6 +306,21 @@ const LEADERSHIP = [
   },
 ]
 
+/* ─── BANNER ─────────────────────────────────────────────────────── */
+function Banner({ onDismiss }) {
+  return (
+    <div className="top-banner">
+      <span className="banner-text">
+        Open to full-time roles starting Jan 2027 ·{' '}
+        <a href="#contact" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+          Let's connect
+        </a>
+      </span>
+      <button className="banner-close" onClick={onDismiss} aria-label="Dismiss">✕</button>
+    </div>
+  )
+}
+
 /* ─── CUSTOM CURSOR ──────────────────────────────────────────────── */
 function CustomCursor() {
   const dot = useRef(null)
@@ -397,7 +397,7 @@ function StatCounter({ target, suffix = '', decimals = 0, prefix = '' }) {
 }
 
 /* ─── NAV ────────────────────────────────────────────────────────── */
-function Nav({ active }) {
+function Nav({ active, bannerVisible }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   useEffect(() => {
@@ -408,13 +408,15 @@ function Nav({ active }) {
   const go = (id) => { document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' }); setOpen(false) }
   return (
     <motion.nav
-      className={`nav${scrolled ? ' scrolled' : ''}`}
+      className={`nav${scrolled ? ' scrolled' : ''}${bannerVisible ? ' with-banner' : ''}`}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="nav-inner">
-        <button className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>AP</button>
+        <button className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          AP<span className="nav-status-dot" />
+        </button>
         <div className={`nav-links${open ? ' open' : ''}`}>
           {NAV_LINKS.map(l => (
             <button key={l} className={`nav-link${active === l.toLowerCase() ? ' active' : ''}`} onClick={() => go(l)}>{l}</button>
@@ -442,7 +444,7 @@ function Hero() {
       )}
       {mobile && <div className="hero-gradient-fallback" />}
       <div className="hero-content">
-        <motion.div className="hero-eyebrow" {...fadeUp(0.1)}>PM · Researcher · Builder</motion.div>
+        <motion.div className="hero-eyebrow" {...fadeUp(0.1)}>PM · Researcher · AI Builder</motion.div>
         <motion.h1 className="hero-name" {...fadeUp(0.2)}>
           <Typewriter text="Yashaswi Alur Prasannakumar" speed={55} />
         </motion.h1>
@@ -450,7 +452,7 @@ function Hero() {
           Building at the intersection of <span className="accent">Data</span>, <span className="accent2">AI</span> &amp; Strategic Operations
         </motion.p>
         <motion.div className="hero-ctas" {...fadeUp(0.45)}>
-          <button className="btn-primary" onClick={() => typeof window.chatbase === 'function' && window.chatbase('open')}>
+          <button className="btn-primary btn-glow" onClick={() => typeof window.chatbase === 'function' && window.chatbase('open')}>
             Chat with AP
           </button>
           <button className="btn-ghost" onClick={() => go('projects')}>View Work</button>
@@ -767,7 +769,7 @@ function Contact() {
         </motion.p>
         <motion.div className="contact-links" {...fadeUp(0.2)}>
           {[
-            { label: 'Email', value: 'alurprasannakumar.y@northeastern.edu', href: 'mailto:alurprasannakumar.y@northeastern.edu', icon: '✉' },
+            { label: 'Email', value: 'apy@apyashaswi.com', href: 'mailto:apy@apyashaswi.com', icon: '✉' },
             { label: 'LinkedIn', value: 'linkedin.com/in/apyashaswi', href: 'https://linkedin.com/in/apyashaswi', icon: '🔗' },
             { label: 'GitHub', value: 'github.com/apyashaswi', href: 'https://github.com/apyashaswi', icon: '⌥' },
           ].map(l => (
@@ -788,6 +790,7 @@ function Contact() {
 /* ─── APP ────────────────────────────────────────────────────────── */
 export default function App() {
   const [active, setActive] = useState('hero')
+  const [banner, setBanner] = useState(true)
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]')
     const obs = new IntersectionObserver(
@@ -800,7 +803,8 @@ export default function App() {
   return (
     <>
       <CustomCursor />
-      <Nav active={active} />
+      {banner && <Banner onDismiss={() => setBanner(false)} />}
+      <Nav active={active} bannerVisible={banner} />
       <main>
         <Hero />
         <About />
