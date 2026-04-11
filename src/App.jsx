@@ -474,7 +474,7 @@ function About() {
   return (
     <section id="about" className="section">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="01" {...fadeUp()}>
           <span className="section-num">01</span>
           <h2 className="section-title">About</h2>
         </motion.div>
@@ -522,7 +522,7 @@ function Experience() {
   return (
     <section id="experience" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="02" {...fadeUp()}>
           <span className="section-num">02</span>
           <h2 className="section-title">Experience</h2>
         </motion.div>
@@ -568,7 +568,7 @@ function Projects() {
   return (
     <section id="projects" className="section">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="03" {...fadeUp()}>
           <span className="section-num">03</span>
           <h2 className="section-title">Projects</h2>
         </motion.div>
@@ -617,7 +617,7 @@ function Highlights() {
   return (
     <section id="highlights" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="04" {...fadeUp()}>
           <span className="section-num">04</span>
           <h2 className="section-title">Highlights</h2>
           <p className="section-subtitle">Moments from the journey</p>
@@ -646,7 +646,7 @@ function Research() {
   return (
     <section id="research" className="section">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="05" {...fadeUp()}>
           <span className="section-num">05</span>
           <h2 className="section-title">Research</h2>
           <p className="section-subtitle">With Prof. Nada R. Sanders · Northeastern University</p>
@@ -700,7 +700,7 @@ function Skills() {
   return (
     <section id="skills" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="06" {...fadeUp()}>
           <span className="section-num">06</span>
           <h2 className="section-title">Skills</h2>
         </motion.div>
@@ -731,7 +731,7 @@ function Leadership() {
   return (
     <section id="leadership" className="section">
       <div className="container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="07" {...fadeUp()}>
           <span className="section-num">07</span>
           <h2 className="section-title">Leadership</h2>
         </motion.div>
@@ -758,7 +758,7 @@ function Contact() {
   return (
     <section id="contact" className="section section-alt">
       <div className="container contact-container">
-        <motion.div className="section-header" {...fadeUp()}>
+        <motion.div className="section-header" data-num="08" {...fadeUp()}>
           <span className="section-num">08</span>
           <h2 className="section-title">Contact</h2>
         </motion.div>
