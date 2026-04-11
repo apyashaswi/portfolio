@@ -4,15 +4,15 @@ import { motion, AnimatePresence } from 'framer-motion'
 const NODES = [
   {
     year: '2002',
-    title: 'Born in Bengaluru',
-    detail: 'Karnataka, India — where it all began.',
+    title: 'Born in Mysuru',
+    detail: 'Mysuru, Karnataka, India — where it all began.',
     color: '#c9a84c',
     type: 'amber',
     future: false,
     highlight: false,
   },
   {
-    year: '2019',
+    year: '2020',
     title: 'B.Tech ECE Begins',
     detail: 'Started Bachelor of Technology in Electronics & Communication Engineering at PES University, Bengaluru.',
     color: '#7F77DD',
@@ -94,16 +94,6 @@ const NODES = [
     glow: true,
   },
   {
-    year: 'Jan 2025',
-    title: 'PM & Scrum Master · MSIG USA',
-    detail: 'Program Manager & Scrum Master at MSIG USA, leading the Data & AI team across Claims Data, Reinsurance, Finance Data, and Strategic Projects. Co-authored PI Planning decks, designed PCT Assessment Framework.',
-    color: '#1D9E75',
-    type: 'teal',
-    future: false,
-    highlight: false,
-    current: true,
-  },
-  {
     year: 'Mar 2025',
     title: 'Community Chair · ICXR',
     detail: "Joined Intercollegiate XR as Community Chair & Executive Committee Member — the world's premier collegiate XR community. Organized multi-campus hackathons and managed industry partnerships.",
@@ -120,6 +110,16 @@ const NODES = [
     type: 'purple',
     future: false,
     highlight: false,
+  },
+  {
+    year: 'Jan 2026',
+    title: 'PM & Scrum Master · MSIG USA',
+    detail: 'Program Manager & Scrum Master at MSIG USA, leading the Data & AI team across Claims Data, Reinsurance, Finance Data, and Strategic Projects. Co-authored PI Planning decks, designed PCT Assessment Framework.',
+    color: '#1D9E75',
+    type: 'teal',
+    future: false,
+    highlight: false,
+    current: true,
   },
   {
     year: 'Jan 2027',

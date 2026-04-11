@@ -25,7 +25,7 @@ const EXPERIENCE = [
     company: 'MSIG USA',
     type: 'Co-op',
     location: 'Warren, NJ',
-    period: 'Jan 2025 – Present',
+    period: 'Jan 2026 – Present',
     description: 'Serving as the operational and delivery anchor for the Data & AI team — spanning agile delivery, PI planning, hiring operations, ADO governance, and executive reporting across Claims Data, Re-insurance and Finance Data, and Strategic Projects.',
     bullets: [
       'Facilitating daily standups for Claims Data, Fabric, and Data Operations teams; managing Azure DevOps boards, resolving access issues, and aligning sprint work items with PI planning inputs across multiple concurrent workstreams',
