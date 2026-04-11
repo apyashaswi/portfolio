@@ -677,6 +677,103 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 .lc-org { font-size: 12px; color: var(--accent2); font-weight: 600; margin-bottom: 3px; }
 .lc-period { font-size: 11px; color: var(--text-dim); }
 
+/* ─── HIGHLIGHTS ─────────────────────────────────────────────────── */
+.highlights-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.highlight-item {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 280px;
+  border: 1px solid var(--border);
+}
+.highlight-item.tall { height: 460px; }
+.highlight-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+.highlight-item:hover .highlight-img { transform: scale(1.04); }
+.highlight-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(184,136,42,0.85);
+  color: #fff;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+.highlight-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 48px 18px 18px;
+  background: linear-gradient(to top, rgba(10,10,15,.92) 0%, transparent 100%);
+}
+.highlight-title { font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 3px; line-height: 1.3; }
+.highlight-sub { font-size: 12px; color: rgba(255,255,255,.6); font-weight: 500; }
+
+/* ─── SKILLS ─────────────────────────────────────────────────────── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+.skill-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: border-color 0.2s;
+}
+.skill-group:hover { border-color: var(--border-hover); }
+.skill-category {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.skill-tag { cursor: default; }
+
+/* ─── LEADERSHIP ─────────────────────────────────────────────────── */
+.leadership-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.leadership-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.leadership-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 4px 20px rgba(127,119,221,0.08);
+}
+.lc-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+.lc-role { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.35; }
+.lc-org { font-size: 12px; color: var(--accent2); font-weight: 600; margin-bottom: 3px; }
+.lc-period { font-size: 11px; color: var(--text-dim); margin-bottom: 10px; }
+.lc-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+/* ─── PROJECTS FEATURED ──────────────────────────────────────────── */
+.project-featured-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
 /* ─── CONTACT ────────────────────────────────────────────────────── */
 .contact-container { max-width: 680px; }
 .contact-blurb {
@@ -760,9 +857,13 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   .research-stats { grid-template-columns: 1fr; gap: 14px; }
   .published-grid { grid-template-columns: 1fr; }
   .about-right-col { grid-template-columns: 1fr; }
-  .leadership-compact-grid { grid-template-columns: 1fr; }
+  .leadership-grid { grid-template-columns: repeat(2, 1fr); }
+  .skills-grid { grid-template-columns: 1fr; }
+  .highlights-grid { grid-template-columns: 1fr; }
+  .highlight-item.tall { height: 300px; }
   .about-stats { grid-template-columns: repeat(2, 1fr); }
   .timeline-item { grid-template-columns: 20px 1fr; gap: 16px; }
+  .project-featured-inner { grid-template-columns: 1fr; gap: 16px; }
   .exp-header { flex-direction: column; gap: 8px; }
   .exp-meta { text-align: left; }
   .cursor-dot, .cursor-ring { display: none; }
@@ -779,4 +880,6 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   .hero-badges { gap: 7px; }
   .hero-badge { font-size: 11px; }
   .about-stats { grid-template-columns: repeat(2, 1fr); }
+  .leadership-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
 }
