@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 
 const HeroCanvas = lazy(() => import('./HeroCanvas'))
+const GlobeViz = lazy(() => import('./GlobeViz'))
+const CareerTimeline = lazy(() => import('./CareerTimeline'))
 
 /* ─── UTILS ─────────────────────────────────────────────────────── */
 const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -14,7 +16,8 @@ const fadeUp = (delay = 0) => ({
 })
 
 /* ─── DATA ──────────────────────────────────────────────────────── */
-const NAV_LINKS = ['About', 'Experience', 'Projects', 'Highlights', 'Research', 'Skills', 'Leadership', 'Contact']
+const NAV_LINKS = ['About', 'Experience', 'Journey', 'Projects', 'Highlights', 'Globe', 'Research', 'Skills', 'Leadership', 'Contact']
+const RECRUITER_NAV = ['About', 'Experience', 'Projects', 'Research', 'Skills', 'Contact']
 
 const EXPERIENCE = [
   {
@@ -396,10 +399,31 @@ function StatCounter({ target, suffix = '', decimals = 0, prefix = '' }) {
   return <span ref={ref}>{prefix}{decimals > 0 ? count.toFixed(decimals) : Math.floor(count)}{suffix}</span>
 }
 
+/* ─── MODE TOGGLE ────────────────────────────────────────────────── */
+function ModeToggle({ mode, setMode }) {
+  return (
+    <div className="mode-toggle" title={mode === 'explorer' ? 'Switch to Recruiter Mode' : 'Switch to Explorer Mode'}>
+      <button
+        className={`mode-btn${mode === 'explorer' ? ' active' : ''}`}
+        onClick={() => setMode('explorer')}
+      >
+        Explorer
+      </button>
+      <button
+        className={`mode-btn${mode === 'recruiter' ? ' active' : ''}`}
+        onClick={() => setMode('recruiter')}
+      >
+        Recruiter
+      </button>
+    </div>
+  )
+}
+
 /* ─── NAV ────────────────────────────────────────────────────────── */
-function Nav({ active, bannerVisible }) {
+function Nav({ active, bannerVisible, mode, setMode }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const links = mode === 'recruiter' ? RECRUITER_NAV : NAV_LINKS
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', fn)
@@ -418,15 +442,60 @@ function Nav({ active, bannerVisible }) {
           AP<span className="nav-status-dot" />
         </button>
         <div className={`nav-links${open ? ' open' : ''}`}>
-          {NAV_LINKS.map(l => (
+          {links.map(l => (
             <button key={l} className={`nav-link${active === l.toLowerCase() ? ' active' : ''}`} onClick={() => go(l)}>{l}</button>
           ))}
+          {mode === 'recruiter' && (
+            <a href="/resume.pdf" download className="btn-ghost nav-resume-btn">Download Resume</a>
+          )}
         </div>
-        <button className="hamburger" onClick={() => setOpen(v => !v)} aria-label="Menu">
-          <span /><span /><span />
-        </button>
+        <div className="nav-right">
+          <ModeToggle mode={mode} setMode={setMode} />
+          <button className="hamburger" onClick={() => setOpen(v => !v)} aria-label="Menu">
+            <span /><span /><span />
+          </button>
+        </div>
       </div>
     </motion.nav>
+  )
+}
+
+/* ─── RECRUITER HERO ─────────────────────────────────────────────── */
+function RecruiterHero() {
+  const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  return (
+    <section id="hero" className="hero hero-recruiter">
+      <div className="hero-content hero-content-recruiter">
+        <motion.div className="hero-eyebrow" {...fadeUp(0.1)}>PM · Researcher · AI Builder</motion.div>
+        <motion.h1 className="hero-name" {...fadeUp(0.2)}>
+          Yashaswi Alur Prasannakumar
+        </motion.h1>
+        <motion.p className="hero-tagline" {...fadeUp(0.35)}>
+          Building at the intersection of <span className="accent">Data</span>, <span className="accent2">AI</span> &amp; Strategic Operations
+        </motion.p>
+        <motion.div className="hero-ctas" {...fadeUp(0.45)}>
+          <a href="/resume.pdf" download className="btn-primary btn-glow">Download Resume</a>
+          <button className="btn-ghost" onClick={() => go('experience')}>View Experience</button>
+        </motion.div>
+        <motion.div className="hero-badges" {...fadeUp(0.55)}>
+          {['Open to Full-Time · Jan 2027', 'Somerset, NJ', 'Dec 2026 Graduate'].map(b => (
+            <span key={b} className="hero-badge">{b}</span>
+          ))}
+        </motion.div>
+        <motion.div className="recruiter-highlights" {...fadeUp(0.65)}>
+          {[
+            { icon: '🏆', text: 'MIT Reality Hack Winner' },
+            { icon: '📊', text: 'GPA 3.75 · Northeastern' },
+            { icon: '💼', text: 'MSIG USA · Program Manager' },
+            { icon: '🔬', text: '4 Research Papers' },
+          ].map(h => (
+            <div key={h.text} className="rec-highlight-pill">
+              <span>{h.icon}</span> {h.text}
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
   )
 }
 
@@ -520,7 +589,8 @@ function About() {
 }
 
 /* ─── EXPERIENCE ─────────────────────────────────────────────────── */
-function Experience() {
+function Experience({ recruiterMode }) {
+  const list = recruiterMode ? EXPERIENCE.slice(0, 1) : EXPERIENCE
   return (
     <section id="experience" className="section section-alt">
       <div className="container">
@@ -529,12 +599,12 @@ function Experience() {
           <h2 className="section-title">Experience</h2>
         </motion.div>
         <div className="timeline">
-          {EXPERIENCE.map((exp, i) => (
+          {list.map((exp, i) => (
             <motion.div key={i} className="timeline-item" {...fadeUp(i * 0.1)}>
               <div className="timeline-marker">
                 {exp.current && <div className="timeline-pulse" />}
                 <div className={`timeline-dot${exp.current ? ' current' : ''}`} />
-                {i < EXPERIENCE.length - 1 && <div className="timeline-line" />}
+                {i < list.length - 1 && <div className="timeline-line" />}
               </div>
               <div className="timeline-content">
                 <div className="exp-header">
@@ -563,15 +633,35 @@ function Experience() {
   )
 }
 
+/* ─── JOURNEY (Career Timeline) ──────────────────────────────────── */
+function Journey() {
+  return (
+    <section id="journey" className="section">
+      <div className="container">
+        <motion.div className="section-header" data-num="03" {...fadeUp()}>
+          <span className="section-num">03</span>
+          <h2 className="section-title">My Journey</h2>
+          <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
+        </motion.div>
+        <motion.div {...fadeUp(0.1)}>
+          <Suspense fallback={<div className="tl-loading">Loading timeline…</div>}>
+            <CareerTimeline />
+          </Suspense>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 /* ─── PROJECTS ───────────────────────────────────────────────────── */
 function Projects() {
   const featured = PROJECTS.find(p => p.featured)
   const rest = PROJECTS.filter(p => !p.featured)
   return (
-    <section id="projects" className="section">
+    <section id="projects" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" data-num="03" {...fadeUp()}>
-          <span className="section-num">03</span>
+        <motion.div className="section-header" data-num="04" {...fadeUp()}>
+          <span className="section-num">04</span>
           <h2 className="section-title">Projects</h2>
         </motion.div>
         {featured && (
@@ -617,10 +707,10 @@ function Projects() {
 /* ─── HIGHLIGHTS ─────────────────────────────────────────────────── */
 function Highlights() {
   return (
-    <section id="highlights" className="section section-alt">
+    <section id="highlights" className="section">
       <div className="container">
-        <motion.div className="section-header" data-num="04" {...fadeUp()}>
-          <span className="section-num">04</span>
+        <motion.div className="section-header" data-num="05" {...fadeUp()}>
+          <span className="section-num">05</span>
           <h2 className="section-title">Highlights</h2>
           <p className="section-subtitle">Moments from the journey</p>
         </motion.div>
@@ -641,15 +731,36 @@ function Highlights() {
   )
 }
 
+/* ─── GLOBE ──────────────────────────────────────────────────────── */
+function Globe() {
+  return (
+    <section id="globe" className="section section-alt">
+      <div className="container">
+        <motion.div className="section-header" data-num="06" {...fadeUp()}>
+          <span className="section-num">06</span>
+          <h2 className="section-title">Around the World</h2>
+          <p className="section-subtitle">Places that shaped the journey — professional & personal</p>
+        </motion.div>
+        <motion.div className="globe-section" {...fadeUp(0.1)}>
+          <Suspense fallback={<div className="globe-placeholder">Loading globe…</div>}>
+            <GlobeViz />
+          </Suspense>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 /* ─── RESEARCH ───────────────────────────────────────────────────── */
-function Research() {
+function Research({ recruiterMode }) {
   const underReview = RESEARCH.papers.filter(p => p.status === 'under-review')
   const published = RESEARCH.papers.filter(p => p.status === 'published')
+  const sectionNum = recruiterMode ? '05' : '07'
   return (
     <section id="research" className="section">
       <div className="container">
-        <motion.div className="section-header" data-num="05" {...fadeUp()}>
-          <span className="section-num">05</span>
+        <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
+          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Research</h2>
           <p className="section-subtitle">With Prof. Nada R. Sanders · Northeastern University</p>
         </motion.div>
@@ -666,44 +777,49 @@ function Research() {
             </motion.div>
           ))}
         </motion.div>
-        <motion.h3 className="pub-heading" {...fadeUp(0.15)}>Under Review</motion.h3>
-        {underReview.map((p, i) => (
-          <motion.div key={i} className="research-card featured-research" {...fadeUp(0.1 + i * 0.08)}>
-            <div className="research-status-badge">Under Review</div>
-            <h3 className="research-title">{p.title}</h3>
-            <div className="research-authors">{p.authors}</div>
-            <div className="research-venue">{p.venue}</div>
-            <p className="research-desc">{p.description}</p>
-            {p.highlights.length > 0 && (
-              <ul className="research-highlights">{p.highlights.map((h, j) => <li key={j}>{h}</li>)}</ul>
-            )}
-            <div className="tag-row">{p.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
-          </motion.div>
-        ))}
-        <motion.h3 className="pub-heading" style={{ marginTop: '48px' }} {...fadeUp(0.2)}>Published</motion.h3>
-        <div className="published-grid">
-          {published.map((p, i) => (
-            <motion.div key={i} className="research-card" {...fadeUp(0.2 + i * 0.08)}>
-              <div className="research-status-badge published">Published</div>
-              <div className="research-title small">{p.title}</div>
-              <div className="research-venue">{p.venue}</div>
-              <p className="research-desc">{p.description}</p>
-              <div className="tag-row">{p.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
-            </motion.div>
-          ))}
-        </div>
+        {!recruiterMode && (
+          <>
+            <motion.h3 className="pub-heading" {...fadeUp(0.15)}>Under Review</motion.h3>
+            {underReview.map((p, i) => (
+              <motion.div key={i} className="research-card featured-research" {...fadeUp(0.1 + i * 0.08)}>
+                <div className="research-status-badge">Under Review</div>
+                <h3 className="research-title">{p.title}</h3>
+                <div className="research-authors">{p.authors}</div>
+                <div className="research-venue">{p.venue}</div>
+                <p className="research-desc">{p.description}</p>
+                {p.highlights.length > 0 && (
+                  <ul className="research-highlights">{p.highlights.map((h, j) => <li key={j}>{h}</li>)}</ul>
+                )}
+                <div className="tag-row">{p.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+              </motion.div>
+            ))}
+            <motion.h3 className="pub-heading" style={{ marginTop: '48px' }} {...fadeUp(0.2)}>Published</motion.h3>
+            <div className="published-grid">
+              {published.map((p, i) => (
+                <motion.div key={i} className="research-card" {...fadeUp(0.2 + i * 0.08)}>
+                  <div className="research-status-badge published">Published</div>
+                  <div className="research-title small">{p.title}</div>
+                  <div className="research-venue">{p.venue}</div>
+                  <p className="research-desc">{p.description}</p>
+                  <div className="tag-row">{p.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+                </motion.div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   )
 }
 
 /* ─── SKILLS ─────────────────────────────────────────────────────── */
-function Skills() {
+function Skills({ recruiterMode }) {
+  const sectionNum = recruiterMode ? '04' : '08'
   return (
     <section id="skills" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" data-num="06" {...fadeUp()}>
-          <span className="section-num">06</span>
+        <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
+          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Skills</h2>
         </motion.div>
         <div className="skills-grid">
@@ -733,8 +849,8 @@ function Leadership() {
   return (
     <section id="leadership" className="section">
       <div className="container">
-        <motion.div className="section-header" data-num="07" {...fadeUp()}>
-          <span className="section-num">07</span>
+        <motion.div className="section-header" data-num="09" {...fadeUp()}>
+          <span className="section-num">09</span>
           <h2 className="section-title">Leadership</h2>
         </motion.div>
         <div className="leadership-grid">
@@ -756,12 +872,13 @@ function Leadership() {
 }
 
 /* ─── CONTACT ────────────────────────────────────────────────────── */
-function Contact() {
+function Contact({ recruiterMode }) {
+  const sectionNum = recruiterMode ? '06' : '10'
   return (
     <section id="contact" className="section section-alt">
       <div className="container contact-container">
-        <motion.div className="section-header" data-num="08" {...fadeUp()}>
-          <span className="section-num">08</span>
+        <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
+          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Contact</h2>
         </motion.div>
         <motion.p className="contact-blurb" {...fadeUp(0.1)}>
@@ -791,6 +908,14 @@ function Contact() {
 export default function App() {
   const [active, setActive] = useState('hero')
   const [banner, setBanner] = useState(true)
+  const [mode, setMode] = useState(() => {
+    try { return localStorage.getItem('ap-mode') || 'explorer' } catch { return 'explorer' }
+  })
+
+  useEffect(() => {
+    try { localStorage.setItem('ap-mode', mode) } catch {}
+  }, [mode])
+
   useEffect(() => {
     const sections = document.querySelectorAll('section[id]')
     const obs = new IntersectionObserver(
@@ -799,23 +924,36 @@ export default function App() {
     )
     sections.forEach(s => obs.observe(s))
     return () => obs.disconnect()
-  }, [])
+  }, [mode])
+
+  const recruiterMode = mode === 'recruiter'
+
   return (
     <>
       <CustomCursor />
       {banner && <Banner onDismiss={() => setBanner(false)} />}
-      <Nav active={active} bannerVisible={banner} />
-      <main>
-        <Hero />
-        <About />
-        <Experience />
-        <Projects />
-        <Highlights />
-        <Research />
-        <Skills />
-        <Leadership />
-        <Contact />
-      </main>
+      <Nav active={active} bannerVisible={banner} mode={mode} setMode={setMode} />
+      <AnimatePresence mode="wait">
+        <motion.main
+          key={mode}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          {recruiterMode ? <RecruiterHero /> : <Hero />}
+          <About />
+          <Experience recruiterMode={recruiterMode} />
+          {!recruiterMode && <Journey />}
+          <Projects />
+          {!recruiterMode && <Highlights />}
+          {!recruiterMode && <Globe />}
+          <Research recruiterMode={recruiterMode} />
+          <Skills recruiterMode={recruiterMode} />
+          {!recruiterMode && <Leadership />}
+          <Contact recruiterMode={recruiterMode} />
+        </motion.main>
+      </AnimatePresence>
       <footer className="footer">
         <div className="footer-inner">
           <span className="footer-logo">AP</span>

@@ -853,3 +853,283 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   .about-stats { grid-template-columns: repeat(2, 1fr); }
   .leadership-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── MODE TOGGLE ────────────────────────────────────────────────── */
+.nav-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.mode-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 3px;
+  gap: 2px;
+}
+.mode-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 5px 13px;
+  border-radius: 20px;
+  color: var(--text-muted);
+  background: transparent;
+  transition: all 0.22s ease;
+  cursor: none;
+}
+.mode-btn.active {
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  color: #fff;
+  box-shadow: 0 0 12px rgba(127,119,221,0.35);
+}
+
+/* ─── RECRUITER HERO ─────────────────────────────────────────────── */
+.hero-recruiter {
+  background: radial-gradient(ellipse 90% 70% at 60% 40%, rgba(127,119,221,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 50% at 20% 70%, rgba(29,158,117,0.08) 0%, transparent 65%),
+              var(--bg);
+}
+.hero-content-recruiter {
+  max-width: 680px;
+}
+.recruiter-highlights {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-top: 28px;
+}
+.rec-highlight-pill {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500;
+  padding: 8px 16px; border-radius: 30px;
+  background: rgba(127,119,221,0.08);
+  border: 1px solid rgba(127,119,221,0.18);
+  color: var(--text-muted);
+}
+.nav-resume-btn {
+  font-size: 12px !important;
+  padding: 7px 14px !important;
+}
+
+/* ─── CAREER TIMELINE ────────────────────────────────────────────── */
+.tl-outer { position: relative; }
+.tl-scroll-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-bottom: 24px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127,119,221,0.25) transparent;
+}
+.tl-scroll-container::-webkit-scrollbar { height: 4px; }
+.tl-scroll-container::-webkit-scrollbar-track { background: transparent; }
+.tl-scroll-container::-webkit-scrollbar-thumb { background: rgba(127,119,221,0.25); border-radius: 2px; }
+
+.tl-track {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+  padding: 36px 24px 16px;
+  min-width: max-content;
+}
+.tl-connector {
+  position: absolute;
+  top: 56px;
+  left: 40px; right: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent) 10%, var(--accent2) 50%, var(--accent) 90%, transparent);
+  opacity: 0.25;
+  pointer-events: none;
+}
+.tl-node {
+  flex-shrink: 0;
+  width: 175px;
+  padding: 0 14px 20px;
+  scroll-snap-align: start;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+.tl-node:hover { transform: translateY(-4px); }
+.tl-node.tl-highlight { width: 220px; }
+.tl-node.tl-future { opacity: 0.45; }
+
+.tl-dot-wrap {
+  position: relative;
+  width: 16px; height: 16px;
+  margin: 0 auto 10px;
+}
+.tl-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  position: relative; z-index: 1;
+  transition: transform 0.2s ease;
+}
+.tl-node:hover .tl-dot { transform: scale(1.3); }
+.tl-node.tl-highlight .tl-dot {
+  width: 18px; height: 18px;
+}
+.tl-pulse {
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: tlPulse 2s ease-in-out infinite;
+}
+@keyframes tlPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0; transform: scale(1.8); }
+}
+.tl-node.tl-glow .tl-dot-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.5), transparent 70%);
+  animation: goldPulse 2.5s ease-in-out infinite;
+}
+@keyframes goldPulse {
+  0%,100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.6); }
+}
+.tl-year {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-bottom: 6px; text-align: center;
+}
+.tl-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--text); line-height: 1.35;
+  text-align: center;
+}
+.tl-node.tl-highlight .tl-title {
+  font-size: 14.5px;
+}
+.tl-award-badge {
+  font-size: 10px; font-weight: 700;
+  background: linear-gradient(90deg, rgba(201,168,76,0.25), rgba(201,168,76,0.1));
+  border: 1px solid rgba(201,168,76,0.4);
+  color: var(--gold);
+  border-radius: 20px;
+  padding: 3px 9px;
+  margin: 8px auto 0;
+  text-align: center;
+  width: fit-content;
+}
+.tl-detail {
+  font-size: 12px; color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: left;
+  overflow: hidden;
+}
+.tl-hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .08em;
+  margin-top: 16px;
+}
+.tl-loading { text-align: center; color: var(--text-muted); padding: 40px; }
+
+/* Timeline — vertical on mobile */
+@media (max-width: 768px) {
+  .tl-scroll-container { overflow-x: hidden; overflow-y: visible; }
+  .tl-track {
+    flex-direction: column;
+    gap: 0;
+    padding: 16px 0;
+    min-width: unset;
+  }
+  .tl-connector {
+    width: 2px; height: auto;
+    top: 24px; bottom: 24px;
+    left: 20px; right: auto;
+    background: linear-gradient(180deg, transparent, var(--accent) 10%, var(--accent2) 50%, var(--accent) 90%, transparent);
+  }
+  .tl-node { width: 100% !important; padding: 12px 12px 12px 52px; text-align: left; }
+  .tl-dot-wrap { position: absolute; left: 12px; top: 18px; margin: 0; }
+  .tl-year { text-align: left; }
+  .tl-title { text-align: left; }
+  .tl-hint { display: none; }
+}
+
+/* ─── GLOBE SECTION ──────────────────────────────────────────────── */
+.globe-section { position: relative; }
+.globe-wrapper {
+  position: relative;
+  height: 540px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(127,119,221,0.06) 0%, transparent 70%);
+  border: 1px solid var(--border);
+}
+.globe-mount {
+  width: 100%; height: 100%;
+}
+.globe-loading {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; color: var(--text-muted); font-size: 14px;
+}
+.globe-loading-ring {
+  width: 48px; height: 48px;
+  border: 3px solid rgba(127,119,221,0.15);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.globe-placeholder {
+  height: 540px; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 14px;
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.globe-tooltip {
+  position: fixed;
+  z-index: 9000;
+  background: rgba(15,15,28,0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(127,119,221,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  pointer-events: none;
+  min-width: 180px; max-width: 220px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.gt-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.gt-detail { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.gt-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  margin-top: 8px;
+}
+.globe-legend {
+  position: absolute;
+  bottom: 16px; left: 20px;
+  display: flex; gap: 16px;
+  background: rgba(8,8,15,0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 7px 14px;
+}
+.gl-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: var(--text-muted);
+}
+.gl-dot {
+  width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+}
+.gl-dot.pro { background: #9F97F0; }
+.gl-dot.travel { background: #2DB88A; }
+.gl-dot.award { background: #c9a84c; box-shadow: 0 0 8px #c9a84c88; }
+
+@media (max-width: 768px) {
+  .globe-wrapper { height: 360px; }
+  .globe-legend { gap: 10px; font-size: 10px; padding: 5px 10px; }
+}
