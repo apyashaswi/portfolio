@@ -368,7 +368,6 @@ export default function JourneyECG() {
 
   const ms  = milestones[activeMsIdx] || milestones[0]
   const bs  = BADGE_STYLE[ms.badge]   || BADGE_STYLE.Milestone
-  const bpm = Math.round(72 * speedMul)
 
   return (
     <section id="journey" className="section ecg-section" ref={sectionRef}>
@@ -395,10 +394,6 @@ export default function JourneyECG() {
           <div className="ecg-monitor-header">
             <span className="ecg-vitals-label">AP · CAREER VITALS · 2002–2027</span>
             <div className="ecg-header-right">
-              <div className="ecg-bpm-display">
-                <span className="ecg-bpm-num">{bpm}</span>
-                <span className="ecg-bpm-label">BPM</span>
-              </div>
               <div className="ecg-live-badge">
                 <span className="ecg-blink-dot" />
                 LIVE
