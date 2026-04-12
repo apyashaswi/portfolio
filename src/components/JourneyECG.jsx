@@ -39,7 +39,7 @@ const LINE_AURA  = 'rgba(0,230,80,0.14)'
 const LINE_MID   = 'rgba(0,210,75,0.50)'
 const LINE_CORE  = '#00d060'          // bright phosphor green
 const HEAD_CLR   = '#00ff88'
-const BASE_SPEED = 1.8                // px / frame at 1×
+const BASE_SPEED = 0.8                // px / frame at 1×
 const GAP        = 28                 // eraser gap ahead of head (px)
 const TRAIL      = 160               // bright-trail length (px)
 
