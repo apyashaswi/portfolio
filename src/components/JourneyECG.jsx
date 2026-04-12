@@ -31,61 +31,77 @@ const BADGE_STYLE = {
 }
 
 /* ─── CONSTANTS ──────────────────────────────────────────────────── */
-const BG          = '#060608'
-const LINE_BRIGHT = '#cc2222'
-const LINE_DIM    = '#330000'
-const GRID_COLOR  = '#140404'
-const BASE_SPEED  = 1.5   // px / frame at 1×
-const GAP         = 32    // eraser gap ahead of head (px)
-const TRAIL       = 120   // bright-trail length behind head (px)
+const BG         = '#010d04'          // near-black with faint green tint
+const GRID_MINOR = 'rgba(0,140,50,0.10)'
+const GRID_MAJOR = 'rgba(0,140,50,0.20)'
+const LINE_DIM   = '#01300a'          // very dark green — old phosphor
+const LINE_AURA  = 'rgba(0,230,80,0.14)'
+const LINE_MID   = 'rgba(0,210,75,0.50)'
+const LINE_CORE  = '#00d060'          // bright phosphor green
+const HEAD_CLR   = '#00ff88'
+const BASE_SPEED = 1.8                // px / frame at 1×
+const GAP        = 28                 // eraser gap ahead of head (px)
+const TRAIL      = 160               // bright-trail length (px)
 
-/* ─── SPIKE SHAPE ────────────────────────────────────────────────── */
-// Returns y-offset: negative = upward, positive = dip
-// Smooth, continuous ECG QRS+T shape
+/* ─── ECG WAVEFORM ───────────────────────────────────────────────── */
+// Returns y-offset (negative = upward on canvas).
+// dx is measured from the R-peak centre.
 function spikeOffset(dx, h) {
-  if (dx < -14 || dx > 64) return 0
-  // Pre-dip (Q): small downward bulge centred at dx≈-9
-  if (dx <= -5) {
-    const t = (dx + 14) / 9
-    return h * 0.1 * Math.sin(Math.PI * t)
+  // P-wave: smooth gaussian bump ~24px before R-peak
+  if (dx >= -38 && dx < -10) {
+    const t = (dx + 24) / 11
+    return -h * 0.14 * Math.exp(-t * t * 1.6)
   }
-  // Rise to peak (smooth cubic: 0 → -h)
-  if (dx <= 2) {
-    const t = (dx + 5) / 7
-    return -h * t * t * (3 - 2 * t)
+  // Q-dip: small downward notch just before R
+  if (dx >= -10 && dx < -2) {
+    const t = (dx + 10) / 8
+    return h * 0.11 * Math.sin(Math.PI * t)
   }
-  // Fall from peak (-h → 0)
-  if (dx <= 10) {
-    const t = (dx - 2) / 8
-    return -h * (1 - t * t)
+  // R-rise: sharp linear ascent
+  if (dx >= -2 && dx <= 0) {
+    return -h * (dx + 2) / 2
   }
-  // Post-dip (S): small downward hump
-  if (dx <= 20) {
-    const t = (dx - 10) / 10
-    return h * 0.2 * Math.sin(Math.PI * t)
+  // R-fall: sharp linear descent
+  if (dx > 0 && dx <= 5) {
+    return -h * (1 - dx / 5)
   }
-  // T-wave: gentle upward recovery
-  if (dx <= 58) {
-    const t = (dx - 20) / 38
-    return -h * 0.12 * Math.sin(Math.PI * t)
+  // S-dip: brief downward excursion below baseline
+  if (dx > 5 && dx <= 17) {
+    const t = (dx - 5) / 12
+    return h * 0.22 * Math.sin(Math.PI * t)
+  }
+  // ST segment: slight isoelectric elevation
+  if (dx > 17 && dx <= 27) return -h * 0.025
+  // T-wave: broad rounded positive hump
+  if (dx > 27 && dx <= 70) {
+    const t = (dx - 27) / 43
+    return -h * 0.30 * Math.sin(Math.PI * t)
   }
   return 0
 }
 
+/* ─── BASELINE WANDER + NOISE ────────────────────────────────────── */
+// Deterministic breathing drift + muscle noise; no Math.random so buffer
+// is reproducible across resize cycles.
+function wanderAndNoise(x) {
+  const wander = Math.sin(x * 0.0038) * 7 + Math.sin(x * 0.0091) * 3.5
+  const noise  = (Math.sin(x * 18.7) + Math.sin(x * 43.1)) * 0.55
+  return wander + noise
+}
+
 /* ─── Y VALUE AT WORLD POSITION ──────────────────────────────────── */
 function computeY(worldX, W, H) {
-  const baseline = H / 2 + Math.sin(worldX * 0.08) * 4
+  const baseline = H / 2 + wanderAndNoise(worldX)
   let off = 0
   const cycleN = Math.floor(worldX / W)
   for (const ms of milestones) {
     const msWX = cycleN * W + ms.rx * W
-    // Check adjacent cycles to avoid edge discontinuities
     for (const cwx of [msWX - W, msWX, msWX + W]) {
       const dx = worldX - cwx
-      if (dx >= -14 && dx <= 64) off += spikeOffset(dx, ms.spike)
+      if (dx >= -38 && dx <= 70) off += spikeOffset(dx, ms.spike)
     }
   }
-  return Math.max(8, Math.min(H - 8, baseline + off))
+  return Math.max(6, Math.min(H - 6, baseline + off))
 }
 
 /* ─── ACTIVE MILESTONE ───────────────────────────────────────────── */
@@ -96,6 +112,24 @@ function getActiveMsIdx(worldX, W) {
     if (milestones[i].rx * W <= pos) idx = i
   }
   return idx
+}
+
+/* ─── ECG PAPER GRID ─────────────────────────────────────────────── */
+function drawGrid(ctx, W, H) {
+  // Minor squares — every 20 px
+  ctx.beginPath()
+  ctx.strokeStyle = GRID_MINOR
+  ctx.lineWidth   = 0.5
+  for (let x = 0; x < W; x += 20) { ctx.moveTo(x, 0); ctx.lineTo(x, H) }
+  for (let y = 0; y < H; y += 20) { ctx.moveTo(0, y); ctx.lineTo(W, y) }
+  ctx.stroke()
+  // Major squares — every 100 px
+  ctx.beginPath()
+  ctx.strokeStyle = GRID_MAJOR
+  ctx.lineWidth   = 0.8
+  for (let x = 0; x < W; x += 100) { ctx.moveTo(x, 0); ctx.lineTo(x, H) }
+  for (let y = 0; y < H; y += 100) { ctx.moveTo(0, y); ctx.lineTo(W, y) }
+  ctx.stroke()
 }
 
 /* ─── COMPONENT ──────────────────────────────────────────────────── */
@@ -111,14 +145,16 @@ export default function JourneyECG() {
   const [activeMsIdx, setActiveMsIdx] = useState(0)
   const [inView,      setInView]      = useState(false)
 
-  /* scroll trigger */
+  /* scroll trigger — animation starts once section enters viewport */
   useEffect(() => {
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) setInView(true) }, { threshold: 0.15 })
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) setInView(true)
+    }, { threshold: 0.15 })
     if (sectionRef.current) io.observe(sectionRef.current)
     return () => io.disconnect()
   }, [])
 
-  /* canvas resize */
+  /* responsive canvas sizing */
   useEffect(() => {
     function resize() {
       const canvas = canvasRef.current
@@ -127,13 +163,14 @@ export default function JourneyECG() {
       const H = window.innerWidth < 768 ? 140 : 180
       canvas.width  = W
       canvas.height = H
-      const st    = stateRef.current
+      const st     = stateRef.current
       const newBuf = new Float32Array(W).fill(H / 2)
-      if (st.bufY) for (let i = 0; i < Math.min(W, st.bufY.length); i++) newBuf[i] = st.bufY[i]
+      if (st.bufY) {
+        for (let i = 0; i < Math.min(W, st.bufY.length); i++) newBuf[i] = st.bufY[i]
+      }
       st.bufY = newBuf
       st.W = W
       st.H = H
-      /* draw static flatline until in view */
       if (!inView) drawFlatline(canvas, W, H)
     }
     resize()
@@ -142,7 +179,7 @@ export default function JourneyECG() {
     return () => ro.disconnect()
   }, [inView])
 
-  /* animation loop */
+  /* main animation loop */
   useEffect(() => {
     if (!inView) return
     const canvas = canvasRef.current
@@ -156,15 +193,14 @@ export default function JourneyECG() {
 
       const headX = Math.floor(worldX) % W
 
-      /* background + grid */
+      /* ── background */
       ctx.fillStyle = BG
       ctx.fillRect(0, 0, W, H)
-      ctx.fillStyle = GRID_COLOR
-      for (let gx = 0; gx < W; gx += 60) ctx.fillRect(gx, 0, 1, H)
-      ctx.fillRect(0, Math.floor(H * 0.25), W, 1)
-      ctx.fillRect(0, Math.floor(H * 0.5),  W, 1)
-      ctx.fillRect(0, Math.floor(H * 0.75), W, 1)
 
+      /* ── ECG paper grid */
+      drawGrid(ctx, W, H)
+
+      /* ── categorise each x pixel */
       function cat(x) {
         const d = (headX - x + W) % W
         if (d < GAP)   return 'gap'
@@ -172,64 +208,113 @@ export default function JourneyECG() {
         return 'dim'
       }
 
-      /* dim trail */
+      /* ── dim (old phosphor) trail */
       ctx.save()
       ctx.strokeStyle = LINE_DIM
-      ctx.lineWidth   = 1.6
+      ctx.lineWidth   = 1.4
       ctx.beginPath()
       let on = false
       for (let x = 0; x < W; x++) {
         if (cat(x) !== 'dim') { on = false; continue }
-        if (!on) { ctx.moveTo(x, bufY[x]); on = true } else ctx.lineTo(x, bufY[x])
+        if (!on) { ctx.moveTo(x + 0.5, bufY[x]); on = true }
+        else ctx.lineTo(x + 0.5, bufY[x])
       }
       ctx.stroke()
       ctx.restore()
 
-      /* bright trail with glow */
-      ctx.save()
-      ctx.strokeStyle = LINE_BRIGHT
-      ctx.lineWidth   = 2
-      ctx.shadowColor = LINE_BRIGHT
-      ctx.shadowBlur  = 8
-      ctx.beginPath()
+      /* ── build bright-trail path once, render 3× for phosphor glow */
+      const brightPath = new Path2D()
       on = false
       for (let x = 0; x < W; x++) {
         if (cat(x) !== 'bright') { on = false; continue }
-        if (!on) { ctx.moveTo(x, bufY[x]); on = true } else ctx.lineTo(x, bufY[x])
+        if (!on) { brightPath.moveTo(x + 0.5, bufY[x]); on = true }
+        else brightPath.lineTo(x + 0.5, bufY[x])
       }
-      ctx.stroke()
+
+      // Layer 1 — wide aura
+      ctx.save()
+      ctx.strokeStyle = LINE_AURA
+      ctx.lineWidth   = 10
+      ctx.shadowColor = LINE_CORE
+      ctx.shadowBlur  = 32
+      ctx.stroke(brightPath)
       ctx.restore()
 
-      /* milestone dots + year labels (fade out as they age) */
+      // Layer 2 — mid glow
+      ctx.save()
+      ctx.strokeStyle = LINE_MID
+      ctx.lineWidth   = 3.5
+      ctx.shadowColor = LINE_CORE
+      ctx.shadowBlur  = 14
+      ctx.stroke(brightPath)
+      ctx.restore()
+
+      // Layer 3 — sharp phosphor core
+      ctx.save()
+      ctx.strokeStyle = LINE_CORE
+      ctx.lineWidth   = 1.6
+      ctx.shadowColor = HEAD_CLR
+      ctx.shadowBlur  = 5
+      ctx.stroke(brightPath)
+      ctx.restore()
+
+      /* ── milestone dots + year labels (fade as they age) */
       const cycleN = Math.floor(worldX / W)
       for (const ms of milestones) {
         const msWX    = cycleN * W + ms.rx * W
         const elapsed = worldX - msWX
-        if (elapsed < 0 || elapsed > W * 0.38) continue
-        const alpha = Math.max(0, 1 - elapsed / (W * 0.38))
+        if (elapsed < 0 || elapsed > W * 0.40) continue
+        const alpha = Math.max(0, 1 - elapsed / (W * 0.40))
         const msX   = Math.floor(msWX) % W
-        const dotY  = bufY[msX] || H / 2
+        const dotY  = bufY[msX] ?? H / 2
         ctx.save()
         ctx.globalAlpha = alpha
+        // dot
         ctx.beginPath()
-        ctx.arc(msX, dotY, ms.featured ? 5 : 3, 0, Math.PI * 2)
-        ctx.fillStyle = ms.featured ? '#EF9F27' : '#cc4444'
-        if (ms.featured) { ctx.shadowColor = '#EF9F27'; ctx.shadowBlur = 14 }
+        ctx.arc(msX, dotY, ms.featured ? 5.5 : 3.5, 0, Math.PI * 2)
+        ctx.fillStyle   = ms.featured ? '#EF9F27' : LINE_CORE
+        ctx.shadowColor = ms.featured ? '#EF9F27' : LINE_CORE
+        ctx.shadowBlur  = ms.featured ? 20 : 10
         ctx.fill()
-        ctx.font      = '9px monospace'
-        ctx.fillStyle = ms.featured ? '#EF9F27' : '#cc5555'
-        ctx.textAlign = 'center'
-        ctx.fillText(ms.year, msX, H - 5)
+        // year label at bottom
+        ctx.font        = 'bold 8px monospace'
+        ctx.fillStyle   = ms.featured ? '#EF9F27' : 'rgba(0,210,80,0.9)'
+        ctx.shadowColor = ms.featured ? '#EF9F27' : LINE_CORE
+        ctx.shadowBlur  = 6
+        ctx.textAlign   = 'center'
+        ctx.fillText(ms.year, msX, H - 4)
         ctx.restore()
       }
 
-      /* glowing head dot */
+      /* ── scan beam: faint vertical line at head position */
+      ctx.save()
+      const beamGrad = ctx.createLinearGradient(headX, 0, headX, H)
+      beamGrad.addColorStop(0,   'rgba(0,255,120,0.00)')
+      beamGrad.addColorStop(0.4, 'rgba(0,255,120,0.12)')
+      beamGrad.addColorStop(0.6, 'rgba(0,255,120,0.12)')
+      beamGrad.addColorStop(1,   'rgba(0,255,120,0.00)')
+      ctx.strokeStyle = beamGrad
+      ctx.lineWidth   = 2
+      ctx.beginPath()
+      ctx.moveTo(headX, 0)
+      ctx.lineTo(headX, H)
+      ctx.stroke()
+      ctx.restore()
+
+      /* ── head dot — outer glow + bright white core */
+      const hy = bufY[headX] ?? H / 2
       ctx.save()
       ctx.beginPath()
-      ctx.arc(headX, bufY[headX] || H / 2, 4.5, 0, Math.PI * 2)
-      ctx.fillStyle   = '#ff3333'
-      ctx.shadowColor = '#ff3333'
-      ctx.shadowBlur  = 22
+      ctx.arc(headX, hy, 5, 0, Math.PI * 2)
+      ctx.fillStyle   = HEAD_CLR
+      ctx.shadowColor = HEAD_CLR
+      ctx.shadowBlur  = 28
+      ctx.fill()
+      // inner white core
+      ctx.beginPath()
+      ctx.arc(headX, hy, 2, 0, Math.PI * 2)
+      ctx.fillStyle   = '#ffffff'
+      ctx.shadowBlur  = 0
       ctx.fill()
       ctx.restore()
     }
@@ -254,7 +339,7 @@ export default function JourneyECG() {
     return () => cancelAnimationFrame(animRef.current)
   }, [inView])
 
-  /* controls */
+  /* ── controls */
   function togglePause() {
     const next = !stateRef.current.paused
     stateRef.current.paused = next
@@ -281,8 +366,9 @@ export default function JourneyECG() {
     setActiveMsIdx(idx)
   }
 
-  const ms = milestones[activeMsIdx] || milestones[0]
-  const bs = BADGE_STYLE[ms.badge] || BADGE_STYLE.Milestone
+  const ms  = milestones[activeMsIdx] || milestones[0]
+  const bs  = BADGE_STYLE[ms.badge]   || BADGE_STYLE.Milestone
+  const bpm = Math.round(72 * speedMul)
 
   return (
     <section id="journey" className="section ecg-section" ref={sectionRef}>
@@ -302,15 +388,21 @@ export default function JourneyECG() {
           <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
         </motion.div>
 
-        {/* ECG monitor */}
+        {/* ECG monitor frame */}
         <div className="ecg-monitor">
 
           {/* Monitor top bar */}
           <div className="ecg-monitor-header">
             <span className="ecg-vitals-label">AP · CAREER VITALS · 2002–2027</span>
-            <div className="ecg-live-badge">
-              <span className="ecg-blink-dot" />
-              LIVE · CONTINUOUS
+            <div className="ecg-header-right">
+              <div className="ecg-bpm-display">
+                <span className="ecg-bpm-num">{bpm}</span>
+                <span className="ecg-bpm-label">BPM</span>
+              </div>
+              <div className="ecg-live-badge">
+                <span className="ecg-blink-dot" />
+                LIVE
+              </div>
             </div>
           </div>
 
@@ -336,6 +428,7 @@ export default function JourneyECG() {
                 </button>
               ))}
             </div>
+            <span className="ecg-scale-label">25 mm/s</span>
           </div>
 
         </div>
@@ -352,7 +445,10 @@ export default function JourneyECG() {
               transition={{ duration:0.22, ease:'easeOut' }}
             >
               <div className="ecg-card-top">
-                <span className="ecg-badge" style={{ background:bs.bg, color:bs.color, borderColor:`${bs.color}55` }}>
+                <span
+                  className="ecg-badge"
+                  style={{ background:bs.bg, color:bs.color, borderColor:`${bs.color}55` }}
+                >
                   {ms.badge}
                 </span>
                 <span className="ecg-card-year">{ms.year}</span>
@@ -384,17 +480,13 @@ export default function JourneyECG() {
   )
 }
 
-/* ─── STATIC FLATLINE (before in-view) ───────────────────────────── */
+/* ─── STATIC FLATLINE (shown before scroll triggers animation) ───── */
 function drawFlatline(canvas, W, H) {
   const ctx = canvas.getContext('2d')
   ctx.fillStyle = BG
   ctx.fillRect(0, 0, W, H)
-  ctx.fillStyle = GRID_COLOR
-  for (let gx = 0; gx < W; gx += 60) ctx.fillRect(gx, 0, 1, H)
-  ctx.fillRect(0, Math.floor(H * 0.25), W, 1)
-  ctx.fillRect(0, Math.floor(H * 0.5),  W, 1)
-  ctx.fillRect(0, Math.floor(H * 0.75), W, 1)
-  ctx.strokeStyle = '#440000'
+  drawGrid(ctx, W, H)
+  ctx.strokeStyle = '#012d0a'
   ctx.lineWidth   = 1.5
   ctx.beginPath()
   ctx.moveTo(0, H / 2)
