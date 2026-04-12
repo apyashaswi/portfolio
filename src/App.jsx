@@ -3,7 +3,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion'
 
 const HeroCanvas = lazy(() => import('./HeroCanvas'))
 const GlobeViz = lazy(() => import('./GlobeViz'))
-const CareerTimeline = lazy(() => import('./CareerTimeline'))
+const JourneyECG = lazy(() => import('./components/JourneyECG'))
 
 /* ─── UTILS ─────────────────────────────────────────────────────── */
 const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -633,23 +633,12 @@ function Experience({ recruiterMode }) {
   )
 }
 
-/* ─── JOURNEY (Career Timeline) ──────────────────────────────────── */
+/* ─── JOURNEY (ECG) ──────────────────────────────────────────────── */
 function Journey() {
   return (
-    <section id="journey" className="section">
-      <div className="container">
-        <motion.div className="section-header" data-num="03" {...fadeUp()}>
-          <span className="section-num">03</span>
-          <h2 className="section-title">My Journey</h2>
-          <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
-        </motion.div>
-        <motion.div {...fadeUp(0.1)}>
-          <Suspense fallback={<div className="tl-loading">Loading timeline…</div>}>
-            <CareerTimeline />
-          </Suspense>
-        </motion.div>
-      </div>
-    </section>
+    <Suspense fallback={<section id="journey" className="section"><div style={{ height: 320 }} /></section>}>
+      <JourneyECG />
+    </Suspense>
   )
 }
 
