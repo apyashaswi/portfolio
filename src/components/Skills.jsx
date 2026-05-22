@@ -3,7 +3,7 @@ import { fadeUp } from '../utils'
 import { SKILLS } from '../data'
 
 export default function Skills({ recruiterMode }) {
-  const sectionNum = recruiterMode ? '04' : '08'
+  const sectionNum = recruiterMode ? '06' : '08'
   return (
     <section id="skills" className="section section-alt">
       <div className="container">
