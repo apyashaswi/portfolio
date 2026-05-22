@@ -1442,3 +1442,35 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   .ecg-vitals-label { font-size: 9px; letter-spacing: 0.08em; }
   .ecg-bpm-num  { font-size: 18px; }
 }
+
+/* ─── SCROLL TOP BUTTON ────────────────────────────────────────────── */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(127, 119, 221, 0.35);
+  background: linear-gradient(135deg, rgba(15, 15, 28, 0.92), rgba(11, 11, 20, 0.92));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 90;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(127, 119, 221, 0.08);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(29, 158, 117, 0.55);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(29, 158, 117, 0.25);
+  color: var(--accent2);
+}
+.scroll-top-btn:active { transform: translateY(0); }
+@media (max-width: 768px) {
+  .scroll-top-btn { bottom: 18px; right: 18px; width: 42px; height: 42px; }
+}

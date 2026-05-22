@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import Banner from './components/Banner'
 import CustomCursor from './components/CustomCursor'
+import ScrollTop from './components/ScrollTop'
 import Nav from './components/Nav'
 import Hero, { RecruiterHero } from './components/Hero'
 import About from './components/About'
@@ -67,6 +68,7 @@ export default function App() {
         </motion.main>
       </AnimatePresence>
       <Footer />
+      <ScrollTop />
     </>
   )
 }
