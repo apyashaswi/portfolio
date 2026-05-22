@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import TiltCard from './TiltCard'
 import { fadeUp } from '../utils'
 import { PROJECTS } from '../data'
@@ -28,6 +29,9 @@ export default function Projects() {
                 <div>
                   <ul className="project-bullets">{featured.bullets.map((b, j) => <li key={j}>{b}</li>)}</ul>
                   <div className="tag-row">{featured.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+                  <Link to={`/projects/${featured.id}`} className="project-cta">
+                    Read full case study →
+                  </Link>
                 </div>
               </div>
             </TiltCard>
@@ -44,6 +48,9 @@ export default function Projects() {
                 <p className="project-desc">{p.description}</p>
                 <ul className="project-bullets">{p.bullets.map((b, j) => <li key={j}>{b}</li>)}</ul>
                 <div className="tag-row">{p.tags.map(t => <span key={t} className="tag">{t}</span>)}</div>
+                <Link to={`/projects/${p.id}`} className="project-cta">
+                  Read full case study →
+                </Link>
               </TiltCard>
             </motion.div>
           ))}

@@ -1,5 +1,59 @@
-export const NAV_LINKS = ['About', 'Experience', 'Journey', 'Projects', 'Highlights', 'Globe', 'Research', 'Skills', 'Leadership', 'Contact']
-export const RECRUITER_NAV = ['About', 'Experience', 'Projects', 'Research', 'Skills', 'Contact']
+export const NAV_LINKS = ['About', 'Roadmap', 'Experience', 'Journey', 'Projects', 'Highlights', 'Globe', 'Research', 'Skills', 'Leadership', 'Contact']
+export const RECRUITER_NAV = ['About', 'Roadmap', 'Experience', 'Projects', 'Research', 'Skills', 'Contact']
+
+export const ROADMAP = {
+  spec: {
+    mission: 'Build at the intersection of Data, AI, and Strategic Operations — translating complex systems into decisions that ship.',
+    northStar: 'Become a Program Manager who can write the algorithm, run the standup, and brief the VP — in the same week.',
+    principles: [
+      'Treat scope discipline as a feature, not a constraint.',
+      'Prefer the one-pager that survives an exec room over the deck that doesn\'t.',
+      'Optimize for compounding skills: tools age, judgment doesn\'t.',
+      'Ship the boring 80% before chasing the impressive 20%.',
+    ],
+  },
+  lanes: [
+    {
+      label: 'Shipped',
+      tone: 'shipped',
+      items: [
+        { quarter: 'Q1 2025', title: 'MIT Reality Hack — Jaw-Dropping Award', sub: 'Hardware Track winner · Spidey Sense' },
+        { quarter: 'Q3 2025', title: 'Senator · Northeastern GSG', sub: 'Institutional policy & funding decisions' },
+        { quarter: 'Q4 2025', title: 'Master\'s coursework · GPA 3.75', sub: 'Engineering Management, Northeastern' },
+        { quarter: 'Q1 2026', title: 'PCT Assessment Framework', sub: 'Pitched to VP/Director at MSIG' },
+      ],
+    },
+    {
+      label: 'Now',
+      tone: 'now',
+      items: [
+        { quarter: 'Q2 2026', title: 'MSIG · PM & Scrum Master', sub: 'Claims Data, Fabric, Data Ops' },
+        { quarter: 'Q2 2026', title: 'MS Thesis · Hybrid ARIMA-LLM', sub: 'Targeting INFORMS & POMS submission' },
+        { quarter: 'Q2 2026', title: 'MIT Reality Hack 2027 sponsorship lead', sub: 'Hardware partner sourcing' },
+      ],
+    },
+    {
+      label: 'Next',
+      tone: 'next',
+      items: [
+        { quarter: 'Q4 2026', title: 'Graduate · MS Engineering Management', sub: 'Northeastern · December 2026' },
+        { quarter: 'Q1 2027', title: 'Full-time PM / Data & AI role', sub: 'Open to roles starting January 2027' },
+        { quarter: '2027+', title: 'Second research publication', sub: 'Trust calibration in HITL systems' },
+      ],
+    },
+  ],
+  stack: [
+    { label: 'Tools', items: ['Microsoft Fabric', 'Azure DevOps', 'Power BI', 'Python', 'LangGraph'] },
+    { label: 'Frameworks', items: ['Prosci ADKAR', 'Scrum / Agile', 'PI Planning', 'OKRs'] },
+    { label: 'Soft', items: ['Exec storytelling', 'Cross-functional alignment', 'Scope triage', 'Stakeholder mapping'] },
+  ],
+  kpis: [
+    { value: '3.75', label: 'GPA' },
+    { value: '4', label: 'Research papers' },
+    { value: '10+', label: 'Leadership roles' },
+    { value: '1', label: 'Hackathon award' },
+  ],
+}
 
 export const EXPERIENCE = [
   {
@@ -70,6 +124,25 @@ export const PROJECTS = [
     ],
     tags: ['ESP32', 'C++', 'VR Development', 'Bluetooth LE', 'Meta Quest 3', 'Hardware Design'],
     award: 'Jaw-Dropping Award · MIT Reality Hack 2025',
+    caseStudy: {
+      tldr: 'A wrist-worn haptic device that lets visually impaired users feel a virtual environment in real time.',
+      role: 'Project Manager',
+      duration: '48 hours',
+      team: 'Team of 5 · multidisciplinary',
+      problem: 'VR has become rich and immersive, but it remains inaccessible to the visually impaired — virtual obstacles can\'t be seen and there is no equivalent of a white cane inside VR. We set out to build a wearable that translates spatial information into touch, in under 48 hours, using only off-the-shelf hardware.',
+      approach: [
+        'Wired an ESP32 microcontroller to a custom array of pancake vibration motors driven by DRV8833 motor drivers — chosen for compactness and sub-50ms response.',
+        'Streamed depth data from Meta Quest 3 cameras over Bluetooth Low Energy to the wristband, encoding obstacle direction and proximity as distinct vibration patterns.',
+        'Tuned the haptic vocabulary with visually impaired test users on-site at MIT, iterating on intensity, motor placement, and pattern grammar.',
+      ],
+      metrics: [
+        { value: '<50ms', label: 'Feedback latency' },
+        { value: '95%', label: 'Confidence gain' },
+        { value: '100+', label: 'Teams beaten' },
+        { value: 'Patent', label: 'Filed' },
+      ],
+      learnings: 'Hardware hackathons live and die by scope discipline. We cut three "nice-to-haves" by hour 18 and shipped a working demo to judges with battery to spare — that focus was what won the room.',
+    },
   },
   {
     id: 'warehouse',
@@ -86,6 +159,25 @@ export const PROJECTS = [
     ],
     tags: ['Operations Research', 'AGV Systems', 'WMS', 'ROI Analysis'],
     award: null,
+    caseStudy: {
+      tldr: 'Operations-research redesign of a 50K-order/month warehouse balancing AGV automation with skilled human picking.',
+      role: 'Lead Analyst',
+      duration: 'Semester project',
+      team: 'Northeastern Supply Chain Engineering',
+      problem: 'A mid-sized e-commerce warehouse was hitting throughput ceilings on every peak season. Labor-only and automation-only approaches both fell apart on the numbers — labor didn\'t scale, automation didn\'t pencil out. The brief was to find a hybrid layout that paid back in under two years.',
+      approach: [
+        'Modeled current pick paths, labor utilization, and error rates against three layout variants (zone, batch, hybrid AGV).',
+        'Quantified the cost-of-error and shrink curves to expose the breakpoint where AGVs justified themselves.',
+        'Built an ROI model with three demand scenarios so the recommendation survived contact with peak-season uncertainty.',
+      ],
+      metrics: [
+        { value: '25%', label: 'Throughput lift' },
+        { value: '$280K', label: 'Annual savings' },
+        { value: '40%', label: 'Walk distance cut' },
+        { value: '18mo', label: 'ROI payback' },
+      ],
+      learnings: 'The cleanest ROI story came from removing pick-walk distance, not buying robots — operations research wins are usually about geometry before they\'re about technology.',
+    },
   },
   {
     id: 'uav',
@@ -102,6 +194,25 @@ export const PROJECTS = [
     ],
     tags: ['ROS', 'Unity 3D', 'Machine Learning', 'LiDAR', 'Kafka'],
     award: null,
+    caseStudy: {
+      tldr: 'A live virtual replica of a UAV that predicts flight parameters and failures from streaming sensor data.',
+      role: 'Research Lead',
+      duration: 'Multi-semester research project',
+      team: 'PES University · Aerospace + ML',
+      problem: 'Testing UAV failure modes on real hardware is slow, expensive, and risky. Existing simulators don\'t reflect the real airframe\'s wear or sensor noise — so failure predictions don\'t transfer. We wanted a digital twin that learned from the actual aircraft\'s telemetry.',
+      approach: [
+        'Streamed ROS sensor data (IMU, GPS, LiDAR) into a Unity physics environment under 100ms.',
+        'Fused real and simulated state through Kafka to train ML models on aligned data.',
+        'Trained a flight-parameter predictor and a failure-mode classifier; validated both against held-out flight logs.',
+      ],
+      metrics: [
+        { value: '95%', label: 'Param prediction' },
+        { value: '88%', label: 'Failure prediction' },
+        { value: '<100ms', label: 'Sim latency' },
+        { value: 'IEEE', label: 'Submitted' },
+      ],
+      learnings: 'Closing the sim-to-real gap was less about better physics and more about better data plumbing — alignment between real and simulated state mattered more than fidelity of either side.',
+    },
   },
   {
     id: 'pct',
@@ -118,6 +229,25 @@ export const PROJECTS = [
     ],
     tags: ['Prosci', 'Change Management', 'ADKAR', 'Organizational Design', 'Risk Assessment'],
     award: null,
+    caseStudy: {
+      tldr: 'A 29-deliverable, 16-condition project health framework presented to VP/Director leadership as a candidate organizational standard.',
+      role: 'Program Manager',
+      duration: 'Q1–Q2 2026',
+      team: 'MSIG USA Data & AI',
+      problem: 'Enterprise data initiatives at MSIG were measured by delivery velocity but not by organizational readiness — projects shipped on time and still failed adoption. Leadership needed a single, repeatable assessment that surfaced change-risk early, not at go-live.',
+      approach: [
+        'Mapped the Prosci Change Triangle to MSIG\'s actual data delivery workflow, identifying the gaps a standard ADKAR assessment didn\'t cover.',
+        'Codified 29 concrete deliverables (artifacts, decisions, sign-offs) and 16 health conditions (leadership engagement, sponsor coverage, stakeholder alignment, etc.).',
+        'Pitched the framework to VP/Director leadership as a proposed standard for all enterprise data initiatives.',
+      ],
+      metrics: [
+        { value: '29', label: 'Deliverables' },
+        { value: '16', label: 'Health conditions' },
+        { value: 'VP', label: 'Audience' },
+        { value: 'Q2 2026', label: 'Presented' },
+      ],
+      learnings: 'Change frameworks fail when they live in slide decks. The version that survived was the one I shrank into a one-pager with a scoring rubric a delivery lead could complete in an hour.',
+    },
   },
 ]
 

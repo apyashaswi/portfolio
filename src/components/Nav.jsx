@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useLocation, useNavigate } from 'react-router-dom'
 import ModeToggle from './ModeToggle'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
 
@@ -7,12 +8,33 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const links = mode === 'recruiter' ? RECRUITER_NAV : NAV_LINKS
+  const navigate = useNavigate()
+  const location = useLocation()
+
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', fn)
     return () => window.removeEventListener('scroll', fn)
   }, [])
-  const go = (id) => { document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: 'smooth' }); setOpen(false) }
+
+  const go = (id) => {
+    const target = id.toLowerCase()
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: target } })
+    } else {
+      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+    }
+    setOpen(false)
+  }
+
+  const goHome = () => {
+    if (location.pathname !== '/') {
+      navigate('/')
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <motion.nav
       className={`nav${scrolled ? ' scrolled' : ''}${bannerVisible ? ' with-banner' : ''}`}
@@ -21,7 +43,7 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="nav-inner">
-        <button className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+        <button className="nav-logo" onClick={goHome}>
           AP<span className="nav-status-dot" />
         </button>
         <div className={`nav-links${open ? ' open' : ''}`}>
