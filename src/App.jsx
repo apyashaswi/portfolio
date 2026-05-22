@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Banner from './components/Banner'
 import CustomCursor from './components/CustomCursor'
 import ScrollTop from './components/ScrollTop'
+import IntroOverlay from './components/IntroOverlay'
 import Nav from './components/Nav'
 import Hero, { RecruiterHero } from './components/Hero'
 import About from './components/About'
@@ -43,6 +44,7 @@ export default function App() {
 
   return (
     <>
+      <IntroOverlay />
       <CustomCursor />
       {banner && <Banner onDismiss={() => setBanner(false)} />}
       <Nav active={active} bannerVisible={banner} mode={mode} setMode={setMode} />
