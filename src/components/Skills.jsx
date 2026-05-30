@@ -20,8 +20,11 @@ export default function Skills({ recruiterMode }) {
   return (
     <section id="skills" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
-          <h2 className="section-title">Skills</h2>
+        <motion.div className="section-header" {...fadeUp()}>
+          <h2 className="section-title">Skills &amp; Tools</h2>
+          <p className="section-subtitle">
+            What I reach for, grouped by the kind of work it does.
+          </p>
         </motion.div>
         <div className="skills-grid">
           {Object.entries(SKILLS).map(([cat, skills], i) => {

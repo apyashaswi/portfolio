@@ -2,30 +2,47 @@ import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 
 export default function Contact({ recruiterMode }) {
-  const sectionNum = recruiterMode ? '06' : '09'
   return (
     <section id="contact" className="section section-alt">
-      <div className="container contact-container">
-        <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
-          <h2 className="section-title">Contact</h2>
+      <div className="container-prose contact-section">
+        <motion.div className="section-header" {...fadeUp()}>
+          <h2 className="section-title">Get in Touch</h2>
+          <p className="section-subtitle">
+            The fastest way to reach me is by email. I read everything.
+          </p>
         </motion.div>
-        <motion.p className="contact-blurb" {...fadeUp(0.1)}>
-          Open to full-time roles in Program Management, Data &amp; AI, and Engineering Operations — available from January 2027. Based in Somerset, NJ. Happy to connect on research, XR, or anything interesting.
+
+        <motion.p className="contact-blurb" {...fadeUp(0.08)}>
+          Open to full-time roles in <em>Program Management</em>, <em>Data &amp; AI</em>,
+          and <em>Engineering Operations</em> &mdash; available from January&nbsp;2027.
+          Based in Somerset, NJ. Happy to talk research, XR, or anything interesting.
         </motion.p>
-        <motion.div className="contact-links" {...fadeUp(0.2)}>
-          {[
-            { label: 'Email', value: 'apy@apyashaswi.com', href: 'mailto:apy@apyashaswi.com', icon: '✉' },
-            { label: 'LinkedIn', value: 'linkedin.com/in/apyashaswi', href: 'https://linkedin.com/in/apyashaswi', icon: '🔗' },
-            { label: 'GitHub', value: 'github.com/apyashaswi', href: 'https://github.com/apyashaswi', icon: '⌥' },
-          ].map(l => (
-            <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="contact-link-card">
-              <span className="clc-icon">{l.icon}</span>
-              <div>
-                <div className="clc-label">{l.label}</div>
-                <div className="clc-value">{l.value}</div>
-              </div>
-            </a>
-          ))}
+
+        <motion.a
+          href="mailto:apy@apyashaswi.com"
+          className="contact-email"
+          {...fadeUp(0.14)}
+        >
+          apy@apyashaswi.com
+          <span className="contact-email-arrow" aria-hidden="true">→</span>
+        </motion.a>
+
+        <motion.div className="contact-secondary" {...fadeUp(0.2)}>
+          <a href="https://linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          <span className="contact-sep">·</span>
+          <a href="https://github.com/apyashaswi" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
+          <span className="contact-sep">·</span>
+          <a href="/resume.pdf" download>
+            Résumé
+          </a>
+        </motion.div>
+
+        <motion.div className="contact-signoff" {...fadeUp(0.26)}>
+          &mdash; Yashaswi
         </motion.div>
       </div>
     </section>

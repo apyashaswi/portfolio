@@ -5,23 +5,33 @@ import { LEADERSHIP } from '../data'
 export default function Leadership() {
   return (
     <section id="leadership" className="section">
-      <div className="container">
-        <motion.div className="section-header" data-num="08" {...fadeUp()}>
-          <h2 className="section-title">Leadership</h2>
+      <div className="container-prose">
+        <motion.div className="section-header" {...fadeUp()}>
+          <h2 className="section-title">Leadership &amp; Communities</h2>
+          <p className="section-subtitle">
+            Twelve roles across student government, hackathons, research societies,
+            cultural festivals, and a startup &mdash; the through-line is people in rooms.
+          </p>
         </motion.div>
-        <div className="leadership-grid">
+
+        <ol className="leadership-list">
           {LEADERSHIP.map((l, i) => (
-            <motion.div key={i} className="leadership-card" {...fadeUp(i * 0.05)}>
-              <div className="lc-header">
-                <div className="lc-role">{l.role}</div>
-                {l.current && <span className="exp-current-badge">Active</span>}
+            <motion.li key={i} className="leadership-entry" {...fadeUp(i * 0.04)}>
+              <div className="leadership-rail">
+                <span className={`leadership-dot${l.current ? ' leadership-dot-current' : ''}`} />
               </div>
-              <div className="lc-org">{l.org}</div>
-              <div className="lc-period">{l.period}</div>
-              <p className="lc-desc">{l.description}</p>
-            </motion.div>
+              <div className="leadership-body">
+                <div className="leadership-period">
+                  {l.period}
+                  {l.current && <span className="leadership-active">Active</span>}
+                </div>
+                <div className="leadership-role">{l.role}</div>
+                <div className="leadership-org">{l.org}</div>
+                <p className="leadership-desc">{l.description}</p>
+              </div>
+            </motion.li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   )
