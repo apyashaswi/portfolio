@@ -1,26 +1,39 @@
 /* ─── VARIABLES ──────────────────────────────────────────────────── */
 :root {
-  --bg: #08080f;
-  --bg-alt: #0b0b14;
-  --bg-card: #0f0f1c;
-  --accent: #7F77DD;
-  --accent2: #1D9E75;
-  --gold: #c9a84c;
-  --accent-dim: rgba(127, 119, 221, 0.15);
-  --accent2-dim: rgba(29, 158, 117, 0.13);
-  --accent-glow: rgba(127, 119, 221, 0.4);
-  --accent2-glow: rgba(29, 158, 117, 0.35);
-  --gold-glow: rgba(201, 168, 76, 0.35);
-  --text: #f0f0ff;
-  --text-muted: #9090aa;
-  --text-dim: #55556a;
-  --border: rgba(127, 119, 221, 0.1);
-  --border-t: rgba(29, 158, 117, 0.1);
-  --border-hover: rgba(127, 119, 221, 0.4);
+  --bg: #0d0b13;
+  --bg-alt: #100d18;
+  --bg-card: #15131f;
+  --accent: #8b83e4;
+  --accent2: #2bb088;
+  --gold: #d4b35a;
+  --warm: #e89f6b;
+  --accent-dim: rgba(139, 131, 228, 0.13);
+  --accent2-dim: rgba(43, 176, 136, 0.12);
+  --accent-glow: rgba(139, 131, 228, 0.28);
+  --accent2-glow: rgba(43, 176, 136, 0.24);
+  --gold-glow: rgba(212, 179, 90, 0.26);
+  --text: #f3f0ea;
+  --text-muted: #9b95a8;
+  --text-dim: #5a5667;
+  --border: rgba(139, 131, 228, 0.09);
+  --border-t: rgba(43, 176, 136, 0.09);
+  --border-hover: rgba(139, 131, 228, 0.32);
   --font-display: 'Playfair Display', serif;
   --font-body: 'DM Sans', sans-serif;
   --radius: 18px;
   --radius-sm: 11px;
+}
+
+/* Film grain texture — sits above content (below cursor) for softer, less synthetic feel */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
 /* ─── RESET ──────────────────────────────────────────────────────── */
@@ -798,6 +811,16 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   background-clip: text;
 }
 .footer-inner span:not(.footer-logo) { font-size: 12px; color: var(--text-dim); }
+.footer-credit { display: inline-flex; align-items: center; gap: 0; flex-wrap: wrap; }
+.footer-claude {
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-bottom: 1px dotted rgba(139, 131, 228, 0.35);
+  padding-bottom: 1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.footer-claude:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ─── RESPONSIVE ─────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
