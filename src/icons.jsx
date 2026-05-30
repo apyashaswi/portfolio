@@ -53,6 +53,22 @@ export const SKILL_ICONS = {
   'C++': 'cplusplus',
   'REST APIs': null,
   'Apache Airflow': 'apacheairflow',
+
+  // Project tags (additional tools used in PROJECTS)
+  'ESP32': 'espressif',
+  'Bluetooth LE': 'bluetooth',
+  'Meta Quest 3': 'meta',
+  'Kafka': 'apachekafka',
+  'LangGraph': 'langchain',
+  'Python': 'python',
+}
+
+// Returns slug for any label, falling back to a normalized lookup (lowercase,
+// trim, strip parenthetical) so casual mismatches still resolve.
+export const lookupIcon = (label) => {
+  if (SKILL_ICONS[label] !== undefined) return SKILL_ICONS[label]
+  const cleaned = label.replace(/\s*\([^)]*\)\s*/g, '').trim()
+  return SKILL_ICONS[cleaned] ?? null
 }
 
 // Per-category accent + inline SVG glyph used for concept-skills (no brand logo).

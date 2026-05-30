@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 import { PROJECTS } from '../data'
+import TechTag from '../components/TechTag'
 
 export default function ProjectDetail() {
   const { id } = useParams()
@@ -88,7 +89,7 @@ export default function ProjectDetail() {
           <motion.section className="pd-section" {...fadeUp(0.4)}>
             <h2 className="pd-section-title">Stack & Tools</h2>
             <div className="tag-row">
-              {project.tags.map(t => <span key={t} className="tag">{t}</span>)}
+              {project.tags.map(t => <TechTag key={t} label={t} />)}
             </div>
           </motion.section>
         )}

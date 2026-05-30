@@ -178,6 +178,21 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   border-color: rgba(29,158,117,0.2);
 }
 .tag.teal:hover { background: rgba(29,158,117,0.22); }
+.tech-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.tech-tag-icon {
+  width: 13px; height: 13px;
+  object-fit: contain;
+  opacity: 0.92;
+  filter: saturate(0.92);
+  flex-shrink: 0;
+}
+.tech-tag-has-icon {
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: color-mix(in srgb, var(--accent) 80%, white);
+}
 
 /* ─── NAV ────────────────────────────────────────────────────────── */
 .nav {
@@ -485,7 +500,7 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 
 /* ─── TILT CARD ──────────────────────────────────────────────────── */
 .tilt-card {
-  transition: transform 0.15s ease, box-shadow 0.3s ease;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
   will-change: transform; transform-style: preserve-3d;
   border-radius: var(--radius);
 }
