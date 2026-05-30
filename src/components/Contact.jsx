@@ -7,7 +7,6 @@ export default function Contact({ recruiterMode }) {
     <section id="contact" className="section section-alt">
       <div className="container contact-container">
         <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
-          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Contact</h2>
         </motion.div>
         <motion.p className="contact-blurb" {...fadeUp(0.1)}>

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 
-import Banner from './components/Banner'
-import CustomCursor from './components/CustomCursor'
+import Masthead from './components/Masthead'
 import ScrollTop from './components/ScrollTop'
 import IntroOverlay from './components/IntroOverlay'
 import Nav from './components/Nav'
@@ -12,7 +11,6 @@ import ProjectDetail from './pages/ProjectDetail'
 
 export default function App() {
   const [active, setActive] = useState('hero')
-  const [banner, setBanner] = useState(true)
   const [mode, setMode] = useState(() => {
     try { return localStorage.getItem('ap-mode') || 'explorer' } catch { return 'explorer' }
   })
@@ -37,9 +35,8 @@ export default function App() {
   return (
     <>
       <IntroOverlay />
-      <CustomCursor />
-      {banner && <Banner onDismiss={() => setBanner(false)} />}
-      <Nav active={active} bannerVisible={banner} mode={mode} setMode={setMode} />
+      <Masthead />
+      <Nav active={active} bannerVisible={true} mode={mode} setMode={setMode} />
       <Routes>
         <Route path="/" element={<Home mode={mode} />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />

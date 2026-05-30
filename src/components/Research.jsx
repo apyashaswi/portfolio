@@ -11,7 +11,6 @@ export default function Research({ recruiterMode }) {
     <section id="research" className="section">
       <div className="container">
         <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
-          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Research</h2>
           <p className="section-subtitle">With Prof. Nada R. Sanders · Northeastern University</p>
         </motion.div>

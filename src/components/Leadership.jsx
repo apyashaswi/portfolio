@@ -7,7 +7,6 @@ export default function Leadership() {
     <section id="leadership" className="section">
       <div className="container">
         <motion.div className="section-header" data-num="08" {...fadeUp()}>
-          <span className="section-num">09</span>
           <h2 className="section-title">Leadership</h2>
         </motion.div>
         <div className="leadership-grid">

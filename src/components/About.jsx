@@ -6,7 +6,6 @@ export default function About() {
     <section id="about" className="section">
       <div className="container">
         <motion.div className="section-header" data-num="01" {...fadeUp()}>
-          <span className="section-num">01</span>
           <h2 className="section-title">About</h2>
         </motion.div>
         <div className="about-grid">

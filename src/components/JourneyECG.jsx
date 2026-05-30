@@ -382,7 +382,6 @@ export default function JourneyECG() {
           viewport={{ once:true, margin:'-60px' }}
           transition={{ duration:0.65, ease:[0.22,1,0.36,1] }}
         >
-          <span className="section-num">02</span>
           <h2 className="section-title">My Journey</h2>
           <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
         </motion.div>

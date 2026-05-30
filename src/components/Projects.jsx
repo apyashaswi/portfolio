@@ -12,7 +12,6 @@ export default function Projects() {
     <section id="projects" className="section section-alt">
       <div className="container">
         <motion.div className="section-header" data-num="03" {...fadeUp()}>
-          <span className="section-num">04</span>
           <h2 className="section-title">Projects</h2>
         </motion.div>
         {featured && (

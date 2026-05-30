@@ -21,7 +21,6 @@ export default function Skills({ recruiterMode }) {
     <section id="skills" className="section section-alt">
       <div className="container">
         <motion.div className="section-header" data-num={sectionNum} {...fadeUp()}>
-          <span className="section-num">{sectionNum}</span>
           <h2 className="section-title">Skills</h2>
         </motion.div>
         <div className="skills-grid">

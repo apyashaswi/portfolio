@@ -75,7 +75,7 @@ export const lookupIcon = (label) => {
 // Glyphs are simple 20x20 line icons matching the category theme.
 export const CATEGORY_META = {
   'Program & Project Management': {
-    accent: '#8b83e4',
+    accent: '#bca47a',
     glyph: (
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="5" height="14" rx="1" />
@@ -85,7 +85,7 @@ export const CATEGORY_META = {
     ),
   },
   'Data & Analytics': {
-    accent: '#2bb088',
+    accent: '#7d9079',
     glyph: (
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 16 L7 11 L10 13 L18 4" />
@@ -94,7 +94,7 @@ export const CATEGORY_META = {
     ),
   },
   'Supply Chain & Operations': {
-    accent: '#e89f6b',
+    accent: '#6b8aa8',
     glyph: (
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 7 L10 3 L17 7 L17 14 L10 18 L3 14 Z" />
@@ -104,7 +104,7 @@ export const CATEGORY_META = {
     ),
   },
   'Engineering & Technical': {
-    accent: '#d4b35a',
+    accent: '#9d6f4e',
     glyph: (
       <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 7 L7 10 L4 13" />
