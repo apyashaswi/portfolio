@@ -63,7 +63,7 @@ export default function Nav({ active, bannerVisible, mode }) {
             <button key={l} className={`nav-link${active === l.toLowerCase() ? ' active' : ''}`} onClick={() => go(l)}>{l}</button>
           ))}
           {mode === 'recruiter' && (
-            <a href="/resume.pdf" download className="btn-ghost nav-resume-btn">Download Resume</a>
+            <a href="https://www.linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer" className="btn-ghost nav-resume-btn">Résumé</a>
           )}
         </div>
         <div className="nav-right">

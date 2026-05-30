@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 import { HIGHLIGHTS } from '../data'
 import Picture from './Picture'
+import { TrophyIcon } from '../icons'
 
 export default function Highlights() {
   return (
@@ -10,8 +11,8 @@ export default function Highlights() {
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Highlights</h2>
           <p className="section-subtitle">
-            Moments from the journey &mdash; awards, classrooms, cities, and the
-            people in the rooms that made them.
+            Moments from the journey &mdash; awards, classrooms, conferences, and the
+            people behind them.
           </p>
         </motion.div>
         <div className="highlights-grid">
@@ -27,7 +28,11 @@ export default function Highlights() {
                   alt={h.title}
                   className="highlight-img"
                 />
-                {h.badge && <span className="highlight-badge">{h.badge}</span>}
+                {h.badge && (
+                  <span className="highlight-badge">
+                    <TrophyIcon size={11} /> {h.badge}
+                  </span>
+                )}
               </div>
               <figcaption className="highlight-caption">
                 <span className="highlight-title">{h.title}</span>

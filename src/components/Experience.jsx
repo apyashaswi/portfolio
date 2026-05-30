@@ -27,7 +27,7 @@ export default function Experience({ recruiterMode }) {
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Experience</h2>
           <p className="section-subtitle">
-            Three roles, three rooms, three different ideas of what "shipping" means.
+            Where I've worked, and what I owned in each role.
           </p>
         </motion.div>
         <div className="timeline timeline-v2">

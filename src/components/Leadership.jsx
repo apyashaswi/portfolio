@@ -10,7 +10,7 @@ export default function Leadership() {
           <h2 className="section-title">Leadership &amp; Communities</h2>
           <p className="section-subtitle">
             Twelve roles across student government, hackathons, research societies,
-            cultural festivals, and a startup &mdash; the through-line is people in rooms.
+            cultural festivals, and a startup.
           </p>
         </motion.div>
 

@@ -36,7 +36,7 @@ export default function Contact({ recruiterMode }) {
             GitHub
           </a>
           <span className="contact-sep">·</span>
-          <a href="/resume.pdf" download>
+          <a href="https://www.linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer">
             Résumé
           </a>
         </motion.div>

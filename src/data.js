@@ -65,7 +65,6 @@ export const PROJECTS = [
   {
     id: 'spidey',
     featured: true,
-    icon: '🥽',
     title: '"Spidey Sense"',
     subtitle: 'Haptic VR Accessibility Device',
     context: 'MIT Reality Hack 2025 · Project Manager · Team of 5 · 48-Hour Hackathon',
@@ -102,7 +101,6 @@ export const PROJECTS = [
   {
     id: 'warehouse',
     featured: false,
-    icon: '🏭',
     title: 'Warehouse Automation Optimization',
     subtitle: null,
     context: 'Northeastern University · Supply Chain Engineering',
@@ -137,7 +135,6 @@ export const PROJECTS = [
   {
     id: 'uav',
     featured: false,
-    icon: '🚁',
     title: 'Digital Twin of UAVs',
     subtitle: null,
     context: 'PES University · Research Project',
@@ -172,7 +169,6 @@ export const PROJECTS = [
   {
     id: 'pct',
     featured: false,
-    icon: '📋',
     title: 'PCT Assessment Framework',
     subtitle: 'Organizational Change Methodology',
     context: 'MSIG USA · Data & AI Team · 2025',
@@ -214,7 +210,7 @@ export const HIGHLIGHTS = [
     img: '/msig-ceo-award.jpg',
     title: 'MSIG USA CEO Award — "You Make a Difference"',
     sub: 'Tech & Operations · Data & AI Team · 2026',
-    badge: '★ Award',
+    badge: 'Award',
     shape: 'portrait',
     feature: true,
   },
@@ -250,7 +246,7 @@ export const HIGHLIGHTS = [
     img: '/mit-rh-team.jpg',
     title: 'MIT Reality Hack 2025',
     sub: 'Hardware Track winner · Team behind "Spidey Sense"',
-    badge: '🏆 Award',
+    badge: 'Award',
     shape: 'wide',
   },
 ]
