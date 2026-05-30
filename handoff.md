@@ -8,14 +8,13 @@
 
 The portfolio has been rebuilt from a dark-3D / Linear-style SaaS look into an **editorial magazine** aesthetic. Think long-form journal: cream serif type on warm cardstock-dark paper, photo-driven, restrained palette, no glow, no buttons-with-glows, no 3D gem.
 
-**Five phases were planned. A → D landed; E is still pending.** Phase D is **not committed yet** (work is on disk, dev server live-reloaded fine).
+**Five phases were planned. A → E are all built.** Phase D is committed (`b549db8`). **Phase E (the sign-off footer) is built but not committed yet** — work is on disk, `vite build` passes.
 
 **Before stopping, run:**
 ```
-git add -A src/ public/ index.html
-git commit -m "Phase D: editorial sweep across Projects, Research, Leadership, Contact, Highlights"
+git add -A src/
+git commit -m "Phase E: editorial colophon footer / sign-off"
 ```
-(Adjust message as you like — see "Phase D" section below for what to summarize.)
 
 ---
 
@@ -145,15 +144,20 @@ Rewrote Projects (articles not cards), Research (paper entries with `01/STATUS` 
 - `src/components/Experience.jsx`, `Skills.jsx` (subtitle additions)
 - `src/styles.css` (~400 lines replaced/refactored)
 
-### Phase E — Personal sign-off (pending)
-Goal: rebuild the footer as a real editorial closing. Ideas in flight:
-- Handwritten signature (Caveat or a scanned PNG if you have one)
-- Colophon: "Set in Fraunces, Newsreader, IBM Plex Mono. Built with Claude Code. React on Vercel."
-- Maybe a final pull-quote/manifesto line
-- Drop the section-alt / footer separation so it bleeds out
-- Possibly a Caveat "AP" mark / monogram in the corner
+### Phase E — Personal sign-off ✓ done (not yet committed)
+Rebuilt the footer as an editorial colophon / back leaf of the journal:
+- Bleeds out — footer now uses `--bg` (cardstock dark), dropped the old stark `#050509` bar and the gradient top-rule.
+- Small oat asterism (⁂) at the top echoes the section dividers.
+- "Thank you for reading." closing line in Fraunces italic, centered. *(Flagged for tone vetting — see open decisions.)*
+- Two-column colophon grid on the `--column` (760px) prose width:
+  - Left: handwritten Caveat **AP** monogram, full name (Newsreader), `© MMXXVI · Somerset, New Jersey` in mono caps.
+  - Right: **Colophon** label + "Set in Fraunces, Newsreader & IBM Plex Mono." + "Built with Claude Code. React, deployed on Vercel."
+- Edition line at the bottom (`The A·P Journal · Vol. XXVI · No. V`) in mono caps, mirroring the masthead.
+- Collapses to a single column under 768px.
 
-Code lives in `src/components/Footer.jsx`. CSS at `.footer*` rules around line 1163.
+Removed the old `.footer-logo` / `.footer-credit` / `.footer-inner` flex styles. `vite build` passes clean.
+
+Code: `src/components/Footer.jsx`. CSS: `.footer*` rules (search for `.footer {`).
 
 ---
 
