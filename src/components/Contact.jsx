@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 
 export default function Contact({ recruiterMode }) {
-  const sectionNum = recruiterMode ? '07' : '10'
+  const sectionNum = recruiterMode ? '06' : '09'
   return (
     <section id="contact" className="section section-alt">
       <div className="container contact-container">

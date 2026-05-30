@@ -376,13 +376,13 @@ export default function JourneyECG() {
         {/* Section header */}
         <motion.div
           className="section-header"
-          data-num="03"
+          data-num="02"
           initial={{ opacity:0, y:32 }}
           whileInView={{ opacity:1, y:0 }}
           viewport={{ once:true, margin:'-60px' }}
           transition={{ duration:0.65, ease:[0.22,1,0.36,1] }}
         >
-          <span className="section-num">03</span>
+          <span className="section-num">02</span>
           <h2 className="section-title">My Journey</h2>
           <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
         </motion.div>

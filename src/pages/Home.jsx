@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom'
 
 import Hero, { RecruiterHero } from '../components/Hero'
 import About from '../components/About'
-import Roadmap from '../components/Roadmap'
 import Experience from '../components/Experience'
 import Journey from '../components/Journey'
 import Projects from '../components/Projects'
@@ -39,7 +38,6 @@ export default function Home({ mode }) {
       >
         {recruiterMode ? <RecruiterHero /> : <Hero />}
         <About />
-        <Roadmap />
         <Experience recruiterMode={recruiterMode} />
         {!recruiterMode && <Journey />}
         <Projects />

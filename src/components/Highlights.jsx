@@ -6,7 +6,7 @@ export default function Highlights() {
   return (
     <section id="highlights" className="section">
       <div className="container">
-        <motion.div className="section-header" data-num="05" {...fadeUp()}>
+        <motion.div className="section-header" data-num="04" {...fadeUp()}>
           <span className="section-num">05</span>
           <h2 className="section-title">Highlights</h2>
           <p className="section-subtitle">Moments from the journey</p>

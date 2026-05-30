@@ -6,7 +6,7 @@ import { RESEARCH } from '../data'
 export default function Research({ recruiterMode }) {
   const underReview = RESEARCH.papers.filter(p => p.status === 'under-review')
   const published = RESEARCH.papers.filter(p => p.status === 'published')
-  const sectionNum = recruiterMode ? '05' : '07'
+  const sectionNum = recruiterMode ? '04' : '06'
   return (
     <section id="research" className="section">
       <div className="container">

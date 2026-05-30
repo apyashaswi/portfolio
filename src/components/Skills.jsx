@@ -16,7 +16,7 @@ function SkillIcon({ name }) {
 }
 
 export default function Skills({ recruiterMode }) {
-  const sectionNum = recruiterMode ? '06' : '08'
+  const sectionNum = recruiterMode ? '05' : '07'
   return (
     <section id="skills" className="section section-alt">
       <div className="container">

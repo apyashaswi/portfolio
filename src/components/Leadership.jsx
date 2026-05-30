@@ -6,7 +6,7 @@ export default function Leadership() {
   return (
     <section id="leadership" className="section">
       <div className="container">
-        <motion.div className="section-header" data-num="09" {...fadeUp()}>
+        <motion.div className="section-header" data-num="08" {...fadeUp()}>
           <span className="section-num">09</span>
           <h2 className="section-title">Leadership</h2>
         </motion.div>

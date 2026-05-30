@@ -24,7 +24,7 @@ export default function Experience({ recruiterMode }) {
   return (
     <section id="experience" className="section section-alt">
       <div className="container">
-        <motion.div className="section-header" data-num="03" {...fadeUp()}>
+        <motion.div className="section-header" data-num="02" {...fadeUp()}>
           <span className="section-num">03</span>
           <h2 className="section-title">Experience</h2>
         </motion.div>
