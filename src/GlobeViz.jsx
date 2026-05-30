@@ -75,6 +75,29 @@ export default function GlobeViz() {
     globeEl.current.pointOfView({ lat: 20, lng: 78, altitude: 1.85 }, 0)
   }, [])
 
+  // Pause the WebGL render loop whenever the globe is off-screen. A globe
+  // spinning at 60fps forever (even scrolled far away) is the single biggest
+  // source of scroll/animation jank elsewhere on the page.
+  useEffect(() => {
+    const el = wrapperRef.current
+    const globe = globeEl.current
+    if (!el || !globe) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          globe.resumeAnimation?.()
+          globe.controls().autoRotate = true
+        } else {
+          globe.controls().autoRotate = false
+          globe.pauseAnimation?.()
+        }
+      },
+      { threshold: 0.04 }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
   const ringColorFn = d => t => {
     const alpha = Math.floor((1 - t * t) * 210).toString(16).padStart(2, '0')
     return d.color + alpha

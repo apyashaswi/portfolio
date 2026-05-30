@@ -15,9 +15,19 @@ export default function Highlights() {
         </motion.div>
         <div className="highlights-grid">
           {HIGHLIGHTS.map((h, i) => (
-            <motion.figure key={i} className={`highlight-item${h.tall ? ' highlight-tall' : ''}`} {...fadeUp(i * 0.08)}>
+            <motion.figure
+              key={i}
+              className={`highlight-item highlight-${h.shape || 'landscape'}${h.feature ? ' highlight-feature' : ''}`}
+              {...fadeUp(i * 0.08)}
+            >
               <div className="highlight-frame">
-                <img src={h.img} alt={h.title} className="highlight-img" />
+                <img
+                  src={h.img}
+                  alt={h.title}
+                  className="highlight-img"
+                  loading="lazy"
+                  decoding="async"
+                />
                 {h.badge && <span className="highlight-badge">{h.badge}</span>}
               </div>
               <figcaption className="highlight-caption">

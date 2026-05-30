@@ -34,6 +34,7 @@ export default function App() {
 
   return (
     <>
+      <a href="#main" className="skip-link">Skip to content</a>
       <IntroOverlay />
       <Masthead />
       <Nav active={active} bannerVisible={true} mode={mode} setMode={setMode} />

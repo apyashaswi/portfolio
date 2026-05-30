@@ -98,6 +98,42 @@ img { display: block; max-width: 100%; }
 button { border: none; background: none; font-family: inherit; cursor: pointer; }
 a, button { cursor: pointer; }
 
+/* Keyboard focus — visible oat ring for keyboard users only, never on mouse click. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* Skip link — hidden until focused, then drops in below the masthead. */
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 16px;
+  z-index: 2000;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  color: var(--ink);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  transition: top 0.2s ease;
+}
+.skip-link:focus { top: 52px; }
+
+/* Respect "reduce motion": neutralise CSS animations/transitions.
+   Framer-motion is handled separately via <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
 /* â”€â”€â”€ MASTHEAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Editorial nameplate band â€” sits above the nav, never dismissed.
    Two thin hairline rules sandwich the nameplate so it reads like
@@ -903,17 +939,18 @@ a, button { cursor: pointer; }
 
 /* â”€â”€â”€ HIGHLIGHTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Highlights -- editorial photo gallery (captions below frame, not overlaid) */
+/* Masonry via CSS multi-column so each photo keeps its native orientation
+   and the columns stay flush — no portraits crammed into landscape boxes. */
 .highlights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 36px 28px;
+  column-count: 3;
+  column-gap: 28px;
   margin-top: 36px;
 }
 .highlight-item {
-  display: flex; flex-direction: column;
-  margin: 0;
+  display: block;
+  break-inside: avoid;
+  margin: 0 0 30px;
 }
-.highlight-tall { grid-row: span 2; }
 .highlight-frame {
   position: relative;
   overflow: hidden;
@@ -926,15 +963,23 @@ a, button { cursor: pointer; }
   object-fit: cover;
   display: block;
   filter: saturate(0.92) contrast(1.02);
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow:
     0 0 0 1px rgba(240, 226, 197, 0.06),
     0 12px 28px rgba(0, 0, 0, 0.3);
 }
-.highlight-tall .highlight-img { aspect-ratio: 4 / 5; }
+/* Per-photo orientation */
+.highlight-portrait .highlight-img { aspect-ratio: 4 / 5; }
+.highlight-landscape .highlight-img { aspect-ratio: 4 / 3; }
+.highlight-wide .highlight-img { aspect-ratio: 16 / 9; }
+.highlight-feature .highlight-img {
+  aspect-ratio: 4 / 5;
+  box-shadow:
+    0 0 0 1px rgba(188, 164, 122, 0.18),
+    0 16px 36px rgba(0, 0, 0, 0.38);
+}
 .highlight-item:hover .highlight-img {
   transform: scale(1.025);
-  filter: saturate(1) contrast(1.04);
 }
 .highlight-badge {
   position: absolute; top: 12px; left: 12px;
@@ -972,12 +1017,10 @@ a, button { cursor: pointer; }
 }
 
 @media (max-width: 900px) {
-  .highlights-grid { grid-template-columns: repeat(2, 1fr); }
-  .highlight-tall { grid-row: auto; }
-  .highlight-tall .highlight-img { aspect-ratio: 4 / 3; }
+  .highlights-grid { column-count: 2; }
 }
 @media (max-width: 540px) {
-  .highlights-grid { grid-template-columns: 1fr; gap: 28px; }
+  .highlights-grid { column-count: 1; }
 }
 
 /* â”€â”€â”€ RESEARCH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */

@@ -41,7 +41,7 @@ export default function About() {
 
       {/* Editorial inline photo breaks out wider than the prose column */}
       <motion.figure className="about-figure" {...fadeUp(0.18)}>
-        <img src="/pm-class-northeastern.jpg" alt="With my Project Management cohort at Northeastern" />
+        <img src="/pm-class-northeastern.jpg" alt="With my Project Management cohort at Northeastern" loading="lazy" decoding="async" />
         <figcaption>
           With the Project Management cohort, Northeastern University &mdash; Spring 2026.
         </figcaption>

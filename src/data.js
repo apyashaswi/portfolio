@@ -206,48 +206,52 @@ export const PROJECTS = [
   },
 ]
 
+// `shape` drives the frame aspect-ratio in a masonry layout so each photo
+// keeps its native orientation instead of being cropped into one box.
+// portrait = 4:5, landscape = 4:3, wide = 16:9.
 export const HIGHLIGHTS = [
   {
     img: '/msig-ceo-award.jpg',
     title: 'MSIG USA CEO Award — "You Make a Difference"',
     sub: 'Tech & Operations · Data & AI Team · 2026',
     badge: '★ Award',
-    tall: true,
-  },
-  {
-    img: '/mit-rh-team.jpg',
-    title: 'MIT Reality Hack 2025',
-    sub: 'Hardware Track winner · Team behind "Spidey Sense"',
-    badge: '🏆 Award',
-    tall: false,
-  },
-  {
-    img: '/harvard-team.jpg',
-    title: 'Harvard Asian Business Conference',
-    sub: 'Cambridge, MA · 2025',
-    badge: null,
-    tall: false,
-  },
-  {
-    img: '/mit-scm-session.jpg',
-    title: 'MIT Supply Chain Sessions',
-    sub: 'Northeastern × MIT speaker series',
-    badge: null,
-    tall: false,
-  },
-  {
-    img: '/mit-souvenir.jpg',
-    title: 'MIT lecture · Prof. Miguel Rodriguez García',
-    sub: 'Team souvenir for solving the day\'s problem',
-    badge: null,
-    tall: false,
+    shape: 'portrait',
+    feature: true,
   },
   {
     img: '/mit-rh-mentor.jpg',
     title: 'With the best mentor at MIT Reality Hack',
     sub: 'A 48-hour build, made possible by the people in the room',
     badge: null,
-    tall: false,
+    shape: 'landscape',
+  },
+  {
+    img: '/mit-scm-session.jpg',
+    title: 'MIT Supply Chain Sessions',
+    sub: 'Northeastern × MIT speaker series',
+    badge: null,
+    shape: 'portrait',
+  },
+  {
+    img: '/harvard-team.jpg',
+    title: 'Harvard Asian Business Conference',
+    sub: 'Cambridge, MA · 2025',
+    badge: null,
+    shape: 'landscape',
+  },
+  {
+    img: '/mit-souvenir.jpg',
+    title: 'MIT lecture · Prof. Miguel Rodriguez García',
+    sub: 'Team souvenir for solving the day\'s problem',
+    badge: null,
+    shape: 'portrait',
+  },
+  {
+    img: '/mit-rh-team.jpg',
+    title: 'MIT Reality Hack 2025',
+    sub: 'Hardware Track winner · Team behind "Spidey Sense"',
+    badge: '🏆 Award',
+    shape: 'wide',
   },
 ]
 

@@ -46,7 +46,7 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
         <button className="nav-logo" onClick={goHome}>
           AP<span className="nav-status-dot" />
         </button>
-        <div className={`nav-links${open ? ' open' : ''}`}>
+        <div id="nav-links" className={`nav-links${open ? ' open' : ''}`}>
           {links.map(l => (
             <button key={l} className={`nav-link${active === l.toLowerCase() ? ' active' : ''}`} onClick={() => go(l)}>{l}</button>
           ))}
@@ -56,7 +56,13 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
         </div>
         <div className="nav-right">
           <ModeToggle mode={mode} setMode={setMode} />
-          <button className="hamburger" onClick={() => setOpen(v => !v)} aria-label="Menu">
+          <button
+            className="hamburger"
+            onClick={() => setOpen(v => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="nav-links"
+          >
             <span /><span /><span />
           </button>
         </div>
