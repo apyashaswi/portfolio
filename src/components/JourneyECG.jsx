@@ -133,6 +133,11 @@ function drawGrid(ctx, W, H) {
 }
 
 /* ─── COMPONENT ──────────────────────────────────────────────────── */
+// True when the OS requests reduced motion — we then render a static trace
+// instead of the perpetual scanning animation.
+const PREFERS_REDUCED_MOTION = typeof window !== 'undefined' &&
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
 export default function JourneyECG() {
   const sectionRef  = useRef(null)
   const canvasRef   = useRef(null)
@@ -171,7 +176,20 @@ export default function JourneyECG() {
       st.bufY = newBuf
       st.W = W
       st.H = H
-      if (!inView) drawFlatline(canvas, W, H)
+      // Pre-render the static paper grid once per resize; the animation loop
+      // then blits it with a single drawImage instead of re-stroking hundreds
+      // of grid lines every frame.
+      const grid = document.createElement('canvas')
+      grid.width = W
+      grid.height = H
+      drawGrid(grid.getContext('2d'), W, H)
+      st.grid = grid
+      if (PREFERS_REDUCED_MOTION) {
+        for (let x = 0; x < W; x++) newBuf[x] = computeY(x, W, H)
+        drawStaticTrace(canvas, W, H, newBuf)
+      } else if (!inView) {
+        drawFlatline(canvas, W, H)
+      }
     }
     resize()
     const ro = new ResizeObserver(resize)
@@ -182,6 +200,7 @@ export default function JourneyECG() {
   /* main animation loop */
   useEffect(() => {
     if (!inView) return
+    if (PREFERS_REDUCED_MOTION) return  // static trace already drawn in resize()
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -197,8 +216,9 @@ export default function JourneyECG() {
       ctx.fillStyle = BG
       ctx.fillRect(0, 0, W, H)
 
-      /* ── ECG paper grid */
-      drawGrid(ctx, W, H)
+      /* ── ECG paper grid (blit cached layer; fall back to live draw) */
+      if (st.grid) ctx.drawImage(st.grid, 0, 0)
+      else drawGrid(ctx, W, H)
 
       /* ── categorise each x pixel */
       function cat(x) {
@@ -236,7 +256,7 @@ export default function JourneyECG() {
       ctx.strokeStyle = LINE_AURA
       ctx.lineWidth   = 10
       ctx.shadowColor = LINE_CORE
-      ctx.shadowBlur  = 32
+      ctx.shadowBlur  = 24
       ctx.stroke(brightPath)
       ctx.restore()
 
@@ -245,7 +265,7 @@ export default function JourneyECG() {
       ctx.strokeStyle = LINE_MID
       ctx.lineWidth   = 3.5
       ctx.shadowColor = LINE_CORE
-      ctx.shadowBlur  = 14
+      ctx.shadowBlur  = 11
       ctx.stroke(brightPath)
       ctx.restore()
 
@@ -472,6 +492,46 @@ export default function JourneyECG() {
       </div>
     </section>
   )
+}
+
+/* ─── STATIC FULL TRACE (reduced-motion: no scanning animation) ──── */
+function drawStaticTrace(canvas, W, H, bufY) {
+  const ctx = canvas.getContext('2d')
+  ctx.fillStyle = BG
+  ctx.fillRect(0, 0, W, H)
+  drawGrid(ctx, W, H)
+
+  // Whole waveform in steady phosphor green — no scan beam, no head dot.
+  const path = new Path2D()
+  path.moveTo(0.5, bufY[0])
+  for (let x = 1; x < W; x++) path.lineTo(x + 0.5, bufY[x])
+  ctx.save()
+  ctx.strokeStyle = LINE_MID
+  ctx.lineWidth = 3
+  ctx.shadowColor = LINE_CORE
+  ctx.shadowBlur = 12
+  ctx.stroke(path)
+  ctx.strokeStyle = LINE_CORE
+  ctx.lineWidth = 1.6
+  ctx.shadowBlur = 4
+  ctx.stroke(path)
+  ctx.restore()
+
+  // All milestone dots + year labels, shown at once.
+  for (const ms of milestones) {
+    const msX  = Math.floor(ms.rx * W)
+    const dotY = bufY[msX] ?? H / 2
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(msX, dotY, ms.featured ? 5.5 : 3.5, 0, Math.PI * 2)
+    ctx.fillStyle = ms.featured ? '#EF9F27' : LINE_CORE
+    ctx.fill()
+    ctx.font = 'bold 8px monospace'
+    ctx.fillStyle = ms.featured ? '#EF9F27' : 'rgba(0,210,80,0.9)'
+    ctx.textAlign = 'center'
+    ctx.fillText(ms.year, msX, H - 4)
+    ctx.restore()
+  }
 }
 
 /* ─── STATIC FLATLINE (shown before scroll triggers animation) ───── */

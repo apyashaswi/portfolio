@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 import { HIGHLIGHTS } from '../data'
+import Picture from './Picture'
 
 export default function Highlights() {
   return (
@@ -21,12 +22,10 @@ export default function Highlights() {
               {...fadeUp(i * 0.08)}
             >
               <div className="highlight-frame">
-                <img
+                <Picture
                   src={h.img}
                   alt={h.title}
                   className="highlight-img"
-                  loading="lazy"
-                  decoding="async"
                 />
                 {h.badge && <span className="highlight-badge">{h.badge}</span>}
               </div>

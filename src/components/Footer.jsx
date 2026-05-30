@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="footer-sign">
             <span className="footer-monogram" aria-hidden="true">AP</span>
             <span className="footer-name">Yashaswi Alur Prasannakumar</span>
-            <span className="footer-copy">© MMXXVI &middot; Somerset, New&nbsp;Jersey</span>
+            <span className="footer-copy">© 2026 &middot; Somerset, New&nbsp;Jersey</span>
           </div>
 
           <div className="footer-colophon">
@@ -35,9 +35,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-edition">
-          <span>The A&middot;P Journal</span>
-          <span className="footer-edition-sep">·</span>
-          <span>Vol. XXVI &middot; No. V</span>
+          <span>Yashaswi Alur Prasannakumar — Portfolio 2026</span>
         </div>
       </div>
     </footer>

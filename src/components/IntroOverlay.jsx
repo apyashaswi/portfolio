@@ -12,8 +12,12 @@ export default function IntroOverlay() {
     if (!show) return
     document.body.style.overflow = 'hidden'
     const t = setTimeout(() => dismiss(), 1700)
+    // Let keyboard users skip the intro (Escape or any key), not just a click.
+    const onKey = () => dismiss()
+    window.addEventListener('keydown', onKey)
     return () => {
       clearTimeout(t)
+      window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,6 +60,7 @@ export default function IntroOverlay() {
             animate={{ scaleX: 1 }}
             transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
           />
+          <div className="intro-skip">Click or press any key to skip</div>
         </motion.div>
       )}
     </AnimatePresence>

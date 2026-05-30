@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 import { PROJECTS } from '../data'
 import TechTag from '../components/TechTag'
+import { ProjectIcon, TrophyIcon } from '../icons'
 
 export default function ProjectDetail() {
   const { id } = useParams()
@@ -19,7 +20,7 @@ export default function ProjectDetail() {
   const others = PROJECTS.filter(p => p.id !== project.id).slice(0, 3)
 
   return (
-    <main className="project-detail">
+    <main id="main" className="project-detail">
       <div className="container pd-container">
         <motion.div {...fadeUp()}>
           <Link to="/" state={{ scrollTo: 'projects' }} className="pd-back">
@@ -28,8 +29,12 @@ export default function ProjectDetail() {
         </motion.div>
 
         <motion.header className="pd-hero" {...fadeUp(0.05)}>
-          {project.award && <div className="project-award-badge pd-award">🏆 {project.award}</div>}
-          <div className="pd-icon">{project.icon}</div>
+          {project.award && (
+            <div className="project-award-badge pd-award">
+              <TrophyIcon size={14} /> {project.award}
+            </div>
+          )}
+          <div className="pd-icon"><ProjectIcon id={project.id} size={46} /></div>
           <h1 className="pd-title">{project.title}</h1>
           {project.subtitle && <div className="pd-subtitle">{project.subtitle}</div>}
           <div className="pd-context">{project.context}</div>
@@ -99,7 +104,7 @@ export default function ProjectDetail() {
           <div className="pd-other-grid">
             {others.map(p => (
               <Link key={p.id} to={`/projects/${p.id}`} className="pd-other-card">
-                <span className="pd-other-icon">{p.icon}</span>
+                <span className="pd-other-icon"><ProjectIcon id={p.id} size={26} /></span>
                 <div>
                   <div className="pd-other-title">{p.title}</div>
                   {p.subtitle && <div className="pd-other-sub">{p.subtitle}</div>}

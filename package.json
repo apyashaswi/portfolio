@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "npx vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "images": "node scripts/convert-images.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
+    "sharp": "^0.34.5",
     "vite": "^5.4.2"
   }
 }

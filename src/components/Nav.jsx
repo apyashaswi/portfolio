@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
-import ModeToggle from './ModeToggle'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
 
-export default function Nav({ active, bannerVisible, mode, setMode }) {
+export default function Nav({ active, bannerVisible, mode }) {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const links = mode === 'recruiter' ? RECRUITER_NAV : NAV_LINKS
@@ -13,9 +12,22 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', fn)
+    window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
   }, [])
+
+  // While the mobile menu overlay is open: lock body scroll and let Escape close it.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [open])
 
   const go = (id) => {
     const target = id.toLowerCase()
@@ -55,7 +67,6 @@ export default function Nav({ active, bannerVisible, mode, setMode }) {
           )}
         </div>
         <div className="nav-right">
-          <ModeToggle mode={mode} setMode={setMode} />
           <button
             className="hamburger"
             onClick={() => setOpen(v => !v)}

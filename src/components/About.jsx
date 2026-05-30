@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
+import Picture from './Picture'
 
 export default function About() {
   return (
@@ -41,7 +42,7 @@ export default function About() {
 
       {/* Editorial inline photo breaks out wider than the prose column */}
       <motion.figure className="about-figure" {...fadeUp(0.18)}>
-        <img src="/pm-class-northeastern.jpg" alt="With my Project Management cohort at Northeastern" loading="lazy" decoding="async" />
+        <Picture src="/pm-class-northeastern.jpg" alt="With my Project Management cohort at Northeastern" />
         <figcaption>
           With the Project Management cohort, Northeastern University &mdash; Spring 2026.
         </figcaption>

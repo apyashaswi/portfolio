@@ -64,16 +64,20 @@ export default function GlobeViz() {
     return () => ro.disconnect()
   }, [])
 
+  // Honour the OS "reduce motion" setting — no perpetual auto-rotation.
+  const reduceMotion = typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
   // Controls â€” start centered on India (20Â°N 78Â°E), slow auto-rotate
   useEffect(() => {
     if (!globeEl.current) return
     const ctrl = globeEl.current.controls()
-    ctrl.autoRotate = true
+    ctrl.autoRotate = !reduceMotion
     ctrl.autoRotateSpeed = 0.38
     ctrl.enableZoom = false
     ctrl.enablePan = false
     globeEl.current.pointOfView({ lat: 20, lng: 78, altitude: 1.85 }, 0)
-  }, [])
+  }, [reduceMotion])
 
   // Pause the WebGL render loop whenever the globe is off-screen. A globe
   // spinning at 60fps forever (even scrolled far away) is the single biggest
@@ -86,7 +90,7 @@ export default function GlobeViz() {
       ([entry]) => {
         if (entry.isIntersecting) {
           globe.resumeAnimation?.()
-          globe.controls().autoRotate = true
+          globe.controls().autoRotate = !reduceMotion
         } else {
           globe.controls().autoRotate = false
           globe.pauseAnimation?.()
@@ -96,7 +100,7 @@ export default function GlobeViz() {
     )
     io.observe(el)
     return () => io.disconnect()
-  }, [])
+  }, [reduceMotion])
 
   const ringColorFn = d => t => {
     const alpha = Math.floor((1 - t * t) * 210).toString(16).padStart(2, '0')
@@ -110,7 +114,7 @@ export default function GlobeViz() {
       onMouseMove={e => setMouse({ x: e.clientX, y: e.clientY })}
       onMouseEnter={() => { if (globeEl.current) globeEl.current.controls().autoRotate = false }}
       onMouseLeave={() => {
-        if (globeEl.current) globeEl.current.controls().autoRotate = true
+        if (globeEl.current) globeEl.current.controls().autoRotate = !reduceMotion
         setTooltip(null)
       }}
     >

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
+import Picture from './Picture'
 
 export function RecruiterHero() {
   const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -34,7 +35,7 @@ export function RecruiterHero() {
           </motion.div>
         </div>
         <motion.figure className="hero-portrait" {...fadeUp(0.2)}>
-          <img src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" />
+          <Picture src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" fetchPriority="high" />
           <figcaption>Northeastern University, Boston</figcaption>
         </motion.figure>
       </div>
@@ -77,7 +78,7 @@ export default function Hero() {
           </motion.div>
         </div>
         <motion.figure className="hero-portrait" {...fadeUp(0.2)}>
-          <img src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" />
+          <Picture src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" fetchPriority="high" />
           <figcaption>Northeastern University, Boston</figcaption>
         </motion.figure>
       </div>

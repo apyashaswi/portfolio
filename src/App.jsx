@@ -36,8 +36,8 @@ export default function App() {
     <>
       <a href="#main" className="skip-link">Skip to content</a>
       <IntroOverlay />
-      <Masthead />
-      <Nav active={active} bannerVisible={true} mode={mode} setMode={setMode} />
+      <Masthead mode={mode} setMode={setMode} />
+      <Nav active={active} bannerVisible={true} mode={mode} />
       <Routes>
         <Route path="/" element={<Home mode={mode} />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />

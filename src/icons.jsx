@@ -114,3 +114,73 @@ export const CATEGORY_META = {
     ),
   },
 }
+
+// Inline line-icons for project case studies, keyed by project id.
+// Replaces emoji (🥽 🏭 🚁 📋) so glyphs are consistent, themeable, and crisp.
+const PROJECT_GLYPHS = {
+  // Spidey Sense — haptic VR headset
+  spidey: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="8" width="20" height="9" rx="3" />
+      <path d="M9 17c0 1.5-1 2.5-2.5 2.5S4 18 4 16.5" />
+      <path d="M15 17c0 1.5 1 2.5 2.5 2.5S20 18 20 16.5" />
+      <circle cx="8" cy="12.5" r="1.4" />
+      <circle cx="16" cy="12.5" r="1.4" />
+    </svg>
+  ),
+  // Warehouse / smart factory
+  warehouse: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 21V9l9-5 9 5v12" />
+      <path d="M3 21h18" />
+      <rect x="7" y="13" width="4" height="4" />
+      <rect x="13" y="13" width="4" height="4" />
+    </svg>
+  ),
+  // UAV / quadcopter drone
+  uav: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="5" cy="6" r="2.5" />
+      <circle cx="19" cy="6" r="2.5" />
+      <path d="M5 8.5v2.5h14V8.5" />
+      <rect x="9.5" y="11" width="5" height="5" rx="1" />
+      <path d="M12 16v3M9 21h6" />
+    </svg>
+  ),
+  // PCT assessment framework — clipboard / checklist
+  pct: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="4" y="4" width="16" height="18" rx="2" />
+      <path d="M9 4V2.5h6V4" />
+      <path d="M8 10l1.5 1.5L12 9" />
+      <path d="M8 16l1.5 1.5L12 15" />
+      <path d="M15 10.5h2M15 16.5h2" />
+    </svg>
+  ),
+}
+
+// Trophy — replaces the 🏆 emoji on award badges.
+export const TrophyIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M7 4h10v4a5 5 0 0 1-10 0V4z" />
+    <path d="M7 6H4v1a4 4 0 0 0 3 3.8M17 6h3v1a4 4 0 0 1-3 3.8" />
+    <path d="M12 13v3M9 20h6M10 20l.5-4h3l.5 4" />
+  </svg>
+)
+
+// Renders a project's case-study glyph at the requested pixel size.
+// Falls back to nothing if an unknown id is passed.
+export const ProjectIcon = ({ id, size = 24 }) => {
+  const glyph = PROJECT_GLYPHS[id]
+  if (!glyph) return null
+  return (
+    <span
+      className="project-glyph"
+      style={{ display: 'inline-flex', width: size, height: size }}
+      aria-hidden="true"
+    >
+      {glyph}
+    </span>
+  )
+}
