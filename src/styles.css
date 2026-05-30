@@ -251,12 +251,24 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   display: flex; align-items: center;
   overflow: hidden; background: var(--bg);
 }
+.hero::after {
+  /* Warm corner wash — soft amber light bleeding in to reduce the synthetic
+     cool-only palette. Stays behind content (z-index 0 below hero-content z 2). */
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 60% at 8% 110%, rgba(232, 159, 107, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 95% -10%, rgba(212, 179, 90, 0.07) 0%, transparent 65%);
+  z-index: 0;
+}
 .hero-gradient-fallback {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 70% 70% at 75% 50%, rgba(127,119,221,0.14) 0%, transparent 65%),
-    radial-gradient(ellipse 45% 45% at 25% 75%, rgba(29,158,117,0.1) 0%, transparent 60%),
-    radial-gradient(ellipse 30% 30% at 60% 20%, rgba(201,168,76,0.04) 0%, transparent 50%);
+    radial-gradient(ellipse 70% 70% at 75% 50%, rgba(139,131,228,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 45% at 25% 75%, rgba(43,176,136,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 35% at 12% 92%, rgba(232,159,107,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 30% at 60% 20%, rgba(212,179,90,0.04) 0%, transparent 50%);
 }
 .hero-content {
   position: relative; z-index: 2;
@@ -278,7 +290,7 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 5.5vw, 3.9rem);
   font-weight: 700; line-height: 1.1;
-  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 65%, var(--accent2) 100%);
+  background: linear-gradient(135deg, #f5efe2 0%, #ffffff 38%, var(--accent) 88%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 24px; min-height: 2.3em;
@@ -302,14 +314,14 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
   background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
   opacity: 0; transition: opacity 0.2s;
 }
-.btn-primary:hover { box-shadow: 0 0 36px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.4); transform: translateY(-2px); }
+.btn-primary:hover { box-shadow: 0 0 22px var(--accent-glow), 0 6px 18px rgba(0,0,0,0.32); transform: translateY(-2px); }
 .btn-primary:hover::before { opacity: 1; }
 
-/* Persistent glow on Chat button */
-.btn-glow { animation: btnGlowPulse 3s ease-in-out infinite; }
+/* Persistent glow on Chat button — slower, gentler breathing */
+.btn-glow { animation: btnGlowPulse 5s ease-in-out infinite; }
 @keyframes btnGlowPulse {
-  0%, 100% { box-shadow: 0 0 18px rgba(127,119,221,0.5), 0 0 44px rgba(127,119,221,0.22); }
-  50% { box-shadow: 0 0 30px rgba(127,119,221,0.75), 0 0 64px rgba(127,119,221,0.35); }
+  0%, 100% { box-shadow: 0 0 14px rgba(139,131,228,0.32), 0 0 32px rgba(139,131,228,0.14); }
+  50% { box-shadow: 0 0 22px rgba(139,131,228,0.5), 0 0 44px rgba(139,131,228,0.22); }
 }
 .btn-glow:hover { animation: none; }
 
@@ -367,7 +379,7 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 .stat-item { display: flex; flex-direction: column; gap: 5px; }
 .stat-num {
   font-family: var(--font-display); font-size: 28px; font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  background: linear-gradient(135deg, var(--gold) 0%, var(--warm) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; line-height: 1;
 }
@@ -375,15 +387,15 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 .about-photo-wrap {
   border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
   border: 1px solid var(--border); position: relative;
-  box-shadow: 0 0 40px rgba(127,119,221,0.07);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(245, 239, 226, 0.04);
 }
-.about-photo { width: 100%; height: 265px; object-fit: cover; transition: transform 0.5s ease; }
-.about-photo-wrap:hover .about-photo { transform: scale(1.05); }
+.about-photo { width: 100%; height: 265px; object-fit: cover; transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease; filter: saturate(0.92) contrast(1.02); }
+.about-photo-wrap:hover .about-photo { transform: scale(1.04); filter: saturate(1) contrast(1.04); }
 .about-photo-caption {
   position: absolute; bottom: 0; left: 0; right: 0;
   padding: 48px 16px 14px;
-  background: linear-gradient(to top, rgba(8,8,15,.92) 0%, transparent 100%);
-  font-size: 12px; color: rgba(255,255,255,.65); font-weight: 500;
+  background: linear-gradient(to top, rgba(13, 11, 19, 0.92) 0%, transparent 100%);
+  font-size: 12px; color: rgba(245, 239, 226, .72); font-weight: 500;
 }
 .edu-cards { display: flex; flex-direction: column; gap: 10px; }
 .edu-card {
@@ -997,8 +1009,9 @@ button { border: none; background: none; font-family: inherit; cursor: none; }
 
 /* ─── RECRUITER HERO ─────────────────────────────────────────────── */
 .hero-recruiter {
-  background: radial-gradient(ellipse 90% 70% at 60% 40%, rgba(127,119,221,0.12) 0%, transparent 70%),
-              radial-gradient(ellipse 60% 50% at 20% 70%, rgba(29,158,117,0.08) 0%, transparent 65%),
+  background: radial-gradient(ellipse 90% 70% at 60% 40%, rgba(139,131,228,0.10) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 50% at 20% 70%, rgba(43,176,136,0.06) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 50% at 90% 90%, rgba(232,159,107,0.06) 0%, transparent 65%),
               var(--bg);
 }
 .hero-content-recruiter {
