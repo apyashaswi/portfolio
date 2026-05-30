@@ -3,45 +3,81 @@ import { fadeUp } from '../utils'
 
 export default function About() {
   return (
-    <section id="about" className="section">
-      <div className="container">
-        <motion.div className="section-header" data-num="01" {...fadeUp()}>
+    <section id="about" className="section about-section">
+      <div className="container-prose">
+        <motion.div className="section-header about-header" {...fadeUp()}>
           <h2 className="section-title">About</h2>
+          <p className="section-subtitle">A short note on who I am and what I do.</p>
         </motion.div>
-        <div className="about-grid">
-          <motion.div className="about-text-col" {...fadeUp(0.1)}>
-            <p className="about-lead">I'm an Engineering Management graduate student at Northeastern (GPA 3.75, December 2026), specializing at the intersection of <span className="accent">Data, AI</span>, and <span className="accent2">Program Management</span>.</p>
-            <p className="about-body">Currently leading strategic projects under the Head of Data & AI at MSIG USA, working across agile delivery, PI planning, hiring operations, and organizational change management. Based in Somerset, New Jersey.</p>
-            <p className="about-body">My background spans electronics engineering (PES University, Bengaluru), startup co-founding, award-winning hardware hacking at MIT, and graduate-level supply chain research under Prof. Nada R. Sanders. I thrive in roles that blend technical depth with strategic execution and cross-functional leadership.</p>
-            <div className="about-stats">
-              {[{ num: '3.75', label: 'GPA' }, { num: 'MIT', label: 'Hackathon Winner' }, { num: '10+', label: 'Leadership Roles' }, { num: '4', label: 'Research Papers' }].map(s => (
-                <div key={s.label} className="stat-item">
-                  <span className="stat-num">{s.num}</span>
-                  <span className="stat-label">{s.label}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-          <motion.div className="about-right-col" {...fadeUp(0.2)}>
-            <div className="about-photo-wrap">
-              <img src="/APY_Harvard_Bg.jpg" alt="Yashaswi Alur Prasannakumar at Harvard University" className="about-photo" />
-              <div className="about-photo-caption">Harvard Asian Conference 2025</div>
-            </div>
-            <div className="edu-cards">
-              <div className="edu-card">
-                <div className="edu-degree">Master of Science · Engineering Management</div>
-                <div className="edu-school">Northeastern University</div>
-                <div className="edu-detail">Boston, MA · Expected December 2026 · GPA 3.75</div>
-                <div className="tag-row">{['Supply Chain Engineering', 'Project Management', 'Operations Research'].map(t => <span key={t} className="tag">{t}</span>)}</div>
-              </div>
-              <div className="edu-card">
-                <div className="edu-degree">Bachelor of Technology · Electronics &amp; Communication Engineering</div>
-                <div className="edu-school">PES University</div>
-                <div className="edu-detail">Bengaluru, India · Class of 2024</div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+
+        <motion.p className="about-lead" {...fadeUp(0.05)}>
+          I'm an Engineering Management graduate student at <span className="about-accent">Northeastern University</span>
+          {' '}(GPA 3.75, graduating December&nbsp;2026), specializing at the intersection of
+          {' '}<em>Data, AI</em>, and <em>Program Management</em>.
+        </motion.p>
+
+        <motion.p className="about-body" {...fadeUp(0.1)}>
+          Currently leading strategic projects under the Head of Data &amp; AI at <strong>MSIG USA</strong>,
+          working across agile delivery, PI planning, hiring operations, and organizational change
+          management. Based in Somerset, New Jersey.
+        </motion.p>
+
+        <motion.figure className="about-pullquote" {...fadeUp(0.12)}>
+          <blockquote>
+            The operational and delivery anchor for the Data &amp; AI team &mdash;
+            spanning agile delivery, PI planning, hiring operations,
+            and executive reporting.
+          </blockquote>
+          <figcaption>— from my current role at MSIG USA</figcaption>
+        </motion.figure>
+
+        <motion.p className="about-body" {...fadeUp(0.14)}>
+          My background spans electronics engineering at <strong>PES University, Bengaluru</strong>,
+          startup co-founding (Cratel), award-winning hardware hacking at MIT, and
+          graduate-level supply chain research under Prof. Nada&nbsp;R.&nbsp;Sanders. I thrive in roles
+          that blend technical depth with strategic execution and cross-functional leadership.
+        </motion.p>
+      </div>
+
+      {/* Editorial inline photo breaks out wider than the prose column */}
+      <motion.figure className="about-figure" {...fadeUp(0.18)}>
+        <img src="/pm-class-northeastern.jpg" alt="With my Project Management cohort at Northeastern" />
+        <figcaption>
+          With the Project Management cohort, Northeastern University &mdash; Spring 2026.
+        </figcaption>
+      </motion.figure>
+
+      <div className="container-prose">
+        <motion.p className="about-body" {...fadeUp(0.22)}>
+          Before all that, I co-founded a B2C supply-chain startup in Bengaluru, led the
+          Dean's Office portfolio at PES (1,000+ student volunteers, $350K+ in annual program funding),
+          and built communities — math, XR, media, an armed-forces tribute — that I'm still proud of.
+        </motion.p>
+
+        <motion.div className="about-numbers" {...fadeUp(0.26)}>
+          <span className="about-numbers-label">By the numbers</span>
+          <span className="about-numbers-sep">·</span>
+          <span><b>3.75</b> GPA</span>
+          <span className="about-numbers-sep">·</span>
+          <span><b>4</b> research papers</span>
+          <span className="about-numbers-sep">·</span>
+          <span><b>10+</b> leadership roles</span>
+          <span className="about-numbers-sep">·</span>
+          <span><b>1</b> hackathon award</span>
+        </motion.div>
+
+        <motion.div className="about-education" {...fadeUp(0.3)}>
+          <div className="about-edu-row">
+            <div className="about-edu-degree">M.S. Engineering Management</div>
+            <div className="about-edu-school">Northeastern University · Boston, MA</div>
+            <div className="about-edu-meta">Expected December 2026 · GPA 3.75</div>
+          </div>
+          <div className="about-edu-row">
+            <div className="about-edu-degree">B.Tech. Electronics &amp; Communication Engineering</div>
+            <div className="about-edu-school">PES University · Bengaluru, India</div>
+            <div className="about-edu-meta">Class of 2024</div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )
