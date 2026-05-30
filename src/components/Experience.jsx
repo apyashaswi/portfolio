@@ -2,6 +2,23 @@ import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
 import { EXPERIENCE } from '../data'
 
+function CompanyMark({ exp }) {
+  const accent = exp.brandColor || 'var(--accent)'
+  return (
+    <div
+      className={`company-mark${exp.current ? ' company-mark-current' : ''}`}
+      style={{ '--brand': accent }}
+    >
+      {exp.logo ? (
+        <img src={exp.logo} alt={`${exp.company} logo`} loading="lazy" />
+      ) : (
+        <span className="company-monogram">{exp.monogram || exp.company.slice(0, 2).toUpperCase()}</span>
+      )}
+      {exp.current && <span className="company-mark-pulse" aria-hidden="true" />}
+    </div>
+  )
+}
+
 export default function Experience({ recruiterMode }) {
   const list = recruiterMode ? EXPERIENCE.slice(0, 1) : EXPERIENCE
   return (
@@ -11,20 +28,24 @@ export default function Experience({ recruiterMode }) {
           <span className="section-num">03</span>
           <h2 className="section-title">Experience</h2>
         </motion.div>
-        <div className="timeline">
+        <div className="timeline timeline-v2">
           {list.map((exp, i) => (
-            <motion.div key={i} className="timeline-item" {...fadeUp(i * 0.1)}>
-              <div className="timeline-marker">
-                {exp.current && <div className="timeline-pulse" />}
-                <div className={`timeline-dot${exp.current ? ' current' : ''}`} />
-                {i < list.length - 1 && <div className="timeline-line" />}
+            <motion.div
+              key={i}
+              className="timeline-item-v2"
+              style={{ '--brand': exp.brandColor || 'var(--accent)' }}
+              {...fadeUp(i * 0.1)}
+            >
+              <div className="timeline-rail">
+                <CompanyMark exp={exp} />
+                {i < list.length - 1 && <div className="timeline-line-v2" />}
               </div>
               <div className="timeline-content">
                 <div className="exp-header">
                   <div>
                     <div className="exp-title">{exp.title}</div>
                     <div className="exp-company">
-                      {exp.company}
+                      <span className="exp-company-name">{exp.company}</span>
                       {exp.type && <span className="exp-type-badge">{exp.type}</span>}
                       {exp.current && <span className="exp-current-badge">Current</span>}
                     </div>

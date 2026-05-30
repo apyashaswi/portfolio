@@ -59,6 +59,9 @@ export const EXPERIENCE = [
   {
     title: 'Program Manager & Scrum Master',
     company: 'MSIG USA',
+    monogram: 'MSIG',
+    brandColor: '#c8161d',
+    logo: null,
     type: 'Co-op',
     location: 'Warren, NJ',
     period: 'Jan 2026 – Present',
@@ -76,6 +79,9 @@ export const EXPERIENCE = [
   {
     title: 'Co-Founder & Chief Product Officer',
     company: 'Cratel',
+    monogram: 'CR',
+    brandColor: '#8b83e4',
+    logo: null,
     type: 'Startup',
     location: 'Bengaluru, India',
     period: 'Jun 2023 – Apr 2024',
@@ -92,6 +98,9 @@ export const EXPERIENCE = [
   {
     title: 'Program Manager',
     company: 'Office of Dean of Student Affairs, PES University',
+    monogram: 'PES',
+    brandColor: '#005baa',
+    logo: null,
     type: null,
     location: 'Bengaluru, India',
     period: 'Jun 2023 – Jan 2024',
