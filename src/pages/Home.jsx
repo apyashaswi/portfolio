@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
 import Hero, { RecruiterHero } from '../components/Hero'
+import TrustStrip from '../components/TrustStrip'
 import About from '../components/About'
 import Experience from '../components/Experience'
 import Journey from '../components/Journey'
@@ -38,6 +39,7 @@ export default function Home({ mode }) {
         transition={{ duration: 0.35 }}
       >
         {recruiterMode ? <RecruiterHero /> : <Hero />}
+        <TrustStrip />
         <About />
         <Experience recruiterMode={recruiterMode} />
         {!recruiterMode && <Journey />}

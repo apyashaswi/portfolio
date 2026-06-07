@@ -9,7 +9,7 @@ const PINS = [
   { lat: 12.9716,  lng:  77.5946, label: 'Bengaluru, India',     detail: 'PES University Â· B.Tech ECE Â· Cratel Co-Founder',      color: '#bca47a', size: 1.2, type: 'pro' },
   { lat: 42.3770,  lng: -71.1167, label: 'Harvard Â· Cambridge',  detail: 'Harvard Asian Conference 2025',                        color: '#bca47a', size: 1.0, type: 'pro' },
   // Award / Home â€” amber #EF9F27
-  { lat: 42.3601,  lng: -71.0942, label: 'MIT Â· Cambridge, MA',  detail: 'MIT Reality Hack 2025 Â· Jaw-Dropping Award ðŸ†',        color: '#EF9F27', size: 1.8, type: 'award' },
+  { lat: 42.3601,  lng: -71.0942, label: 'MIT Â· Cambridge, MA',  detail: 'MIT Reality Hack 2025 Â· Jaw-Dropping Award',        color: '#EF9F27', size: 1.8, type: 'award' },
   { lat: 12.2958,  lng:  76.6394, label: 'Mysuru, India',        detail: 'Hometown Â· City of Palaces Â· Karnataka',               color: '#EF9F27', size: 1.5, type: 'award' },
   // Travel US â€” teal #7d9079
   { lat: 40.7128,  lng: -74.0060, label: 'New York City, NY',    detail: 'NYC Â· The City',                                       color: '#7d9079', size: 0.85, type: 'travel' },
@@ -26,6 +26,16 @@ const PINS = [
   { lat: 13.0827,  lng:  80.2707, label: 'Chennai, India',       detail: 'Gateway of South India',                               color: '#7d9079', size: 0.85, type: 'travel' },
 ]
 
+// Holographic "data-link" arcs tracing the journey between key locations.
+const ARCS = [
+  { startLat: 12.9716, startLng: 77.5946, endLat: 42.3601, endLng: -71.0589 }, // Bengaluru → Boston
+  { startLat: 42.3601, startLng: -71.0589, endLat: 40.7684, endLng: -74.5143 }, // Boston → Warren NJ
+  { startLat: 12.9716, startLng: 77.5946, endLat: 25.2048, endLng: 55.2708 },   // Bengaluru → Dubai
+  { startLat: 12.2958, startLng: 76.6394, endLat: 12.9716, endLng: 77.5946 },   // Mysuru → Bengaluru
+  { startLat: 42.3601, startLng: -71.0589, endLat: 40.7128, endLng: -74.0060 }, // Boston → NYC
+  { startLat: 42.3601, startLng: -71.0942, endLat: 42.3601, endLng: -71.0589 }, // MIT → Boston
+]
+
 export default function GlobeViz() {
   const globeEl = useRef()
   const wrapperRef = useRef()
@@ -34,12 +44,15 @@ export default function GlobeViz() {
   const [dims, setDims] = useState({ w: 900, h: 650 })
   const [landData, setLandData] = useState([])
 
-  // Load land polygon GeoJSON â€” gives custom dark blue-grey continent color
+  // Load land polygon GeoJSON — bundled locally (no third-party dependency),
+  // with an abort guard so it never sets state after unmount.
   useEffect(() => {
-    fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+    const ctrl = new AbortController()
+    fetch('/countries.geojson', { signal: ctrl.signal })
       .then(r => r.json())
       .then(d => setLandData(d.features))
       .catch(() => {})
+    return () => ctrl.abort()
   }, [])
 
   // Ocean base material â€” dark navy, clearly darker than land #1e2140
@@ -129,15 +142,26 @@ export default function GlobeViz() {
 
           customGlobeMaterial={globeMaterial}
 
-          // Land polygons: noticeably lighter than ocean (#1e2140 vs #0a0a1a)
-          polygonsData={landData}
-          polygonCapColor={() => '#1e2140'}
-          polygonSideColor={() => 'transparent'}
-          polygonStrokeColor={() => 'rgba(127,119,221,0.22)'}
-          polygonAltitude={0.008}
+          // Holographic landmass: continents stippled into oat hex-dots so the
+          // globe reads like a projected hologram rather than a solid map.
+          hexPolygonsData={landData}
+          hexPolygonResolution={3}
+          hexPolygonMargin={0.32}
+          hexPolygonAltitude={0.008}
+          hexPolygonUseDots={true}
+          hexPolygonColor={() => 'rgba(188,164,122,0.55)'}
 
           atmosphereColor="#bca47a"
-          atmosphereAltitude={0.26}
+          atmosphereAltitude={0.32}
+
+          // Animated data-links between the places that shaped the journey.
+          arcsData={ARCS}
+          arcColor={() => ['rgba(188,164,122,0.9)', 'rgba(138,157,132,0.6)']}
+          arcStroke={0.5}
+          arcDashLength={0.4}
+          arcDashGap={0.18}
+          arcDashAnimateTime={reduceMotion ? 0 : 3200}
+          arcAltitudeAutoScale={0.4}
 
           pointsData={PINS}
           pointLat="lat"
@@ -179,6 +203,22 @@ export default function GlobeViz() {
             <div className="gt-detail">{tooltip.detail}</div>
           </div>
         )}
+
+        {/* Accessible, touch-friendly equivalent — the globe interactions are
+            pointer-only, so this disclosure gives keyboard, screen-reader, AND
+            touch users the full list of places (tap to expand on mobile). */}
+        <details className="globe-locations">
+          <summary>View all {PINS.length} locations</summary>
+          <ul>
+            {PINS.map(p => (
+              <li key={p.label}>
+                <span className="gloc-dot" style={{ background: p.color }} aria-hidden="true" />
+                <span className="gloc-name">{p.label}</span>
+                <span className="gloc-detail">{p.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
 
         <div className="globe-legend">
           <div className="gl-item">

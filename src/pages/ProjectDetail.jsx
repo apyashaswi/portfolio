@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { fadeUp } from '../utils'
+import { fadeUp, useDocumentMeta } from '../utils'
 import { PROJECTS } from '../data'
 import TechTag from '../components/TechTag'
 import { ProjectIcon, TrophyIcon } from '../icons'
@@ -9,6 +9,12 @@ import { ProjectIcon, TrophyIcon } from '../icons'
 export default function ProjectDetail() {
   const { id } = useParams()
   const project = PROJECTS.find(p => p.id === id)
+
+  // Give each case study its own title + description for sharing and crawlers.
+  useDocumentMeta(
+    project ? `${project.title} — Yashaswi Alur Prasannakumar` : undefined,
+    project ? (project.caseStudy?.tldr || project.description) : undefined,
+  )
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })

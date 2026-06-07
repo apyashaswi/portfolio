@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import ModeToggle from './ModeToggle'
+import EffectsToggle from './EffectsToggle'
 
 // Permanent editorial masthead — replaces the dismissible promo banner.
 // Folds the "open to roles" message into a journal-style nameplate.
@@ -28,6 +29,7 @@ export default function Masthead({ mode, setMode }) {
           <span className="masthead-name">A&middot;P Journal</span>
         </div>
         <div className="masthead-edition">
+          <EffectsToggle />
           <ModeToggle mode={mode} setMode={setMode} />
         </div>
       </div>
