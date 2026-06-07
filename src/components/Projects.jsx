@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import TechTag from './TechTag'
+import TiltCard from './TiltCard'
 import { fadeUp } from '../utils'
 import { PROJECTS } from '../data'
 
@@ -20,6 +21,12 @@ function ProjectEntry({ p, featured }) {
         {p.subtitle && <div className="project-subtitle">{p.subtitle}</div>}
         <div className="project-context">{p.context}</div>
       </header>
+      {p.caseStudy?.metrics?.[0] && (
+        <div className="project-metric" aria-label={`Headline result: ${p.caseStudy.metrics[0].value} ${p.caseStudy.metrics[0].label}`}>
+          <span className="project-metric-value">{p.caseStudy.metrics[0].value}</span>
+          <span className="project-metric-label">{p.caseStudy.metrics[0].label}</span>
+        </div>
+      )}
       <p className="project-desc">{p.description}</p>
       <ul className="project-bullets">
         {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
@@ -46,13 +53,17 @@ export default function Projects() {
         </motion.div>
         {featured && (
           <motion.div {...fadeUp(0.05)}>
-            <ProjectEntry p={featured} featured />
+            <TiltCard className="project-tilt project-tilt-featured">
+              <ProjectEntry p={featured} featured />
+            </TiltCard>
           </motion.div>
         )}
-        <div className="projects-list">
+        <div className="projects-list projects-list-cards">
           {rest.map((p, i) => (
             <motion.div key={p.id} {...fadeUp(i * 0.08)}>
-              <ProjectEntry p={p} />
+              <TiltCard className="project-tilt">
+                <ProjectEntry p={p} />
+              </TiltCard>
             </motion.div>
           ))}
         </div>

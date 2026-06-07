@@ -65,7 +65,10 @@ body::before {
   z-index: 9990;
   opacity: 0.075;
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch' seed='3'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  /* Baked tiling noise (scripts/make-grain.mjs) — far cheaper than a live
+     full-viewport SVG feTurbulence filter, which recomposites on every scroll. */
+  background-image: url('/grain.png');
+  background-size: 220px 220px;
 }
 body::after {
   content: '';
@@ -2160,7 +2163,10 @@ a, button { cursor: pointer; }
 .intro-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, #0b0b14 0%, #050509 70%);
+  overflow: hidden;
+  /* Warm-paper ground (not near-black) so the dissolve reveals into the hero's
+     own tone — continuity instead of a hard cut. */
+  background: radial-gradient(ellipse at 62% 46%, #36302a 0%, #221d18 72%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2437,3 +2443,375 @@ a, button { cursor: pointer; }
   .project-detail { padding: 110px 0 60px; }
   .pd-title { font-size: 32px; }
 }
+
+/* ─── EDITORIAL-FUTURISM: 3D hero substrate (experiment only) ───────────────
+   A WebGL particle constellation + distorted core sits behind the editorial
+   hero. Content stays above it; scrims keep the type at AA contrast. The scene
+   itself freezes under prefers-reduced-motion (handled in HeroScene.jsx). */
+.hero-futurist {
+  position: relative;
+  overflow: hidden;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+}
+.hero-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;          /* never steal scroll/clicks from the page */
+}
+.hero-scene canvas { display: block; }
+/* Legibility scrim: warm-paper ground darkened toward the text column (left),
+   feathered to transparent over the constellation (right). */
+.hero-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 18% 50%, rgba(44, 38, 32, 0.92) 0%, rgba(44, 38, 32, 0.55) 38%, rgba(44, 38, 32, 0) 70%),
+    linear-gradient(180deg, rgba(44, 38, 32, 0.55) 0%, rgba(44, 38, 32, 0) 22%, rgba(44, 38, 32, 0) 78%, var(--bg) 100%);
+}
+.hero-futurist .hero-grid { position: relative; z-index: 2; }
+
+/* A faint engineering grid — the "schematic" register under the masthead. */
+.hero-futurist::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image:
+    linear-gradient(rgba(188, 164, 122, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(188, 164, 122, 0.05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(80% 70% at 70% 45%, #000 0%, transparent 75%);
+          mask-image: radial-gradient(80% 70% at 70% 45%, #000 0%, transparent 75%);
+}
+
+/* Portrait gains a quiet oat rim so it belongs in the lit 3D space. */
+.hero-futurist .hero-portrait img {
+  box-shadow: 0 0 0 1px rgba(188, 164, 122, 0.25), 0 30px 80px -30px rgba(0, 0, 0, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-futurist { min-height: auto; }   /* calmer, document-like when reduced */
+}
+@media (max-width: 720px) {
+  .hero-futurist { min-height: auto; }
+  .hero-scene::after {
+    background: linear-gradient(180deg, rgba(44,38,32,0.4) 0%, rgba(44,38,32,0.75) 60%, var(--bg) 100%);
+  }
+}
+
+/* ─── HUD telemetry overlay (experiment) ──────────────────────────────────── */
+.hero-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(188, 164, 122, 0.52);
+}
+.hero-hud > div { position: absolute; display: flex; align-items: center; gap: 8px; }
+.hud-tl { top: 88px; left: 28px; }
+.hud-tr { top: 88px; right: 28px; }
+.hud-bl { bottom: 26px; left: 28px; }
+.hud-br { bottom: 26px; right: 28px; color: rgba(138, 157, 132, 0.6); }
+.hud-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: hud-blink 1.8s ease-in-out infinite;
+}
+@keyframes hud-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@media (max-width: 720px) { .hero-hud { display: none; } }
+@media (prefers-reduced-motion: reduce) { .hud-dot { animation: none; } }
+
+/* ─── Project card: pointer-tracked specular glare (experiment) ───────────── */
+.tilt-card--glare {
+  position: relative;
+  isolation: isolate;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+  will-change: transform;
+}
+.tilt-card--glare:hover {
+  box-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(188, 164, 122, 0.22);
+}
+.tilt-card--glare::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 4;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgba(188, 164, 122, 0.28),
+    rgba(188, 164, 122, 0) 42%
+  );
+  opacity: var(--glare, 0);
+  transition: opacity 0.3s ease;
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt-card--glare { transition: none; }
+  .tilt-card--glare::after { display: none; }
+}
+
+/* ─── Project cards: 3D surface for the tilt/glare treatment (experiment) ──── */
+.project-tilt {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px 30px 26px;
+  height: 100%;
+}
+.project-tilt .project-entry,
+.project-tilt .project-entry-featured {
+  border-top: none;
+  padding-top: 0;
+  margin-bottom: 0;
+}
+.project-tilt-featured {
+  padding: 38px 40px 34px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(188, 164, 122, 0.10), transparent 55%),
+    var(--bg-card);
+}
+/* The non-featured entries become a responsive card wall. */
+.projects-list-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: 22px;
+  margin-top: 22px;
+}
+@media (max-width: 720px) {
+  .projects-list-cards { grid-template-columns: 1fr; }
+  .project-tilt, .project-tilt-featured { padding: 24px; }
+}
+
+/* ─── Starred-items styling (experiment) ──────────────────────────────────── */
+
+/* Screen-reader-only utility (accessible globe location list, etc.) */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0);
+  white-space: nowrap; border: 0;
+}
+
+/* Hero CSS poster — resting look + fallback when 3D is deferred/off/unsupported */
+.hero-poster {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(46% 60% at 72% 46%, rgba(188, 164, 122, 0.22), rgba(188, 164, 122, 0) 70%),
+    radial-gradient(40% 55% at 60% 50%, rgba(125, 144, 121, 0.10), transparent 72%),
+    var(--bg);
+}
+.hero-scene canvas.hero-canvas { position: absolute; inset: 0; z-index: 1; }
+
+/* In-page "reduce effects" toggle (sits beside the mode toggle in the masthead) */
+.effects-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.effects-toggle:hover { color: var(--ink); border-color: var(--border-hover); }
+.effects-toggle .effects-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 7px var(--accent);
+}
+.effects-toggle.is-reduced .effects-dot { background: var(--ink-dim); box-shadow: none; }
+
+/* Trust strip — affiliation credit line under the hero */
+.trust-strip { padding: 22px 0; border-bottom: 1px solid var(--border); }
+.trust-strip-inner {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  justify-content: center; gap: 10px 18px;
+}
+.trust-strip-label {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-dim);
+}
+.trust-strip-list { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: baseline; }
+.trust-strip-item {
+  display: inline-flex; align-items: baseline; gap: 10px 18px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-muted);
+}
+.trust-strip-sep { color: var(--ink-dim); }
+
+/* Project card headline metric */
+.project-metric {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  margin: 14px 0 4px;
+  padding: 7px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--accent-dim);
+}
+.project-metric-value {
+  font-family: var(--font-display); font-weight: 600; font-size: 22px;
+  line-height: 1; color: var(--accent);
+}
+.project-metric-label {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-muted);
+}
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 26px;
+}
+.testimonial-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 26px 22px;
+}
+.testimonial-sample {
+  position: absolute; top: 14px; right: 14px;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-dim);
+  border: 1px solid var(--border); border-radius: 999px; padding: 2px 7px;
+}
+.testimonial-quote {
+  font-family: var(--font-serif); font-style: italic; font-size: 17px;
+  line-height: 1.6; color: var(--ink-soft); margin-bottom: 16px;
+}
+.testimonial-quote::before { content: '\201C'; color: var(--accent); margin-right: 2px; }
+.testimonial-quote::after  { content: '\201D'; color: var(--accent); margin-left: 2px; }
+.testimonial-role {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent2);
+}
+@media (max-width: 720px) {
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .effects-toggle { display: none; }   /* keep the masthead uncluttered on phones */
+}
+
+/* ─── Cinematic cold-open + hero reveal (experiment) ──────────────────────── */
+/* Ignition bloom that flares as the overlay lifts into the hero. */
+.intro-flash {
+  position: absolute;
+  left: 62%; top: 46%;
+  width: 60vmax; height: 60vmax;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(188, 164, 122, 0.55) 0%, rgba(188, 164, 122, 0.12) 35%, transparent 68%);
+  mix-blend-mode: screen;
+}
+/* Thin oat rule that draws under the monogram (replaces the old progress bar). */
+.intro-rule {
+  width: 150px;
+  height: 1.5px;
+  margin-top: 16px;
+  background: linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+  transform-origin: center;
+}
+
+/* Hero name: a one-time oat shimmer sweep once the reveal lands. */
+.hero-name { position: relative; }
+.hero-name.is-revealed::after {
+  content: '';
+  position: absolute;
+  inset: -2% -6%;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(240, 226, 197, 0.55) 50%, transparent 62%);
+  background-size: 280% 100%;
+  mix-blend-mode: screen;
+  animation: hero-name-shimmer 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.5s 1 both;
+}
+@keyframes hero-name-shimmer {
+  from { background-position: 150% 0; opacity: 0; }
+  20%  { opacity: 1; }
+  to   { background-position: -120% 0; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-name.is-revealed::after { display: none; }
+  .intro-flash { display: none; }
+}
+
+/* ─── Review fixes: a11y / touch targets (experiment) ─────────────────────── */
+
+/* Accessible "Skip intro" control on the cold-open */
+.intro-skip-btn {
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 9px 18px;
+  min-height: 38px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.intro-skip-btn:hover { color: var(--ink); border-color: var(--border-hover); }
+
+/* Touch-target floor (WCAG 2.5.8) for the inline hero/project CTAs */
+.hero-link { display: inline-flex; align-items: center; min-height: 28px; }
+.project-cta { display: inline-flex; align-items: center; min-height: 24px; }
+
+/* Globe locations disclosure — visible, keyboard- and touch-reachable equivalent */
+.globe-locations { margin-top: 16px; }
+.globe-locations summary {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent2);
+}
+.globe-locations[open] summary { color: var(--ink); }
+.globe-locations ul {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 8px 24px;
+}
+.globe-locations li {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+.gloc-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; align-self: center; }
+.gloc-name { color: var(--ink); }
+
+/* Make the testimonials "Sample" disclosure actually legible */
+.testimonial-sample { color: var(--ink-muted); font-size: 10px; }
+
+/* Fix: decorative flash must not intercept clicks on the Skip button */
+.intro-flash { pointer-events: none; }
+.intro-skip-btn { position: relative; z-index: 3; }
