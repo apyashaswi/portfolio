@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-30T00:00:00.000Z",
+  "title": "Design System: The A·P Journal",
+  "extensions": {
+    "colorMeta": {
+      "accent-oat": { "role": "primary", "displayName": "Oat / Honey", "canonical": "#bca47a", "tonalRamp": ["#2e2718", "#453a24", "#5c4d30", "#7a6640", "#9a8358", "#bca47a", "#d3c09e", "#ebe0c8"] },
+      "accent-sage": { "role": "secondary", "displayName": "Dusty Sage", "canonical": "#8a9d84", "tonalRamp": ["#1c211a", "#2b3327", "#3d4837", "#526049", "#6b7c5f", "#8a9d84", "#aebba8", "#d4dcd1"] },
+      "accent-ink-blue": { "role": "tertiary", "displayName": "Ink Blue", "canonical": "#6b8aa8", "tonalRamp": ["#17222b", "#223441", "#2f475a", "#3f5c73", "#54748f", "#6b8aa8", "#95afc6", "#c4d5e2"] },
+      "bg": { "role": "neutral", "displayName": "Cardstock Dark", "canonical": "#2c2620", "tonalRamp": ["#0f0d0a", "#1a1611", "#2c2620", "#3a342c", "#4d453a", "#6b5f4e", "#9a8a72", "#c9baa0"] },
+      "ink": { "role": "neutral", "displayName": "Warm Cream", "canonical": "#f0e2c5", "tonalRamp": ["#5e5345", "#79695450", "#998b75", "#b3a48c", "#d6c9ad", "#f0e2c5", "#f6ecda", "#fbf6ec"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero nameplate and section titles only. WONK axis on for character." },
+      "body": { "displayName": "Body", "purpose": "All prose; capped to the 760px reading column for long-form sections." },
+      "label": { "displayName": "Label / Mono", "purpose": "Publication chrome only: masthead, dates, kickers, metadata." },
+      "signature": { "displayName": "Signature", "purpose": "Reserved for the nav 'AP' mark and the Contact sign-off only." }
+    },
+    "shadows": [
+      { "name": "photo-frame-lift", "value": "0 6px 14px rgba(0, 0, 0, 0.28)", "purpose": "Soft ambient lift under real framed photographs only." },
+      { "name": "status-pip-halo", "value": "0 0 0 2px rgba(188, 164, 122, 0.18)", "purpose": "Living-status signal on the masthead pip and the current-role timeline dot; pulses to a wider, fainter ring." },
+      { "name": "focus-ring", "value": "0 0 0 2px var(--accent)", "purpose": "Keyboard-only focus indicator via :focus-visible; never shown on mouse interaction." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "ease", "purpose": "Default transition easing across nav, links, and hover states (0.2-0.4s durations)." },
+      { "name": "reduced-motion-fallback", "value": "prefers-reduced-motion: reduce", "purpose": "Honored three ways: CSS media query, framer MotionConfig reducedMotion='user', and manual guards in canvas components (hero particles, globe autorotate)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "480px" },
+      { "name": "md", "value": "640px" },
+      { "name": "nav-collapse", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Text-Link CTA",
+      "kind": "button",
+      "refersTo": "text-link-cta",
+      "description": "Primary call to action, phrased as a sentence fragment, never a boxed button.",
+      "html": "<a class=\"ds-cta\" href=\"#\">Read the full case study &rarr;</a>",
+      "css": ".ds-cta { color: #bca47a; font-family: 'Newsreader', Georgia, serif; font-style: italic; font-size: 1rem; text-decoration: none; transition: color 0.2s; } .ds-cta:hover { color: #d3c09e; } .ds-cta:focus-visible { outline: 2px solid #bca47a; outline-offset: 3px; border-radius: 2px; }"
+    },
+    {
+      "name": "Section Header",
+      "kind": "custom",
+      "refersTo": "section-header-rule",
+      "description": "The load-bearing triad opening every section: hairline rule, Fraunces title, italic Newsreader subtitle.",
+      "html": "<div class=\"ds-section-header\"><h2 class=\"ds-section-title\">Projects</h2><p class=\"ds-section-subtitle\">Selected work, in brief.</p></div>",
+      "css": ".ds-section-header { position: relative; padding-top: 20px; } .ds-section-header::before { content: ''; position: absolute; top: 0; left: 0; width: 36px; height: 1px; background: #bca47a; } .ds-section-title { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-variation-settings: 'opsz' 144, 'WONK' 1; font-size: clamp(1.8rem, 4vw, 3rem); color: #f0e2c5; } .ds-section-subtitle { font-family: 'Newsreader', Georgia, serif; font-style: italic; color: #d6c9ad; margin-top: 6px; }"
+    },
+    {
+      "name": "Status Pip",
+      "kind": "custom",
+      "refersTo": "status-pip",
+      "description": "Pulsing circular status indicator (masthead 'open to roles', Leadership current-role dot).",
+      "html": "<span class=\"ds-status-pip\"></span>",
+      "css": ".ds-status-pip { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #bca47a; box-shadow: 0 0 0 2px rgba(188,164,122,0.18); animation: ds-pulse 2.4s ease-in-out infinite; } @keyframes ds-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 0 2px rgba(188,164,122,0.18); } 50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(188,164,122,0.05); } } @media (prefers-reduced-motion: reduce) { .ds-status-pip { animation: none; } }"
+    },
+    {
+      "name": "Mono Tag",
+      "kind": "chip",
+      "refersTo": "mono-tag",
+      "description": "Hashtag-style research tag; mono-caps pill, used sparingly.",
+      "html": "<span class=\"ds-tag\">#machinelearning</span>",
+      "css": ".ds-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; letter-spacing: 0.03em; color: #8a9d84; border: 1px solid rgba(125,144,121,0.3); }"
+    },
+    {
+      "name": "Photo Frame",
+      "kind": "card",
+      "refersTo": "photo-frame",
+      "description": "Framed photograph treatment used in Highlights and About inline figures; the only element carrying a default shadow.",
+      "html": "<figure class=\"ds-photo-frame\"><img src=\"placeholder.jpg\" alt=\"\" /><figcaption class=\"ds-photo-caption\">Caption in mono.</figcaption></figure>",
+      "css": ".ds-photo-frame { box-shadow: 0 6px 14px rgba(0,0,0,0.28); border-radius: 2px; overflow: hidden; } .ds-photo-caption { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; color: #b3a48c; margin-top: 8px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The A·P Journal",
+    "overview": "The site presents itself as a personal magazine: a running publication with a masthead, section entries that read as articles rather than app screens, and a single sign-off voice at the close. The paper is warm cardstock, not stark white or SaaS-black; ink is cream, not pure white, so nothing on the page reads as a display panel. A restrained WebGL hero and a holographic globe supply the one moment of technical spectacle the rest of the page earns the right to have, by keeping everything else quiet.",
+    "keyCharacteristics": [
+      "One voice color (oat) does all the 'look here' work; sage and ink-blue are rare, calm seconds.",
+      "Long-form prose treatment wherever content is genuinely long-read (drop caps, pull quotes, 760px column).",
+      "Baked paper-grain texture plus a warm-sepia wash, fixed and pointer-events-none.",
+      "Hairline rules and the ⁂ asterism do the separating work instead of borders and shadows."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Oat is the only color allowed to signal 'pay attention here.' A second element needing emphasis competes with the first; redesign the hierarchy instead of adding a second accent.", "section": "colors" },
+      { "name": "The No-Pure-Neutral Rule", "body": "Nothing in the system is true black or true white. Every surface and ink value carries the same warm cardstock/cream undertone.", "section": "colors" },
+      { "name": "The Three-Family Ceiling", "body": "Fraunces + Newsreader + IBM Plex Mono is the working system. Caveat is a fourth, capped to two specific signature moments.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Surfaces are flat at rest. A shadow only lifts a real photograph or signals a live status, never generic card chrome.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do let oat carry every 'pay attention' moment; keep sage and ink-blue rare and calm.",
+      "Do phrase CTAs as text links in a sentence, not boxed buttons.",
+      "Do use hairline rules and the ⁂ asterism to separate sections instead of shadows or card borders.",
+      "Do keep the reading column at 760px for long-form prose sections.",
+      "Do carry the section-header triad (rule + Fraunces title + italic subtitle) on every new section."
+    ],
+    "donts": [
+      "Don't introduce gradient-clipped headline text anywhere in the system.",
+      "Don't add a tiny uppercase tracked eyebrow above a section as generic scaffolding.",
+      "Don't build identical icon+heading+text card grids; Projects and Research are articles, not cards.",
+      "Don't reach for a second saturated accent color for emphasis.",
+      "Don't add default card-shadow chrome; shadows are reserved for real photographs and live-status pips only.",
+      "Don't use pure black or pure white anywhere.",
+      "Don't use emoji as structural icons; all icons are inline SVG from src/icons.jsx."
+    ]
+  }
+}

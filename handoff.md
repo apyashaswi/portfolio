@@ -1,229 +1,93 @@
-# Portfolio Redesign — Handoff
+# Portfolio Design Review — Handoff
 
-> Status as of **2026-05-30**. Branch: `main`. The current session built out an editorial-magazine redesign of the portfolio.
+> Status as of **2026-07-30**. Branch: `design-review-fixes` (pushed, draft PR open against `main`). Nothing from this pass is merged yet — this branch currently contains review/setup artifacts only, no actual fixes.
 
 ---
 
 ## TL;DR — where we are
 
-The portfolio has been rebuilt from a dark-3D / Linear-style SaaS look into an **editorial magazine** aesthetic. Think long-form journal: cream serif type on warm cardstock-dark paper, photo-driven, restrained palette, no glow, no buttons-with-glows, no 3D gem.
+An end-to-end design/UX audit was just run against the live site (`/impeccable critique`, via two independent isolated assessments: an LLM design review + a deterministic detector/browser-evidence pass). Score: **31/40 ("Good")**. Full report is in `.impeccable/critique/2026-07-30T18-58-11Z__localhost-20-full-20site-20all-20sections.md`.
 
-**Five phases were planned. A → E are all built.** Phase D is committed (`b549db8`). **Phase E (the sign-off footer) is built but not committed yet** — work is on disk, `vite build` passes.
-
-**Before stopping, run:**
-```
-git add -A src/
-git commit -m "Phase E: editorial colophon footer / sign-off"
-```
+**Nothing has been fixed yet.** This session ran out of time / the user stepped away right after the critique + a scoping conversation. The next session should start by implementing the fixes below, in priority order.
 
 ---
 
-## Design language (current)
+## What was set up this session (new, committed)
 
-### Palette — cardstock dark
-| Var | Value | Use |
-|---|---|---|
-| `--bg` | `#2c2620` | page background (warm charcoal, not stark) |
-| `--bg-alt` | `#322c25` | alternating section bg |
-| `--bg-card` | `#3a342c` | card / well surfaces |
-| `--accent` | `#bca47a` | **oat** — singular voice color (rules, links, kickers, dots) |
-| `--accent2` | `#7d9079` | dusty sage — calm secondary |
-| `--accent3` | `#6b8aa8` | ink-blue — tertiary, rare |
-| `--ink` | `#f0e2c5` | cream body text |
-| `--ink-soft` | `#d6c9ad` | softened cream for leads |
-| `--ink-muted` | `#998b75` | dim metadata |
-| `--ink-dim` | `#5e5345` | very dim, decorative only |
+- **`PRODUCT.md`** — strategic doc (register: brand/portfolio; audience: recruiters + broader professional network; goal: get visitors to reach out directly; personality: editorial, warm, credible). Read this before making any content/voice decisions.
+- **`DESIGN.md`** — visual system doc ("The A·P Journal" — cardstock-dark palette, oat/sage/ink-blue accents, Fraunces/Newsreader/IBM Plex Mono/Caveat type system, named rules like "The One Voice Rule" and "The Flat-By-Default Rule"). Read this before touching any styling.
+- **`.impeccable/design.json`** — machine-readable sidecar for the above (tonal ramps, component snippets).
+- **`.impeccable/live/config.json`** — pre-configured for `/impeccable live` (in-browser visual iteration mode), Vite/SPA shell, no CSP blockers detected.
+- **`.impeccable/critique/2026-07-30T18-58-11Z__localhost-20-full-20site-20all-20sections.md`** — the full critique snapshot (see below for the summary).
 
-**Voice color discipline:** oat does all the editorial work. We tried vermillion red (alarm/danger on dark — rejected) and a full light-cream-paper flip (broke too many components mid-flight — reverted). Stay on cardstock dark unless there's a strong reason to revisit.
-
-### Typography
-| Var | Family | Use |
-|---|---|---|
-| `--font-display` | **Fraunces** (variable, with `WONK` + `SOFT` axes) | All headings, titles, name marks |
-| `--font-serif` (`--font-body`) | **Newsreader** | Body prose, leads, subtitles |
-| `--font-mono` | **IBM Plex Mono** | Chrome: masthead edition, dates, kickers, metadata |
-| `--font-hand` | **Caveat** | Nav logo "AP" signature, contact sign-off |
-| `--font-ui` | DM Sans | Utility fallback, mobile nav |
-
-All loaded from Google Fonts in `index.html`. Fraunces uses `font-variation-settings: "opsz" 144, "SOFT" 30-50, "WONK" 1` on most headings for character.
-
-### Texture
-- **Paper grain**: SVG turbulence noise overlay (`mix-blend-mode: overlay`, 0.075 opacity) + warm sepia wash (`soft-light`, 0.13 opacity) on body `::before` / `::after`. Fixed-position, z-index 9989-9990, pointer-events none. Don't touch unless adjusting for theme change.
-- **Asterism (⁂)** divider between consecutive sections (`.section + .section::before`). Oat, restrained.
-
-### Reading column
-- `--column: 760px` — narrow editorial column for long-form prose (About, Leadership).
-- `.container-prose` class uses this width.
-- `.container` is 980px (broader, used for Projects, Highlights, etc.).
+These four/five files are new to git this session — the repo had none of them before. `impeccable` (the design-audit skill) reads `PRODUCT.md`/`DESIGN.md` automatically on every future invocation, so don't delete them.
 
 ---
 
-## Architecture
+## Critique summary — score 31/40 ("Good")
 
-### Top-level chrome
-- `src/components/Masthead.jsx` — fixed editorial nameplate band at top (`THE A·P JOURNAL · VOL. XXVI · NO. V`, with an "Open to roles" CTA on the left and a pulsing oat pip). Replaces the old dismissible promo banner.
-- `src/components/Nav.jsx` — sticky nav below masthead. "AP" logo is **Caveat handwritten**, links are serif italic when active with hairline underline.
-- `src/components/Footer.jsx` — current footer has "Built with Claude Code · React on Vercel". **Phase E will rebuild this as the editorial sign-off.**
+Full detail in the snapshot file above; short version:
 
-### Section structure
-Section headers everywhere use a consistent pattern:
-- 36px × 1px oat hairline rule (via `.section-header::before`)
-- Fraunces (variable, WONK on) `.section-title` — clamp-sized
-- Italic Newsreader `.section-subtitle` — editorial voice
+### Priority issues, in order (user confirmed: fix everything, in this order; nothing off-limits)
 
-Section numbers (`01`, `02`, …) were removed in Phase A — they read as SaaS.
+1. **[P0] Chatbase widget auto-opens and blocks content** — covers 35-40% of the mobile viewport across every section, and on mobile with the nav menu open it sits on top of 3 of 10 nav links (confirmed via `elementFromPoint()` + a synthetic click that produced no navigation — this is a functional bug, not just visual clutter). **Fix:** disable Chatbase's proactive/auto-open behavior in its dashboard config; keep the existing click-to-open `openChat()` hook in `Hero.jsx`.
 
-### Per-section components & treatments
-| Component | File | Treatment |
-|---|---|---|
-| Hero | `Hero.jsx` | Two-column nameplate. Italic first-name kicker over big Fraunces last name with oat period. Italic byline. Lead paragraph. Text-link CTAs (no buttons). Portrait photo in 4:5 with mono caption. |
-| About | `About.jsx` | Long-read with drop-cap lead, italic pull quote, wider-than-column inline figure (`pm-class-northeastern.jpg`), "By the numbers" inline strip, education as dot-prefixed list. |
-| Experience | `Experience.jsx` | Timeline-v2 with branded company-mark badges (MSIG red, Cratel oat, PES blue). Each role gets a `--brand` CSS var for in-context tinting. |
-| Projects | `Projects.jsx` | Articles, not cards. Vermillion-rule mono kicker for awards, Fraunces title linking to case study, italic subtitle, mono context, em-dash bullets, italic "Read the full case study" CTA. Hairline rules separate entries. |
-| Highlights | `Highlights.jsx` | 3-col grid with captions **below** image (not overlaid). MSIG award is `tall` and spans 2 rows. Mono badge top-left of frame when present. |
-| Research | `Research.jsx` | Restrained 3-stat strip with rule above/below. Papers as editorial entries (`01 / UNDER REVIEW`, Fraunces title, italic authors, mono venue, serif abstract, `#hashtag` mono tags). |
-| Skills | `Skills.jsx` | Already editorial from earlier phase. Icon+label grid grouped by category. Branded tool icons from Simple Icons CDN. |
-| Leadership | `Leadership.jsx` | **Single-column timeline list** with vertical hairline rail. Mono period, Fraunces role, italic accent org, serif description. Current role has oat-halo dot. |
-| Contact | `Contact.jsx` | Editorial sign-off. Italic blurb, huge Fraunces vermillion email link, inline `LinkedIn · GitHub · Résumé`, handwritten Caveat "— Yashaswi". |
+2. **[P1] Broken/mojibake bullet glyph on every Experience bullet** — `src/styles.css:826`, `content: 'â†’'` (corrupted encoding — a known site-wide issue, see "Gotchas" below). **Fix:** `content: '\2192'` (or `'\2014'` to match `.pd-bullets` elsewhere in the same file) — one-line CSS fix.
 
-### Data layer
-- `src/data.js` — `NAV_LINKS`, `RECRUITER_NAV`, `EXPERIENCE`, `PROJECTS`, `HIGHLIGHTS`, `RESEARCH`, `SKILLS`, `LEADERSHIP`.
-- `src/icons.jsx` — `simpleIconUrl()`, `skillIconUrl()`, `lookupIcon()`, `SKILL_ICONS` map, `CATEGORY_META`.
-- `src/components/TechTag.jsx` — chip that renders Simple Icon if slug exists, plain text otherwise.
+3. **[P1] Journey (ECG monitor) and Globe sections abandon the site's One Voice palette.** User confirmed: **re-skin both into the oat/sage/ink-blue system** (not keep as intentional "insert" moments — that option was explicitly declined). This is a real design decision, not a token swap: `JourneyECG.jsx` is currently phosphor-green-on-near-black with gold/purple/teal/red badges; `GlobeViz.jsx` is navy-hologram with its own amber/teal accents. Consider a quick `/impeccable shape` pass on this specifically before diving into code, since "how does a heart-monitor or hologram read in cardstock-oat" isn't obvious.
 
-### Removed during the redesign
-- `Banner.jsx` (replaced by `Masthead.jsx`)
-- `Roadmap.jsx` + `ROADMAP` data ("AP as a Product" section — user disliked it)
-- `CustomCursor.jsx` (the dot+ring cursor) — switched to system cursor
-- `HeroCanvas.jsx` is **still on disk but no longer imported** anywhere. Safe to delete in a cleanup pass.
-- `CareerTimeline.jsx` was already dead before this session (replaced by `JourneyECG.jsx`).
-- All `.cursor-dot` / `.cursor-ring` CSS
-- All `.section-num` / `.section-header::before { content: attr(data-num) }` CSS (now used for the hairline rule)
-- `.btn-primary` / `.btn-glow` / `.scroll-indicator` styles
-- The old `data-num="0X"` attributes are still in JSX in some components — harmless, not styled. Can be pruned in a cleanup pass.
+4. **[P1] Mobile accessibility: 92% of tap targets under 44×44px** (36 of 39 audited elements — hero CTAs are 28px tall, footer social links 28px tall, ECG waypoint dots as small as 8×8px), **plus a reproducible keyboard bug**: the "Skip to content" link is never the first Tab stop on page load. Root cause traced to `src/components/IntroOverlay.jsx` — its auto-dismiss restores focus to `document.body` in a way that makes Chromium continue tabbing from the overlay's DOM position instead of resetting to document start, so the skip-link (earlier in the DOM) gets bypassed. **Fix:** raise tap targets to 44×44px (padding is enough, doesn't need to change visual size); have the dismiss handler explicitly `.focus()` the skip-link or reset focus properly.
 
----
+5. **[P2] "Unvetted AI-authored content" cluster — needs YOUR input before anyone can implement it:**
+   - Hero photo (`APY_with_Paws.jpg`) is a mascot photo, dominates the entire first mobile viewport. Need either a clean headshot to swap in, or a decision to demote the mascot photo to a lower "personality" section instead of the hero.
+   - Hero byline restates your full name a second time directly under a headline that already says it — redundant, should probably just cut.
+   - About's pull-quote (`src/components/About.jsx`) is confirmed **near-verbatim** from `data.js`'s `EXPERIENCE[0].description` — same sentence, lightly trimmed, dressed as a personal reflection with a figcaption implying it was extracted for that purpose. Needs an actual first-person line from you.
+   - Testimonials section is still not built — CSS exists in `styles.css`, no component, not imported into `Home.jsx`. Still waiting on real quotes from professors (this was already known before this session).
 
-## Photos (all in `public/`)
+6. **[P3] Small self-violations of the site's own `DESIGN.md`:**
+   - Gradient-clip text on `.intro-monogram` (`styles.css:2183`) — directly contradicts `DESIGN.md`'s explicit "no gradient text" rule. Two dead `.grad-text`/`.grad-text-rev` utility classes (`styles.css:234, 240`) sit unused — safe to delete outright.
+   - `TiltCard.jsx`'s pointer-tilt-and-glare hover effect is applied to every Projects entry, including the featured one — `DESIGN.md` explicitly says "Projects and Research are articles, not cards, on purpose." Drop `TiltCard` from Projects or swap for the same restrained photo-frame-lift shadow already used for real photographs.
 
-| File | Where used | Notes |
-|---|---|---|
-| `APY_with_Paws.jpg` | Hero portrait | Full body shot with Northeastern husky mascot. Strong "personal site" hero. |
-| `pm-class-northeastern.jpg` | About inline figure | Group photo at PM class with Sharad. |
-| `msig-ceo-award.jpg` | Highlights (tall feature) | CEO "You Make a Difference" award doc. |
-| `mit-rh-team.jpg` | Highlights | Reality Hack winning team with the device. |
-| `harvard-team.jpg` | Highlights | Asian Business Conference team. |
-| `mit-scm-session.jpg` | Highlights | Editorial moment — name placard "Yashaswi" in foreground. |
-| `mit-souvenir.jpg` | Highlights | With Prof. García after lecture problem-solve. |
-| `mit-rh-mentor.jpg` | Highlights | Candid with the Reality Hack mentor. |
-| `with-suresh-kumar.jpg` | (unused) | NYC selfie with Ex-ISRO scientist. Candidate for About or Phase E sign-off background. |
-| `first-3d-model.jpg` | (unused) | Ultimaker S3 with first 3D model. Candidate for a Project hero. |
-| `northeastern-logo.jpg` | (unused) | School mark — candidate if we add per-school logos on the education list. |
-| `APY_Harvard_Bg.jpg`, `APY_MIT_Dome_bg.jpg`, `APY_MIT_Reality_Hack.jpg` | (unused after Phase D) | Originals replaced by stronger people-in-them shots. Safe to delete or keep. |
+### What's already working well (don't break these while fixing the above)
+- 3-layer reduced-motion handling (CSS media query + `MotionConfig reducedMotion="user"` + manual guards in every WebGL component)
+- Focus-trapped, Escape-dismissible `IntroOverlay` dialog (just has the one Tab-order bug noted above)
+- Accessible `<details>` fallback for the pointer-only 3D globe
+- Evidence-forward writing style (specific numbers, not adjectives) in Projects/Research
+- Explorer/Recruiter mode toggle (`localStorage`-persisted content-density lever) — genuinely good, just isn't the default
 
-All 10 user-uploaded photos were renamed from long descriptive filenames to slugs to keep code URLs clean.
-
----
-
-## Phase status
-
-### Phase A — Foundation ✓ committed
-Masthead, Fraunces/Newsreader/Plex Mono/Caveat type system, cardstock-dark palette, paper grain, asterism dividers, hairline-rule section heads, removed cursor/gem/section-numbers.
-
-### Phase B — Hero as nameplate ✓ committed
-Two-column hero with photo + Fraunces nameplate, text-link CTAs, mono caption.
-
-### Phase C — About as long-read ✓ committed
-Drop cap, pull quote, inline figure, by-the-numbers strip, education as dot list.
-
-### Phase D — Section heads + flow **NOT YET COMMITTED**
-Rewrote Projects (articles not cards), Research (paper entries with `01/STATUS` kickers, hashtag tags), Leadership (single-column timeline list), Contact (editorial sign-off with Caveat signature), Highlights (captions below image, not overlay). Added subtitles to all section headers that lacked them. Pruned dead responsive rules.
-
-**Files changed in Phase D:**
-- `src/components/Projects.jsx`, `Research.jsx`, `Leadership.jsx`, `Contact.jsx`, `Highlights.jsx`
-- `src/components/Experience.jsx`, `Skills.jsx` (subtitle additions)
-- `src/styles.css` (~400 lines replaced/refactored)
-
-### Phase E — Personal sign-off ✓ done (not yet committed)
-Rebuilt the footer as an editorial colophon / back leaf of the journal:
-- Bleeds out — footer now uses `--bg` (cardstock dark), dropped the old stark `#050509` bar and the gradient top-rule.
-- Small oat asterism (⁂) at the top echoes the section dividers.
-- "Thank you for reading." closing line in Fraunces italic, centered. *(Flagged for tone vetting — see open decisions.)*
-- Two-column colophon grid on the `--column` (760px) prose width:
-  - Left: handwritten Caveat **AP** monogram, full name (Newsreader), `© MMXXVI · Somerset, New Jersey` in mono caps.
-  - Right: **Colophon** label + "Set in Fraunces, Newsreader & IBM Plex Mono." + "Built with Claude Code. React, deployed on Vercel."
-- Edition line at the bottom (`The A·P Journal · Vol. XXVI · No. V`) in mono caps, mirroring the masthead.
-- Collapses to a single column under 768px.
-
-Removed the old `.footer-logo` / `.footer-credit` / `.footer-inner` flex styles. `vite build` passes clean.
-
-Code: `src/components/Footer.jsx`. CSS: `.footer*` rules (search for `.footer {`).
-
----
-
-## Open decisions / things to revisit
-
-1. **Hero portrait** — `APY_with_Paws.jpg` works but is a mascot photo. If the user produces a cleaner headshot/portrait, swap the `src` in `Hero.jsx` (lines ~38 and ~80) — same file used in both Hero and RecruiterHero.
-
-2. **"VOL. XXVI · NO. V" in masthead** — the user did not push back on the Roman numeral edition conceit but it's twee. If it bothers them, drop or simplify to `EDITION '26`. File: `src/components/Masthead.jsx`.
-
-3. **Three section header subtitles** are written in my voice (e.g., "Three roles, three rooms, three different ideas of what 'shipping' means."). Should be vetted by the user for tone. Files: `Experience.jsx`, `Projects.jsx`, `Leadership.jsx`, `Contact.jsx`, `Highlights.jsx`, `Skills.jsx`.
-
-4. **About pull quote** sources from the MSIG experience description verbatim. Could be replaced with something more reflective if the user has a personal operating principle they prefer.
-
-5. **Chatbase widget** is still loaded in `index.html`. The Hero has a "Chat with my AI →" CTA that opens it. Working.
-
-6. **Cratel `brandColor: '#8b83e4'`** in `data.js` is purple — survives the editorial palette swap because it's the company's brand color (not a site palette decision). MSIG red and PES blue similarly. Don't normalize these unless intentionally rebranding.
-
-7. **`dist/` directory** is untracked but accumulating Vite build output. Consider adding to `.gitignore` if not already there.
-
-8. **`.claude/settings.local.json`** is local Claude Code state. Shouldn't be committed.
-
----
-
-## Important caveats / gotchas
-
-1. **UTF-8 mojibake in CSS comments**: Earlier in the session, two PowerShell `Get-Content` / `Set-Content` rounds mangled the box-drawing characters (─) and em-dashes (—) in `src/styles.css` comments. The CSS rules themselves are intact; only comment glyphs read as `â”€â”€â”€` and `â€"` in the file. If you edit those blocks, the Edit tool may fail to match on comment text — re-read the file with the Read tool to copy the literal bytes. Future PowerShell writes should use `[System.Text.UTF8Encoding]::new($false)` (UTF-8 no BOM).
-
-2. **Dev server**: a Vite dev server was started in the background earlier on port **5176** (5173-5175 were busy). It's been hot-reloading the whole session. Kill it before you start the next session, or it'll keep running:
-   ```
-   # find the process holding 5176
-   netstat -ano | findstr :5176
-   ```
-
-3. **`HeroCanvas.jsx` is orphan** — imported by nothing. Safe to delete. Same for `CareerTimeline.jsx`.
-
-4. **Edit tool quirk on Windows** — when an edit's `old_string` contains a non-ASCII character that's been mangled (e.g., `—` → `â€"`), the Edit tool errors. Always re-Read first if a string match fails on what should be obviously-present text.
-
-5. **`replace_all: true` foot-gun** — a literal short string like `"03"` matches *every* occurrence including section numbers AND year strings. Always check first or pass a longer unique context.
+### Also noted (minor, lower priority than the above)
+- Leadership's first entry renders "Active" twice adjacent (the `period` field is literally the string `'Active'`, plus a separate current-role badge also says "Active")
+- About's `::first-letter` drop-cap grabs "I'" (apostrophe included) instead of just "I" — CSS spec quirk with contractions
+- `JourneyECG.jsx` hardcodes different Cratel metrics than `data.js`'s canonical entry for the same role — the two have drifted
+- `StatCounter` takes 1.8s to settle; a fast scroller can screenshot an incomplete number mid-animation
+- `.btn-ghost` (Recruiter-mode "Résumé" nav link) is a bordered pill, at odds with the "no bordered buttons" component rule
 
 ---
 
 ## How to resume in the next session
 
-1. Read this file.
-2. **Commit Phase D first** — see TL;DR section above.
-3. Pick one of:
-   - **Phase E (sign-off footer)** — most natural next step.
-   - **Polish pass**: ProjectDetail page (the `/projects/:id` route) still uses old card styles and needs the editorial sweep too. Wasn't touched in Phase D.
-   - **Content review**: vet the section subtitles I wrote, swap the hero portrait, replace the About pull quote.
-   - **Cleanup**: delete `HeroCanvas.jsx`, `CareerTimeline.jsx`, dead `data-num` JSX attributes, orphan `--ink-on-dark` references; add `dist/` and `.claude/` to `.gitignore`.
-
-4. Dev server: `npm run dev` (will pick an open port; check the output).
+1. Read this file, then skim the full critique snapshot (`.impeccable/critique/2026-07-30T*.md`) for complete detail on every issue above.
+2. Read `PRODUCT.md` and `DESIGN.md` if you haven't already this session — they now exist and should ground any further design work.
+3. Work top-down through the priority list. Suggested order:
+   - Do the two trivial one-line fixes first (Chatbase config — may need the Chatbase dashboard, not just code; bullet glyph CSS fix).
+   - Then the mobile tap-target + skip-link fixes (`/impeccable adapt`).
+   - Then the Journey/Globe re-skin (`/impeccable shape` first, given it's a real design decision, then implement).
+   - Then the P3 self-violation cleanup (`/impeccable polish`).
+   - The P2 content cluster needs material from the site owner (headshot photo, a real pull-quote line, real testimonial quotes) before it can be implemented — surface this early so it's not the blocker at the end.
+4. This work is on branch `design-review-fixes`, PR open (draft) against `main`. Commit incrementally as each issue is fixed; mark the PR ready for review once everything (or an agreed subset) lands. Re-run `/impeccable critique` afterward — the score should move meaningfully off 31/40.
+5. Dev server: `npm run dev` (Vite; will pick an open port, check the output — port 5173 was occupied by something else during this session, landed on 5174).
 
 ---
 
-## Reference: recent commit history
+## Gotchas from this session (and one still-open from the last one)
 
-```
-c402380 About as long-read editorial feature                    ← Phase C
-67764bc Editorial redesign: cardstock dark palette, nameplate    ← Phase A + B
-866f1c8 Remove 'AP as a Product' Roadmap section
-a79c2e3 Soften Hero/About: dim 3D gem, warm amber accents
-5239f6a Tech-stack icons on Project chips + softer TiltCard
-9a24bfe Rework Experience timeline with branded company-mark
-5e8d269 Redesign Skills as icon+label rows
-f5cadaf Warm palette, add film grain, credit Claude Code in footer
-```
+1. **Mojibake / UTF-8 corruption in `styles.css` is a recurring, ongoing issue** — the prior handoff (git history, see below) already flagged corrupted box-drawing characters and em-dashes in CSS *comments*. This session found the corruption has also reached actual rendered *content* now (the Experience bullet glyph, priority issue #2 above). If you edit near either spot, re-read the file with a proper UTF-8-aware tool first; don't trust that an `old_string` match on a dash/arrow character will work as typed.
+2. **The impeccable skill lives globally, not in this project.** Its scripts are at `~/.claude/skills/impeccable/scripts/` (i.e. `C:\Users\Yashaswi A P\.claude\skills\impeccable\scripts\`), not under this repo's `.claude/`. Run them with the full global path.
+3. **Two Chatbase-related things to keep separate:** the auto-open/greeting behavior (P0 fix, mostly a Chatbase dashboard setting) vs. the "Chat with my AI" CTA and its `openChat()` click handler in `Hero.jsx` (keep this — it's a good feature, just shouldn't fire itself).
+4. Dev server was left running in the background this session (port 5174) for the audit's browser-based checks. Kill it before starting fresh next time if it's still alive: `netstat -ano | findstr :5174` (Windows) to find the PID.
 
-Five clean commits in this session's editorial arc, plus Phase D waiting on disk.
+---
+
+## Reference: how this branch relates to the last one
+
+The previous `handoff.md` (now superseded, but preserved in git history — see commit history for "Phase A" through "Phase E" of the earlier editorial-magazine redesign, all merged to `main` well before this session) covered the cardstock-dark editorial rebuild. That work is complete and live. This session's audit was a fresh top-to-bottom review of the *result* of that redesign plus the later 3D-hero merge (`9a84b36`), not a continuation of the Phase A-E work itself.
