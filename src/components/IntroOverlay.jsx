@@ -11,11 +11,9 @@ import { introWillShow, fireIntroDone } from '../intro'
 export default function IntroOverlay() {
   const [show, setShow] = useState(introWillShow)
   const skipRef = useRef(null)
-  const prevFocus = useRef(null)
 
   useEffect(() => {
     if (!show) { fireIntroDone(); return }   // skipped (reduced motion / effects off)
-    prevFocus.current = document.activeElement
     document.body.style.overflow = 'hidden'
     skipRef.current?.focus()
     const t = setTimeout(() => dismiss(), 2000)
@@ -25,8 +23,16 @@ export default function IntroOverlay() {
       clearTimeout(t)
       window.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
-      // Return focus to wherever it was, so keyboard users aren't dumped at the top.
-      if (prevFocus.current && prevFocus.current.focus) prevFocus.current.focus()
+      // prevFocus is always <body> here (the intro only ever shows once, at
+      // initial load, before anything is interactively focused), and <body>
+      // isn't natively focusable — calling .focus() on it doesn't reset
+      // Chromium's sequential-navigation pointer, so the next Tab continues
+      // from the overlay's former DOM position and skips .skip-link. A
+      // temporary tabindex resets that pointer to the top of the document
+      // instead, with no visible focus ring for mouse users.
+      document.body.setAttribute('tabindex', '-1')
+      document.body.focus({ preventScroll: true })
+      document.body.removeAttribute('tabindex')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show])

@@ -2089,6 +2089,15 @@ a, button { cursor: pointer; }
   background: rgba(0, 160, 55, 0.08);
   border: 1px solid rgba(0, 160, 55, 0.18);
   transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+  position: relative;
+}
+.ecg-pip::before {
+  content: '';
+  position: absolute;
+  inset: -18px; /* (44 - 8) / 2 = 18px of invisible hit-slop on each side */
+}
+.ecg-pip.featured::before {
+  inset: -16.5px; /* (44 - 11) / 2, since .featured is 11px not 8px */
 }
 .ecg-pip:hover {
   transform: scale(1.35);
@@ -2775,8 +2784,8 @@ a, button { cursor: pointer; }
 .intro-skip-btn:hover { color: var(--ink); border-color: var(--border-hover); }
 
 /* Touch-target floor (WCAG 2.5.8) for the inline hero/project CTAs */
-.hero-link { display: inline-flex; align-items: center; min-height: 28px; }
-.project-cta { display: inline-flex; align-items: center; min-height: 24px; }
+.hero-link { display: inline-flex; align-items: center; min-height: 44px; }
+.project-cta { display: inline-flex; align-items: center; min-height: 44px; }
 
 /* Globe locations disclosure — visible, keyboard- and touch-reachable equivalent */
 .globe-locations { margin-top: 16px; }
