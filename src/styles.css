@@ -823,7 +823,7 @@ a, button { cursor: pointer; }
   padding-left: 20px; position: relative;
 }
 .exp-bullets li::before {
-  content: ‘\2192’; position: absolute; left: 0;
+  content: "\2192"; position: absolute; left: 0;
   color: var(--accent2); font-size: 12px; top: 2px;
 }
 
