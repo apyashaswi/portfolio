@@ -85,43 +85,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+      /* Chatbase's dashboard "proactive message" setting auto-shows a greeting
+         bubble on load, blocking hero content and the mobile hamburger nav
+         (audit P0). That toggle lives on chatbase.co, outside this repo. The
+         greeting bubble is a separate DOM node (#chatbase-message-bubbles)
+         from the actual chat panel (#chatbase-bubble-window) and toggle
+         button (#chatbase-bubble-button) — hiding it here doesn't touch
+         either of those, so Hero.jsx's openChat() CTA keeps working. */
+      #chatbase-message-bubbles { display: none !important; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script>
-      (function () {
-        if (!window.chatbase || window.chatbase("getState") !== "initialized") {
-          window.chatbase = (...arguments) => {
-            if (!window.chatbase.q) { window.chatbase.q = [] }
-            window.chatbase.q.push(arguments)
-          }
-          window.chatbase = new Proxy(window.chatbase, {
-            get(target, prop) {
-              if (prop === "q") { return target.q }
-              return (...args) => target(prop, ...args)
-            }
-          })
-        }
-        const onLoad = function () {
-          const script = document.createElement("script")
-          script.src = "https://www.chatbase.co/embed.min.js"
-          script.id = "p6fTFZWVuLEZfBNQ-T_0y"
-          script.domain = "www.chatbase.co"
-          script.onload = function () {
-            // Chatbase's dashboard "proactive message" setting auto-opens the
-            // widget on load, blocking hero content and the mobile hamburger
-            // nav (audit P0). That toggle lives on chatbase.co, outside this
-            // repo, so this closes it once, shortly after init, without
-            // touching the deliberate openChat() hook in Hero.jsx afterward.
-            setTimeout(function () {
-              if (window.chatbase) window.chatbase("close")
-            }, 2500)
-          }
-          document.body.appendChild(script)
-        }
-        if (document.readyState === "complete") { onLoad() } else { window.addEventListener("load", onLoad) }
-      })();
+      (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="p6fTFZWVuLEZfBNQ-T_0y";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
     </script>
   </body>
 </html>
