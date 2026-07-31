@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { fadeUp } from '../utils'
 
 /* ─── MILESTONES ─────────────────────────────────────────────────── */
 const milestones = [
@@ -397,13 +398,7 @@ export default function JourneyECG() {
         <motion.div
           className="section-header"
           data-num="02"
-          initial={{ opacity:0, y:32 }}
-          whileInView={{ opacity:1, y:0 }}
-          viewport={{ once:true, margin:'-60px' }}
-          transition={{
-            y: { type: 'spring', duration: 0.45, bounce: 0.16 },
-            opacity: { duration: 0.28, ease: 'easeOut' },
-          }}
+          {...fadeUp()}
         >
           <h2 className="section-title">My Journey</h2>
           <p className="section-subtitle">From Bengaluru to Boston — 2002 to 2027</p>
