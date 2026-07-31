@@ -330,10 +330,10 @@ export default function JourneyECG() {
       ctx.shadowColor = HEAD_CLR
       ctx.shadowBlur  = 28
       ctx.fill()
-      // inner white core
+      // inner core, warm-cream (matches HEAD_CLR, no pure white)
       ctx.beginPath()
       ctx.arc(headX, hy, 2, 0, Math.PI * 2)
-      ctx.fillStyle   = '#ffffff'
+      ctx.fillStyle   = HEAD_CLR
       ctx.shadowBlur  = 0
       ctx.fill()
       ctx.restore()
@@ -501,7 +501,7 @@ function drawStaticTrace(canvas, W, H, bufY) {
   ctx.fillRect(0, 0, W, H)
   drawGrid(ctx, W, H)
 
-  // Whole waveform in steady phosphor green — no scan beam, no head dot.
+  // Whole waveform in steady oat, no scan beam, no head dot.
   const path = new Path2D()
   path.moveTo(0.5, bufY[0])
   for (let x = 1; x < W; x++) path.lineTo(x + 0.5, bufY[x])
