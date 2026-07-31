@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import TechTag from './TechTag'
-import TiltCard from './TiltCard'
 import { fadeUp } from '../utils'
 import { PROJECTS } from '../data'
 
@@ -53,17 +52,17 @@ export default function Projects() {
         </motion.div>
         {featured && (
           <motion.div {...fadeUp(0.05)}>
-            <TiltCard className="project-tilt project-tilt-featured">
+            <div className="project-tilt project-tilt-featured">
               <ProjectEntry p={featured} featured />
-            </TiltCard>
+            </div>
           </motion.div>
         )}
         <div className="projects-list projects-list-cards">
           {rest.map((p, i) => (
             <motion.div key={p.id} {...fadeUp(i * 0.08)}>
-              <TiltCard className="project-tilt">
+              <div className="project-tilt">
                 <ProjectEntry p={p} />
-              </TiltCard>
+              </div>
             </motion.div>
           ))}
         </div>

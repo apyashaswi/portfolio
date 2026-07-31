@@ -228,20 +228,6 @@ a, button { cursor: pointer; }
   .masthead-title { justify-self: start; }
 }
 
-/* â”€â”€â”€ GRADIENT TEXT UTILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.grad-text {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.grad-text-rev {
-  background: linear-gradient(135deg, var(--accent2) 0%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* Custom cursor removed â€” using system cursors */
 
 /* â”€â”€â”€ TYPEWRITER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -828,12 +814,6 @@ a, button { cursor: pointer; }
 }
 
 /* â”€â”€â”€ TILT CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.tilt-card {
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
-  will-change: transform; transform-style: preserve-3d;
-  border-radius: var(--radius);
-}
-
 /* â”€â”€â”€ PROJECTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 /* Projects -- editorial entries instead of showcase cards */
 .projects-list {
@@ -2196,10 +2176,7 @@ a, button { cursor: pointer; }
   font-family: 'Playfair Display', serif;
   font-size: clamp(72px, 14vw, 140px);
   font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent);
   text-shadow: 0 0 60px rgba(188, 164, 122, 0.25);
 }
 .intro-tagline {
@@ -2548,37 +2525,6 @@ a, button { cursor: pointer; }
 @keyframes hud-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 @media (max-width: 720px) { .hero-hud { display: none; } }
 @media (prefers-reduced-motion: reduce) { .hud-dot { animation: none; } }
-
-/* ─── Project card: pointer-tracked specular glare (experiment) ───────────── */
-.tilt-card--glare {
-  position: relative;
-  isolation: isolate;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
-  will-change: transform;
-}
-.tilt-card--glare:hover {
-  box-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(188, 164, 122, 0.22);
-}
-.tilt-card--glare::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 4;
-  background: radial-gradient(
-    circle at var(--mx, 50%) var(--my, 50%),
-    rgba(188, 164, 122, 0.28),
-    rgba(188, 164, 122, 0) 42%
-  );
-  opacity: var(--glare, 0);
-  transition: opacity 0.3s ease;
-  mix-blend-mode: screen;
-}
-@media (prefers-reduced-motion: reduce) {
-  .tilt-card--glare { transition: none; }
-  .tilt-card--glare::after { display: none; }
-}
 
 /* ─── Project cards: 3D surface for the tilt/glare treatment (experiment) ──── */
 .project-tilt {
