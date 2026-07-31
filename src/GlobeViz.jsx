@@ -8,9 +8,9 @@ const PINS = [
   { lat: 40.7684,  lng: -74.5143, label: 'Warren, NJ',           detail: 'MSIG USA Â· Program Manager & Scrum Master',            color: '#bca47a', size: 1.2, type: 'pro' },
   { lat: 12.9716,  lng:  77.5946, label: 'Bengaluru, India',     detail: 'PES University Â· B.Tech ECE Â· Cratel Co-Founder',      color: '#bca47a', size: 1.2, type: 'pro' },
   { lat: 42.3770,  lng: -71.1167, label: 'Harvard Â· Cambridge',  detail: 'Harvard Asian Conference 2025',                        color: '#bca47a', size: 1.0, type: 'pro' },
-  // Award / Home â€” amber #EF9F27
-  { lat: 42.3601,  lng: -71.0942, label: 'MIT Â· Cambridge, MA',  detail: 'MIT Reality Hack 2025 Â· Jaw-Dropping Award',        color: '#EF9F27', size: 1.8, type: 'award' },
-  { lat: 12.2958,  lng:  76.6394, label: 'Mysuru, India',        detail: 'Hometown Â· City of Palaces Â· Karnataka',               color: '#EF9F27', size: 1.5, type: 'award' },
+  // Award / Home â€” ink-blue #6b8aa8
+  { lat: 42.3601,  lng: -71.0942, label: 'MIT Â· Cambridge, MA',  detail: 'MIT Reality Hack 2025 Â· Jaw-Dropping Award',        color: '#6b8aa8', size: 1.8, type: 'award' },
+  { lat: 12.2958,  lng:  76.6394, label: 'Mysuru, India',        detail: 'Hometown Â· City of Palaces Â· Karnataka',               color: '#6b8aa8', size: 1.5, type: 'award' },
   // Travel US â€” teal #7d9079
   { lat: 40.7128,  lng: -74.0060, label: 'New York City, NY',    detail: 'NYC Â· The City',                                       color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 43.0962,  lng: -79.0377, label: 'Niagara Falls, NY',    detail: 'Niagara Falls Â· Natural Wonder',                       color: '#7d9079', size: 0.85, type: 'travel' },
@@ -55,11 +55,11 @@ export default function GlobeViz() {
     return () => ctrl.abort()
   }, [])
 
-  // Ocean base material â€” dark navy, clearly darker than land #1e2140
+  // Ocean base material â€” warm cardstock (--bg #2c2620), no longer navy
   const globeMaterial = useMemo(() => new THREE.MeshPhongMaterial({
-    color: '#0a0a1a',
-    emissive: '#04040e',
-    specular: '#161630',
+    color: '#2c2620',      // --bg: warm cardstock ocean, not navy
+    emissive: '#2c2620',    // --bg (reused rather than inventing a darker shade)
+    specular: '#3a342c',   // --bg-card
     shininess: 5,
   }), [])
 
@@ -138,7 +138,7 @@ export default function GlobeViz() {
           height={dims.h}
           // Use solid section-alt background color instead of transparent
           // to avoid WebGL ghost-rendering artifacts on canvas edges
-          backgroundColor="#0b0b14"
+          backgroundColor="#2c2620"
 
           customGlobeMaterial={globeMaterial}
 
@@ -230,7 +230,7 @@ export default function GlobeViz() {
             Travels
           </div>
           <div className="gl-item">
-            <span className="gl-dot" style={{ background: '#EF9F27', boxShadow: '0 0 9px #EF9F27bb' }} />
+            <span className="gl-dot" style={{ background: '#6b8aa8', boxShadow: '0 0 9px #6b8aa8bb' }} />
             Award / Home
           </div>
         </div>

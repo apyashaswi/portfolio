@@ -1767,14 +1767,14 @@ a, button { cursor: pointer; }
   height: 650px; display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 14px;
   border: 1px solid var(--border); border-radius: var(--radius);
-  background: #0b0b14;
+  background: var(--bg);
 }
 
 /* Tooltip */
 .globe-tooltip {
   position: fixed;
   z-index: 9000;
-  background: rgba(10,10,22,0.96);
+  background: rgba(44,38,32,0.96);
   backdrop-filter: blur(16px);
   border: 1px solid rgba(188, 164, 122,0.3);
   border-radius: var(--radius-sm);
@@ -1799,7 +1799,7 @@ a, button { cursor: pointer; }
   left: 50%;
   transform: translateX(-50%);
   display: flex; gap: 20px;
-  background: rgba(8,8,18,0.82);
+  background: rgba(44, 38, 32, 0.82); /* --bg */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(188, 164, 122,0.18);
   border-radius: 30px;
