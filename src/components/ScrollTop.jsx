@@ -19,7 +19,11 @@ export default function ScrollTop() {
           initial={{ opacity: 0, scale: 0.6, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.6, y: 20 }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+          transition={{
+            scale: { type: 'spring', duration: 0.3, bounce: 0.2 },
+            y: { type: 'spring', duration: 0.3, bounce: 0.2 },
+            opacity: { duration: 0.2, ease: 'easeOut' },
+          }}
         >
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <polyline points="6 14 12 8 18 14" />

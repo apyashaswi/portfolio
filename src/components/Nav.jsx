@@ -52,7 +52,10 @@ export default function Nav({ active, bannerVisible, mode }) {
       className={`nav${scrolled ? ' scrolled' : ''}${bannerVisible ? ' with-banner' : ''}`}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        y: { type: 'spring', duration: 0.4, bounce: 0.14 },
+        opacity: { duration: 0.25, ease: 'easeOut' },
+      }}
     >
       <div className="nav-inner">
         <button className="nav-logo" onClick={goHome}>
