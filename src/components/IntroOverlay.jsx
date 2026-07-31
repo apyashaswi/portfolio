@@ -16,7 +16,7 @@ export default function IntroOverlay() {
     if (!show) { fireIntroDone(); return }   // skipped (reduced motion / effects off)
     document.body.style.overflow = 'hidden'
     skipRef.current?.focus()
-    const t = setTimeout(() => dismiss(), 2000)
+    const t = setTimeout(() => dismiss(), 1200)
     const onKey = (e) => { if (e.key === 'Escape') dismiss() }
     window.addEventListener('keydown', onKey)
     return () => {
@@ -51,22 +51,22 @@ export default function IntroOverlay() {
           aria-modal="true"
           aria-label="Intro animation"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.08, filter: 'blur(6px)', transition: { duration: 0.85, ease: [0.7, 0, 0.2, 1] } }}
+          exit={{ opacity: 0, scale: 1.08, filter: 'blur(6px)', transition: { duration: 0.5, ease: [0.7, 0, 0.2, 1] } }}
         >
           <motion.div
             className="intro-flash"
             aria-hidden="true"
             initial={{ opacity: 0, scale: 0.2 }}
             animate={{ opacity: [0, 0, 0.9, 0], scale: [0.2, 0.2, 1.6, 2.2] }}
-            transition={{ duration: 2.0, times: [0, 0.8, 0.9, 1], ease: 'easeOut' }}
+            transition={{ duration: 1.0, times: [0, 0.75, 0.85, 1], ease: 'easeOut' }}
           />
           <motion.div
             className="intro-monogram"
             aria-hidden="true"
             initial={{ opacity: 0, scale: 0.86, letterSpacing: '0.5em' }}
             animate={{ opacity: 1, scale: 1, letterSpacing: '0.16em' }}
-            exit={{ scale: 1.35, opacity: 0, transition: { duration: 0.7, ease: [0.7, 0, 0.2, 1] } }}
-            transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            exit={{ scale: 1.35, opacity: 0, transition: { duration: 0.45, ease: [0.7, 0, 0.2, 1] } }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             AP
           </motion.div>
@@ -75,13 +75,13 @@ export default function IntroOverlay() {
             aria-hidden="true"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ delay: 0.4, duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.25, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           />
           <motion.div
             className="intro-tagline"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.4, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             Yashaswi Alur Prasannakumar
           </motion.div>
