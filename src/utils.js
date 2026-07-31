@@ -29,9 +29,15 @@ export const useDocumentMeta = (title, description) => {
   }, [title, description])
 }
 
-export const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 32 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] },
-})
+export const fadeUp = (delay = 0) => {
+  const d = Math.min(delay, 0.3)
+  return {
+    initial: { opacity: 0, y: 32 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: '-60px' },
+    transition: {
+      y: { type: 'spring', duration: 0.45, bounce: 0.16, delay: d },
+      opacity: { duration: 0.28, ease: 'easeOut', delay: d },
+    },
+  }
+}
