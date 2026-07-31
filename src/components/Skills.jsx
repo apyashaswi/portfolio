@@ -48,7 +48,7 @@ export default function Skills({ recruiterMode }) {
                       initial={{ opacity: 0, x: -6 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.35, delay: 0.04 * j }}
+                      transition={{ duration: 0.3, delay: Math.min(0.04 * j, 0.25), ease: 'easeOut' }}
                     >
                       <SkillIcon name={s} />
                       <span className="skill-label">{s}</span>
