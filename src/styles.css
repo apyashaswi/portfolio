@@ -2525,7 +2525,7 @@ a, button { cursor: pointer; }
 @media (max-width: 720px) { .hero-hud { display: none; } }
 @media (prefers-reduced-motion: reduce) { .hud-dot { animation: none; } }
 
-/* ─── Project cards: 3D surface for the tilt/glare treatment (experiment) ──── */
+/* ─── Project cards: flat well styling (no tilt/glare — that interaction was removed) ──── */
 .project-tilt {
   background: var(--bg-card);
   border: 1px solid var(--border);
