@@ -22,12 +22,22 @@ function useHeroReveal() {
 
 const makeReveal = (reduced) => ({
   hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 26, filter: 'blur(7px)' },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: reduced ? 0.4 : 0.85, delay: reduced ? 0 : i * 0.12, ease: [0.22, 1, 0.36, 1] },
-  }),
+  show: (i = 0) => {
+    if (reduced) {
+      return { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4, delay: 0, ease: [0.22, 1, 0.36, 1] } }
+    }
+    const delay = i * 0.06
+    return {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: {
+        y: { type: 'spring', duration: 0.45, bounce: 0.14, delay },
+        filter: { type: 'spring', duration: 0.45, bounce: 0.14, delay },
+        opacity: { duration: 0.28, ease: 'easeOut', delay },
+      },
+    }
+  },
 })
 
 function HeroBody({ recruiter }) {
