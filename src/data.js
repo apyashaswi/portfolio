@@ -10,7 +10,7 @@ export const EXPERIENCE = [
     logo: null,
     type: 'Co-op',
     location: 'Warren, NJ',
-    period: 'Jan 2026 – Present',
+    period: 'Jan 2026 – Aug 2026',
     description: 'Serving as the operational and delivery anchor for the Data & AI team — spanning agile delivery, PI planning, hiring operations, ADO governance, and executive reporting across Claims Data, Re-insurance and Finance Data, and Strategic Projects.',
     bullets: [
       'Facilitating daily standups for Claims Data, Fabric, and Data Operations teams; managing Azure DevOps boards, resolving access issues, and aligning sprint work items with PI planning inputs across multiple concurrent workstreams',
@@ -20,7 +20,7 @@ export const EXPERIENCE = [
       'Supporting Microsoft Fabric tenant-to-tenant migration across database tables and delivering Fabric enablement training for 20 actuarial participants on F64 capacity',
     ],
     tags: ['Microsoft Fabric', 'Azure DevOps', 'Scrum / Agile', 'PI Planning', 'Change Management', 'Hiring Operations', 'Executive Reporting', 'Prosci'],
-    current: true,
+    current: false,
   },
   {
     title: 'Co-Founder & Chief Product Officer',

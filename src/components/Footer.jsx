@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="footer-sign">
             <span className="footer-monogram" aria-hidden="true">AP</span>
             <span className="footer-name">Yashaswi Alur Prasannakumar</span>
-            <span className="footer-copy">© 2026 &middot; Somerset, New&nbsp;Jersey</span>
+            <span className="footer-copy">© 2026 &middot; Boston, Massachusetts</span>
           </div>
 
           <div className="footer-colophon">

@@ -68,13 +68,13 @@ function HeroBody({ recruiter }) {
           </motion.h1>
           <motion.div className="hero-byline" {...anim(2)}>
             <span className="hero-byline-by">by</span> Yashaswi Alur Prasannakumar &middot;{' '}
-            <span className="hero-byline-loc">Somerset, NJ</span>
+            <span className="hero-byline-loc">Boston, MA</span>
           </motion.div>
           <motion.p className="hero-lead" {...anim(3)}>
-            A program manager, researcher, and builder working at the
-            intersection of <em>Data</em>, <em>AI</em>, and Strategic Operations &mdash;
-            currently leading delivery on the Data &amp; AI team at MSIG USA,
-            graduating Northeastern in December&nbsp;2026.
+            A program manager, researcher, and technology strategist working at the
+            intersection of business and <em>AI</em> &mdash; turning requirements into
+            enterprise-scale solutions. Recently led delivery on the Data &amp; AI
+            team at MSIG USA, graduating Northeastern in December&nbsp;2026.
           </motion.p>
           <motion.div className="hero-ctas" {...anim(4)}>
             {recruiter ? (

@@ -16,7 +16,7 @@ export default function Contact({ recruiterMode }) {
           <motion.p className="contact-blurb" {...fadeUp(0.08)}>
             Open to full-time roles in <em>Program Management</em>, <em>Data &amp; AI</em>,
             and <em>Engineering Operations</em> &mdash; available from January&nbsp;2027.
-            Based in Somerset, NJ. Happy to talk research, XR, or anything interesting.
+            Based in Boston, MA. Happy to talk research, XR, or anything interesting.
           </motion.p>
         )}
 

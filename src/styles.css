@@ -452,16 +452,16 @@ a, button { cursor: pointer; }
   flex-direction: column;
   font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
 }
-.hero-name-first {
+.hero-name-first { display: block; }
+.hero-name-last {
   display: block;
   font-style: italic;
   font-weight: 400;
   color: var(--accent);
   font-size: 0.62em;
   letter-spacing: -0.01em;
-  margin-bottom: 6px;
+  margin-top: 6px;
 }
-.hero-name-last { display: block; }
 .hero-name-stop { color: var(--accent); }
 
 .hero-byline {

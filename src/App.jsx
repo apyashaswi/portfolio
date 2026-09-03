@@ -12,7 +12,7 @@ import ProjectDetail from './pages/ProjectDetail'
 export default function App() {
   const [active, setActive] = useState('hero')
   const [mode, setMode] = useState(() => {
-    try { return localStorage.getItem('ap-mode') || 'explorer' } catch { return 'explorer' }
+    try { return localStorage.getItem('ap-mode') || 'recruiter' } catch { return 'recruiter' }
   })
   const location = useLocation()
   const isHome = location.pathname === '/'
