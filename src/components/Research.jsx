@@ -63,7 +63,7 @@ export default function Research({ recruiterMode }) {
             <motion.h3 className="pub-heading" {...fadeUp(0.15)}>Under Review</motion.h3>
             <div className="papers-list">
               {underReview.map((p, i) => (
-                <motion.div key={i} {...fadeUp(0.1 + i * 0.08)}>
+                <motion.div key={p.title} {...fadeUp(0.1 + i * 0.08)}>
                   <PaperEntry p={p} index={i} status="Under review" />
                 </motion.div>
               ))}
@@ -72,7 +72,7 @@ export default function Research({ recruiterMode }) {
             <motion.h3 className="pub-heading" {...fadeUp(0.2)}>Published</motion.h3>
             <div className="papers-list">
               {published.map((p, i) => (
-                <motion.div key={i} {...fadeUp(0.2 + i * 0.08)}>
+                <motion.div key={p.title} {...fadeUp(0.2 + i * 0.08)}>
                   <PaperEntry p={p} index={i} status="Published" />
                 </motion.div>
               ))}

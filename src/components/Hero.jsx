@@ -4,6 +4,7 @@ import Picture from './Picture'
 import HeroScene from './HeroScene'
 import HeroHUD from './HeroHUD'
 import { INTRO_DONE, introWillShow } from '../intro'
+import { revealTransition } from '../utils'
 
 // Reveal begins the instant the intro overlay lifts (or immediately if the
 // intro was already shown this session) — so the cold-open and the hero land
@@ -27,15 +28,12 @@ const makeReveal = (reduced) => ({
       return { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4, delay: 0, ease: [0.22, 1, 0.36, 1] } }
     }
     const delay = i * 0.06
+    const t = revealTransition(delay)
     return {
       opacity: 1,
       y: 0,
       filter: 'blur(0px)',
-      transition: {
-        y: { type: 'spring', duration: 0.45, bounce: 0.14, delay },
-        filter: { type: 'spring', duration: 0.45, bounce: 0.14, delay },
-        opacity: { duration: 0.28, ease: 'easeOut', delay },
-      },
+      transition: { ...t, filter: t.y },
     }
   },
 })

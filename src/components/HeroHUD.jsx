@@ -1,22 +1,13 @@
-import { useEffect, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
+import { useScrollY } from '../utils'
 
 /* Decorative "telemetry" HUD — IBM Plex Mono register marks that frame the hero
    like a viewport readout. Purely ornamental (aria-hidden); the scroll/coord
    readouts tick only when motion is allowed. */
 export default function HeroHUD() {
   const reduced = useReducedMotion()
-  const [scrollPct, setScrollPct] = useState(0)
-
-  useEffect(() => {
-    if (reduced) return
-    const onScroll = () => {
-      const max = window.innerHeight * 0.9
-      setScrollPct(Math.min(100, Math.round((window.scrollY / max) * 100)))
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [reduced])
+  const rawY = useScrollY(!reduced)
+  const scrollPct = reduced ? 0 : Math.min(100, Math.round((rawY / (window.innerHeight * 0.9)) * 100))
 
   return (
     <div className="hero-hud" aria-hidden="true">

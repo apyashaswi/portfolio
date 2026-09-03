@@ -1,28 +1,29 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
 import Globe from 'react-globe.gl'
 import * as THREE from 'three'
+import { useReducedEffects } from './effects'
 
 const PINS = [
-  // Professional â€” purple #bca47a
-  { lat: 42.3601,  lng: -71.0589, label: 'Boston, MA',           detail: 'Northeastern University Â· MS Engineering Management', color: '#bca47a', size: 1.2, type: 'pro' },
-  { lat: 40.7684,  lng: -74.5143, label: 'Warren, NJ',           detail: 'MSIG USA Â· Program Manager & Scrum Master',            color: '#bca47a', size: 1.2, type: 'pro' },
-  { lat: 12.9716,  lng:  77.5946, label: 'Bengaluru, India',     detail: 'PES University Â· B.Tech ECE Â· Cratel Co-Founder',      color: '#bca47a', size: 1.2, type: 'pro' },
-  { lat: 42.3770,  lng: -71.1167, label: 'Harvard Â· Cambridge',  detail: 'Harvard Asian Conference 2025',                        color: '#bca47a', size: 1.0, type: 'pro' },
-  // Award / Home â€” ink-blue #6b8aa8
-  { lat: 42.3601,  lng: -71.0942, label: 'MIT Â· Cambridge, MA',  detail: 'MIT Reality Hack 2025 Â· Jaw-Dropping Award',        color: '#6b8aa8', size: 1.8, type: 'award' },
-  { lat: 12.2958,  lng:  76.6394, label: 'Mysuru, India',        detail: 'Hometown Â· City of Palaces Â· Karnataka',               color: '#6b8aa8', size: 1.5, type: 'award' },
-  // Travel US â€” teal #7d9079
-  { lat: 40.7128,  lng: -74.0060, label: 'New York City, NY',    detail: 'NYC Â· The City',                                       color: '#7d9079', size: 0.85, type: 'travel' },
-  { lat: 43.0962,  lng: -79.0377, label: 'Niagara Falls, NY',    detail: 'Niagara Falls Â· Natural Wonder',                       color: '#7d9079', size: 0.85, type: 'travel' },
-  { lat: 44.4759,  lng: -73.2121, label: 'Burlington, VT',       detail: 'Burlington Â· New England',                             color: '#7d9079', size: 0.85, type: 'travel' },
-  { lat: 44.0523,  lng: -71.1270, label: 'North Conway, NH',     detail: 'North Conway Â· White Mountains, NH',                   color: '#7d9079', size: 0.85, type: 'travel' },
-  { lat: 44.9778,  lng: -93.2650, label: 'Minneapolis, MN',      detail: 'Minneapolis Â· Twin Cities',                            color: '#7d9079', size: 0.85, type: 'travel' },
-  // Travel International â€” teal #7d9079
+  // Professional — purple #bca47a
+  { lat: 42.3601,  lng: -71.0589, label: 'Boston, MA',           detail: 'Northeastern University · MS Engineering Management', color: '#bca47a', size: 1.2, type: 'pro' },
+  { lat: 40.7684,  lng: -74.5143, label: 'Warren, NJ',           detail: 'MSIG USA · Program Manager & Scrum Master',            color: '#bca47a', size: 1.2, type: 'pro' },
+  { lat: 12.9716,  lng:  77.5946, label: 'Bengaluru, India',     detail: 'PES University · B.Tech ECE · Cratel Co-Founder',      color: '#bca47a', size: 1.2, type: 'pro' },
+  { lat: 42.3770,  lng: -71.1167, label: 'Harvard · Cambridge',  detail: 'Harvard Asian Conference 2025',                        color: '#bca47a', size: 1.0, type: 'pro' },
+  // Award / Home — ink-blue #6b8aa8
+  { lat: 42.3601,  lng: -71.0942, label: 'MIT · Cambridge, MA',  detail: 'MIT Reality Hack 2025 · Jaw-Dropping Award',        color: '#6b8aa8', size: 1.8, type: 'award' },
+  { lat: 12.2958,  lng:  76.6394, label: 'Mysuru, India',        detail: 'Hometown · City of Palaces · Karnataka',               color: '#6b8aa8', size: 1.5, type: 'award' },
+  // Travel US — teal #7d9079
+  { lat: 40.7128,  lng: -74.0060, label: 'New York City, NY',    detail: 'NYC · The City',                                       color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 43.0962,  lng: -79.0377, label: 'Niagara Falls, NY',    detail: 'Niagara Falls · Natural Wonder',                       color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 44.4759,  lng: -73.2121, label: 'Burlington, VT',       detail: 'Burlington · New England',                             color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 44.0523,  lng: -71.1270, label: 'North Conway, NH',     detail: 'North Conway · White Mountains, NH',                   color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 44.9778,  lng: -93.2650, label: 'Minneapolis, MN',      detail: 'Minneapolis · Twin Cities',                            color: '#7d9079', size: 0.85, type: 'travel' },
+  // Travel International — teal #7d9079
   { lat: 25.2048,  lng:  55.2708, label: 'Dubai, UAE',           detail: 'Transit & Exploration',                                color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 19.0760,  lng:  72.8777, label: 'Mumbai, India',        detail: 'City of Dreams',                                       color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 28.6139,  lng:  77.2090, label: 'New Delhi, India',     detail: 'Capital of India',                                     color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 15.2993,  lng:  74.1240, label: 'Goa, India',           detail: 'Coastal Vibes',                                        color: '#7d9079', size: 0.85, type: 'travel' },
-  { lat: 26.9124,  lng:  75.7873, label: 'Jaipur, India',        detail: 'Pink City Â· Rajasthan',                                color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 26.9124,  lng:  75.7873, label: 'Jaipur, India',        detail: 'Pink City · Rajasthan',                                color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 13.0827,  lng:  80.2707, label: 'Chennai, India',       detail: 'Gateway of South India',                               color: '#7d9079', size: 0.85, type: 'travel' },
 ]
 
@@ -51,11 +52,13 @@ export default function GlobeViz() {
     fetch('/countries.geojson', { signal: ctrl.signal })
       .then(r => r.json())
       .then(d => setLandData(d.features))
-      .catch(() => {})
+      .catch(err => {
+        if (err.name !== 'AbortError') console.error('[GlobeViz] failed to load countries.geojson', err)
+      })
     return () => ctrl.abort()
   }, [])
 
-  // Ocean base material â€” warm cardstock (--bg #2c2620), no longer navy
+  // Ocean base material — warm cardstock (--bg #2c2620), no longer navy
   const globeMaterial = useMemo(() => new THREE.MeshPhongMaterial({
     color: '#2c2620',      // --bg: warm cardstock ocean, not navy
     emissive: '#2c2620',    // --bg (reused rather than inventing a darker shade)
@@ -63,7 +66,7 @@ export default function GlobeViz() {
     shininess: 5,
   }), [])
 
-  // Responsive sizing â€” cap at 680px height for a large but contained globe
+  // Responsive sizing — cap at 680px height for a large but contained globe
   useEffect(() => {
     const update = () => {
       if (!wrapperRef.current) return
@@ -77,11 +80,14 @@ export default function GlobeViz() {
     return () => ro.disconnect()
   }, [])
 
-  // Honour the OS "reduce motion" setting — no perpetual auto-rotation.
-  const reduceMotion = typeof window !== 'undefined' &&
+  // Honour the OS "reduce motion" setting *and* the site's own Effects toggle
+  // — no perpetual auto-rotation/arc animation under either.
+  const osReducedMotion = typeof window !== 'undefined' &&
     window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  const effectsReduced = useReducedEffects()
+  const reduceMotion = osReducedMotion || effectsReduced
 
-  // Controls â€” start centered on India (20Â°N 78Â°E), slow auto-rotate
+  // Controls — start centered on India (20°N 78°E), slow auto-rotate
   useEffect(() => {
     if (!globeEl.current) return
     const ctrl = globeEl.current.controls()

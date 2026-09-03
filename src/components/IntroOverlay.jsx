@@ -14,15 +14,23 @@ export default function IntroOverlay() {
 
   useEffect(() => {
     if (!show) { fireIntroDone(); return }   // skipped (reduced motion / effects off)
+    const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     skipRef.current?.focus()
     const t = setTimeout(() => dismiss(), 1200)
-    const onKey = (e) => { if (e.key === 'Escape') dismiss() }
+    const onKey = (e) => {
+      if (e.key === 'Escape') { dismiss(); return }
+      // Trap focus on the single focusable element in this modal dialog —
+      // without this, Tab escapes into Nav during the 1200ms window and a
+      // keyboard user can open the mobile menu while the intro still holds
+      // the body-scroll lock, corrupting Nav's own save/restore of it.
+      if (e.key === 'Tab') { e.preventDefault(); skipRef.current?.focus() }
+    }
     window.addEventListener('keydown', onKey)
     return () => {
       clearTimeout(t)
       window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
+      document.body.style.overflow = prevOverflow
       // prevFocus is always <body> here (the intro only ever shows once, at
       // initial load, before anything is interactively focused), and <body>
       // isn't natively focusable — calling .focus() on it doesn't reset
@@ -38,7 +46,9 @@ export default function IntroOverlay() {
   }, [show])
 
   const dismiss = () => {
-    fireIntroDone()
+    // Don't fire INTRO_DONE here — setShow(false) re-runs the effect above,
+    // whose `if (!show)` branch fires it exactly once, for both this path
+    // and the "never showed at all" path. Firing it here too would double-fire.
     setShow(false)
   }
 

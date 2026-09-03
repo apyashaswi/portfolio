@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { fadeUp } from '../utils'
+import { fadeUp, MAX_STAGGER_DELAY } from '../utils'
 import { SKILLS } from '../data'
 import { SKILL_ICONS, CATEGORY_META, skillIconUrl } from '../icons.jsx'
 
@@ -48,7 +48,7 @@ export default function Skills({ recruiterMode }) {
                       initial={{ opacity: 0, x: -6 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: Math.min(0.04 * j, 0.25), ease: 'easeOut' }}
+                      transition={{ duration: 0.3, delay: Math.min(0.04 * j, MAX_STAGGER_DELAY), ease: 'easeOut' }}
                     >
                       <SkillIcon name={s} />
                       <span className="skill-label">{s}</span>

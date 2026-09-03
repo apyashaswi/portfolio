@@ -23,13 +23,30 @@ export default function App() {
 
   useEffect(() => {
     if (!isHome) return
-    const sections = document.querySelectorAll('section[id]')
-    const obs = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
-      { threshold: 0.3 }
-    )
-    sections.forEach(s => obs.observe(s))
-    return () => obs.disconnect()
+    let obs
+    // (Re-)scans for section[id] elements and (re-)subscribes the observer.
+    // Needed on top of the [mode, ...] deps below because the sections
+    // themselves get swapped out asynchronously after this effect already
+    // ran: an Explorer/Recruiter toggle re-mounts <motion.main> only after
+    // its exit animation finishes (AnimatePresence mode="wait"), and the
+    // lazy-loaded Journey section replaces its Suspense fallback's
+    // <section id="journey"> once the chunk finishes loading. Watching
+    // #main for childList changes lets the observer re-sync to whichever
+    // section[id] nodes are actually in the DOM right now.
+    const attach = () => {
+      obs?.disconnect()
+      const sections = document.querySelectorAll('section[id]')
+      obs = new IntersectionObserver(
+        entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
+        { threshold: 0.3 }
+      )
+      sections.forEach(s => obs.observe(s))
+    }
+    attach()
+    const main = document.getElementById('main')
+    const mo = main && new MutationObserver(attach)
+    mo?.observe(main, { childList: true, subtree: true })
+    return () => { obs?.disconnect(); mo?.disconnect() }
   }, [mode, isHome, location.pathname])
 
   return (

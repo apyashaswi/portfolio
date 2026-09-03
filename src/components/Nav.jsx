@@ -2,19 +2,14 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
+import { revealTransition, useScrollY } from '../utils'
 
 export default function Nav({ active, bannerVisible, mode }) {
-  const [scrolled, setScrolled] = useState(false)
+  const scrolled = useScrollY() > 50
   const [open, setOpen] = useState(false)
   const links = mode === 'recruiter' ? RECRUITER_NAV : NAV_LINKS
   const navigate = useNavigate()
   const location = useLocation()
-
-  useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
-  }, [])
 
   // While the mobile menu overlay is open: lock body scroll and let Escape close it.
   useEffect(() => {
@@ -52,10 +47,7 @@ export default function Nav({ active, bannerVisible, mode }) {
       className={`nav${scrolled ? ' scrolled' : ''}${bannerVisible ? ' with-banner' : ''}`}
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{
-        y: { type: 'spring', duration: 0.4, bounce: 0.14 },
-        opacity: { duration: 0.25, ease: 'easeOut' },
-      }}
+      transition={revealTransition()}
     >
       <div className="nav-inner">
         <button className="nav-logo" onClick={goHome}>

@@ -12,22 +12,24 @@ export default function Contact({ recruiterMode }) {
           </p>
         </motion.div>
 
-        <motion.p className="contact-blurb" {...fadeUp(0.08)}>
-          Open to full-time roles in <em>Program Management</em>, <em>Data &amp; AI</em>,
-          and <em>Engineering Operations</em> &mdash; available from January&nbsp;2027.
-          Based in Somerset, NJ. Happy to talk research, XR, or anything interesting.
-        </motion.p>
+        {!recruiterMode && (
+          <motion.p className="contact-blurb" {...fadeUp(0.08)}>
+            Open to full-time roles in <em>Program Management</em>, <em>Data &amp; AI</em>,
+            and <em>Engineering Operations</em> &mdash; available from January&nbsp;2027.
+            Based in Somerset, NJ. Happy to talk research, XR, or anything interesting.
+          </motion.p>
+        )}
 
         <motion.a
           href="mailto:apy@apyashaswi.com"
           className="contact-email"
-          {...fadeUp(0.14)}
+          {...fadeUp(recruiterMode ? 0.08 : 0.14)}
         >
           apy@apyashaswi.com
           <span className="contact-email-arrow" aria-hidden="true">→</span>
         </motion.a>
 
-        <motion.div className="contact-secondary" {...fadeUp(0.2)}>
+        <motion.div className="contact-secondary" {...fadeUp(recruiterMode ? 0.14 : 0.2)}>
           <a href="https://linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
@@ -41,9 +43,11 @@ export default function Contact({ recruiterMode }) {
           </a>
         </motion.div>
 
-        <motion.div className="contact-signoff" {...fadeUp(0.26)}>
-          &mdash; Yashaswi
-        </motion.div>
+        {!recruiterMode && (
+          <motion.div className="contact-signoff" {...fadeUp(0.26)}>
+            &mdash; Yashaswi
+          </motion.div>
+        )}
       </div>
     </section>
   )

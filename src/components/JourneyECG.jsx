@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { fadeUp } from '../utils'
+import { useReducedEffects } from '../effects'
 
 /* ─── MILESTONES ─────────────────────────────────────────────────── */
 const milestones = [
@@ -136,7 +137,7 @@ function drawGrid(ctx, W, H) {
 /* ─── COMPONENT ──────────────────────────────────────────────────── */
 // True when the OS requests reduced motion — we then render a static trace
 // instead of the perpetual scanning animation.
-const PREFERS_REDUCED_MOTION = typeof window !== 'undefined' &&
+const OS_REDUCED_MOTION = typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
 export default function JourneyECG() {
@@ -150,6 +151,10 @@ export default function JourneyECG() {
   const [speedMul,    setSpeedMul]    = useState(1)
   const [activeMsIdx, setActiveMsIdx] = useState(0)
   const [inView,      setInView]      = useState(false)
+
+  // Also honour the site's own "Effects: off" toggle, not just the OS setting.
+  const effectsReduced = useReducedEffects()
+  const reducedMotion = OS_REDUCED_MOTION || effectsReduced
 
   /* scroll trigger — animation starts once section enters viewport */
   useEffect(() => {
@@ -185,7 +190,7 @@ export default function JourneyECG() {
       grid.height = H
       drawGrid(grid.getContext('2d'), W, H)
       st.grid = grid
-      if (PREFERS_REDUCED_MOTION) {
+      if (reducedMotion) {
         for (let x = 0; x < W; x++) newBuf[x] = computeY(x, W, H)
         drawStaticTrace(canvas, W, H, newBuf)
       } else if (!inView) {
@@ -196,12 +201,12 @@ export default function JourneyECG() {
     const ro = new ResizeObserver(resize)
     if (canvasRef.current?.parentElement) ro.observe(canvasRef.current.parentElement)
     return () => ro.disconnect()
-  }, [inView])
+  }, [inView, reducedMotion])
 
   /* main animation loop */
   useEffect(() => {
     if (!inView) return
-    if (PREFERS_REDUCED_MOTION) return  // static trace already drawn in resize()
+    if (reducedMotion) return  // static trace already drawn in resize()
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -223,9 +228,10 @@ export default function JourneyECG() {
 
       /* ── categorise each x pixel */
       function cat(x) {
-        const d = (headX - x + W) % W
-        if (d < GAP)   return 'gap'
-        if (d < TRAIL) return 'bright'
+        const ahead  = (x - headX + W) % W   // distance in direction of travel — not yet re-swept this lap
+        const behind = (headX - x + W) % W   // distance already swept this lap — freshly drawn
+        if (ahead < GAP)    return 'gap'
+        if (behind < TRAIL) return 'bright'
         return 'dim'
       }
 
@@ -358,7 +364,7 @@ export default function JourneyECG() {
 
     animRef.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(animRef.current)
-  }, [inView])
+  }, [inView, reducedMotion])
 
   /* ── controls */
   function togglePause() {
