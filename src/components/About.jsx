@@ -18,19 +18,10 @@ export default function About() {
         </motion.p>
 
         <motion.p className="about-body" {...fadeUp(0.1)}>
-          Led strategic projects under the Head of Data &amp; AI at <strong>MSIG USA</strong>,
-          working across agile delivery, PI planning, hiring operations, and organizational change
-          management. Based in Boston, Massachusetts.
+          I bridge business needs and technology — using data, AI, and structured program
+          delivery to turn requirements into enterprise-scale solutions. Based in Boston,
+          Massachusetts, and always exploring what's next.
         </motion.p>
-
-        <motion.figure className="about-pullquote" {...fadeUp(0.12)}>
-          <blockquote>
-            The operational and delivery anchor for the Data &amp; AI team &mdash;
-            spanning agile delivery, PI planning, hiring operations,
-            and executive reporting.
-          </blockquote>
-          <figcaption>— from my role at MSIG USA</figcaption>
-        </motion.figure>
 
         <motion.p className="about-body" {...fadeUp(0.14)}>
           My background spans electronics engineering at <strong>PES University, Bengaluru</strong>,
