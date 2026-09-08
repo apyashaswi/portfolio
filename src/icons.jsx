@@ -1,16 +1,10 @@
-// Simple Icons CDN helpers.
-// https://cdn.simpleicons.org/{slug}            → official brand color SVG
-// https://cdn.simpleicons.org/{slug}/{hex}      → recolored SVG (hex without #)
-
-export const simpleIconUrl = (slug, hex) =>
-  hex ? `https://cdn.simpleicons.org/${slug}/${hex}` : `https://cdn.simpleicons.org/${slug}`
-
-// Slugs whose brand color is too dark/desaturated to read on a dark background.
-// We render these with a light override.
-const LIGHT_OVERRIDE = new Set(['unity', 'ros', 'apple', 'github', 'openai'])
-
-export const skillIconUrl = (slug) =>
-  LIGHT_OVERRIDE.has(slug) ? simpleIconUrl(slug, 'e8e4f5') : simpleIconUrl(slug)
+// Locally-hosted logo marks — downloaded from Simple Icons (or, where a brand
+// has been removed from that registry, recolored from its official brand-
+// guideline hex — see scripts/download-logos note in PROJECT-NOTES). Colors
+// are baked into each SVG file at download time (including light-overrides
+// for marks that fail contrast on the dark cardstock bg), so this is just a
+// path lookup now — no runtime CDN dependency.
+export const skillIconUrl = (slug) => `/logos/${slug}.svg`
 
 // Map skill label → Simple Icons slug (or null if it's a concept / not a tool).
 export const SKILL_ICONS = {
