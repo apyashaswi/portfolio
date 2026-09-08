@@ -17,7 +17,11 @@ const PINS = [
   { lat: 43.0962,  lng: -79.0377, label: 'Niagara Falls, NY',    detail: 'Niagara Falls · Natural Wonder',                       color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 44.4759,  lng: -73.2121, label: 'Burlington, VT',       detail: 'Burlington · New England',                             color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 44.0523,  lng: -71.1270, label: 'North Conway, NH',     detail: 'North Conway · White Mountains, NH',                   color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 44.3386,  lng: -68.2733, label: 'Acadia National Park', detail: 'Cadillac Mountain · Maine',                            color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 44.9778,  lng: -93.2650, label: 'Minneapolis, MN',      detail: 'Minneapolis · Twin Cities',                            color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 38.4755,  lng: -78.4419, label: 'Shenandoah National Park', detail: 'Skyline Drive · Virginia & West Virginia',        color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 39.2904,  lng: -76.6122, label: 'Baltimore, MD',        detail: 'Inner Harbor · Maryland',                              color: '#7d9079', size: 0.85, type: 'travel' },
+  { lat: 38.9072,  lng: -77.0369, label: 'Washington, DC',       detail: 'The Nation\'s Capital',                                color: '#7d9079', size: 0.85, type: 'travel' },
   // Travel International — teal #7d9079
   { lat: 25.2048,  lng:  55.2708, label: 'Dubai, UAE',           detail: 'Transit & Exploration',                                color: '#7d9079', size: 0.85, type: 'travel' },
   { lat: 19.0760,  lng:  72.8777, label: 'Mumbai, India',        detail: 'City of Dreams',                                       color: '#7d9079', size: 0.85, type: 'travel' },
@@ -210,22 +214,6 @@ export default function GlobeViz() {
           </div>
         )}
 
-        {/* Accessible, touch-friendly equivalent — the globe interactions are
-            pointer-only, so this disclosure gives keyboard, screen-reader, AND
-            touch users the full list of places (tap to expand on mobile). */}
-        <details className="globe-locations">
-          <summary>View all {PINS.length} locations</summary>
-          <ul>
-            {PINS.map(p => (
-              <li key={p.label}>
-                <span className="gloc-dot" style={{ background: p.color }} aria-hidden="true" />
-                <span className="gloc-name">{p.label}</span>
-                <span className="gloc-detail">{p.detail}</span>
-              </li>
-            ))}
-          </ul>
-        </details>
-
         <div className="globe-legend">
           <div className="gl-item">
             <span className="gl-dot" style={{ background: '#bca47a', boxShadow: '0 0 7px #bca47aaa' }} />
@@ -241,6 +229,28 @@ export default function GlobeViz() {
           </div>
         </div>
       </div>
+
+      {/* Accessible, touch-friendly equivalent — the globe interactions are
+          pointer-only, so this disclosure gives keyboard, screen-reader, AND
+          touch users the full list of places (tap to expand on mobile).
+          Deliberately OUTSIDE .globe-wrapper: that box has a fixed JS-driven
+          height (dims.h) for the canvas, and doesn't grow for content that
+          overflows it — with enough pins, an expanded list here would spill
+          out and overlap whatever section comes next instead of pushing it
+          down. Living in normal flow under .globe-outer (no fixed height)
+          lets it grow/shrink correctly when opened/closed. */}
+      <details className="globe-locations">
+        <summary>View all {PINS.length} locations</summary>
+        <ul>
+          {PINS.map(p => (
+            <li key={p.label}>
+              <span className="gloc-dot" style={{ background: p.color }} aria-hidden="true" />
+              <span className="gloc-name">{p.label}</span>
+              <span className="gloc-detail">{p.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </details>
     </div>
   )
 }
