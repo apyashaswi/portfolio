@@ -8,7 +8,6 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import ProjectDetail from './pages/ProjectDetail'
-import SkillsPreview from './pages/SkillsPreview'
 
 export default function App() {
   const [active, setActive] = useState('hero')
@@ -59,7 +58,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home mode={mode} />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/skills-preview" element={<SkillsPreview />} />
         <Route path="*" element={<Home mode={mode} />} />
       </Routes>
       <Footer />
