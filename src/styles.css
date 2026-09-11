@@ -955,8 +955,11 @@ a, button { cursor: pointer; }
 .highlight-portrait .highlight-img { aspect-ratio: 4 / 5; }
 .highlight-landscape .highlight-img { aspect-ratio: 4 / 3; }
 .highlight-wide .highlight-img { aspect-ratio: 16 / 9; }
+/* 3:2 -- the native ratio the MSIG photos were shot at, so they crop to nothing. */
+.highlight-photo .highlight-img { aspect-ratio: 3 / 2; }
+/* feature marks emphasis only; the shape class above still owns the aspect,
+   so a wide photo in the feature slot isn't forced into a portrait crop. */
 .highlight-feature .highlight-img {
-  aspect-ratio: 4 / 5;
   box-shadow:
     0 0 0 1px rgba(188, 164, 122, 0.18),
     0 16px 36px rgba(0, 0, 0, 0.38);
