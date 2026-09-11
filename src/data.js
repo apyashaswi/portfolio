@@ -236,6 +236,13 @@ export const HIGHLIGHTS = [
     shape: 'photo',
   },
   {
+    img: '/njx-hackathon.jpg',
+    title: 'On the judging panel at the NJx Hackathon',
+    sub: 'State-level 24-hour hackathon · New Jersey · 2026',
+    badge: null,
+    shape: 'landscape',
+  },
+  {
     img: '/mit-rh-mentor.jpg',
     title: 'With the best mentor at MIT Reality Hack',
     sub: 'A 48-hour build, made possible by the people in the room',
@@ -331,6 +338,13 @@ export const LEADERSHIP = [
     period: 'Active',
     current: true,
     description: 'Leading hardware sponsorship operations for one of the world\'s premier XR hackathons at MIT, coordinating with industry partners to source and deliver hardware for participants.',
+  },
+  {
+    role: 'Judge & Mentor',
+    org: 'NJx Hackathon, 1435 Capital Management',
+    period: 'Apr & Jun 2026',
+    current: false,
+    description: 'Judged the April edition of New Jersey\'s state-level 24-hour hackathon, then returned in June as both mentor and judge — assessing pitches from high school, undergraduate, and graduate teams building against a theme revealed at kickoff. Run by 1435 Capital Management with StartupGrind Princeton, mTap, and Cogent Connections.',
   },
   {
     role: 'Senator',
