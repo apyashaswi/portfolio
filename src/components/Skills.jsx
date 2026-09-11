@@ -1,17 +1,11 @@
 import { motion } from 'framer-motion'
 import { fadeUp, MAX_STAGGER_DELAY } from '../utils'
 import { SKILLS } from '../data'
-import { SKILL_ICONS, CATEGORY_META, skillIconUrl } from '../icons.jsx'
+import { SKILL_ICONS, CATEGORY_META, SkillLogo } from '../icons.jsx'
 
 function SkillIcon({ name }) {
   const slug = SKILL_ICONS[name]
-  if (slug) {
-    return (
-      <span className="skill-icon skill-icon-logo" aria-hidden="true">
-        <img src={skillIconUrl(slug)} alt="" loading="lazy" />
-      </span>
-    )
-  }
+  if (slug) return <SkillLogo slug={slug} size={18} className="skill-icon" />
   return <span className="skill-icon skill-icon-dot" aria-hidden="true" />
 }
 

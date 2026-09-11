@@ -302,17 +302,38 @@ a, button { cursor: pointer; }
 .tech-tag {
   display: inline-flex; align-items: center; gap: 6px;
 }
-.tech-tag-icon {
-  width: 13px; height: 13px;
-  object-fit: contain;
-  opacity: 0.92;
-  filter: saturate(0.92);
-  flex-shrink: 0;
-}
 .tech-tag-has-icon {
   background: color-mix(in srgb, var(--accent) 14%, var(--bg-card));
   border-color: color-mix(in srgb, var(--accent) 28%, transparent);
   color: color-mix(in srgb, var(--accent) 80%, white);
+}
+
+/* --- BRAND LOGOS ------------------------------------------------------- */
+/* Every file in public/logos/ is the brand's own official artwork, used
+   unmodified -- see public/logos/SOURCES.md. Two shapes come out of that:
+   square product icons, which are full-colour on transparent and sit bare on
+   the cardstock; and horizontal lockups, which are dark ink and would vanish
+   on it. Rather than recolour or crop someone's logo, the lockups get the
+   warm paper chip their guidelines already assume. --logo-h sets the size. */
+.brand-logo { display: inline-flex; align-items: center; flex-shrink: 0; }
+.brand-logo img { display: block; object-fit: contain; }
+.brand-logo-mark img {
+  width: var(--logo-h, 18px); height: var(--logo-h, 18px);
+  opacity: 0.92;
+  filter: saturate(0.9);
+}
+.brand-logo-wide {
+  background: var(--paper);
+  border-radius: 3px;
+  padding: 2px 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+/* auto width + both maxima: the browser fits each lockup's own aspect ratio
+   inside the box, so a 6:1 wordmark and a 2.6:1 one both stay uncropped. */
+.brand-logo-wide img {
+  width: auto; height: auto;
+  max-height: var(--logo-h, 18px);
+  max-width: calc(var(--logo-h, 18px) * 4.8);
 }
 
 /* â”€â”€â”€ NAV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
@@ -1155,12 +1176,16 @@ a, button { cursor: pointer; }
   text-transform: uppercase;
   color: var(--cat-accent);
 }
+/* One column, not two: the official brand lockups are horizontal, so a row
+   needs the full card width to seat a legible logo next to its label. */
 .skill-list {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px;
+  display: grid; grid-template-columns: 1fr; gap: 2px;
   list-style: none; padding: 0; margin: 0;
 }
+/* Fixed mark column so every label lands on the same line, whether the row
+   leads with a dot, a square icon, or a full-width brand lockup. */
 .skill-item {
-  display: flex; align-items: center; gap: 10px;
+  display: grid; grid-template-columns: 88px 1fr; align-items: center; gap: 12px;
   font-size: 13.5px; color: var(--text);
   padding: 6px 8px; border-radius: 8px;
   transition: background 0.2s, transform 0.2s;
@@ -1169,16 +1194,11 @@ a, button { cursor: pointer; }
   background: color-mix(in srgb, var(--cat-accent) 8%, transparent);
   transform: translateX(2px);
 }
+/* Marks hang off the right edge of their column, so they sit closest to the
+   label they belong to and the ragged left edge reads as a deliberate margin. */
 .skill-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px;
-  flex-shrink: 0;
-}
-.skill-icon-logo img {
-  width: 18px; height: 18px;
-  object-fit: contain;
-  opacity: 0.92;
-  filter: saturate(0.9);
+  display: inline-flex; align-items: center; justify-content: flex-end;
+  height: 22px;
 }
 .skill-icon-dot::before {
   content: '';
