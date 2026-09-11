@@ -1,12 +1,46 @@
-// Locally-hosted logo marks — downloaded from Simple Icons (or, where a brand
-// has been removed from that registry, recolored from its official brand-
-// guideline hex — see scripts/download-logos note in PROJECT-NOTES). Colors
-// are baked into each SVG file at download time (including light-overrides
-// for marks that fail contrast on the dark cardstock bg), so this is just a
-// path lookup now — no runtime CDN dependency.
+// Locally-hosted brand logos, each downloaded from the brand's own official
+// source — see public/logos/SOURCES.md for the exact URL behind every file.
+// The artwork is unmodified: no recolouring, no cropping, no redrawn paths.
+//
+// Three slugs are the exception. Unity, Meta and Bluetooth gate their real
+// logo files behind a login, an approval request and SIG membership
+// respectively, so those three are still the older redrawn marks. Drop the
+// official files into public/logos/ if you ever get access and they'll be
+// picked up with no code change.
 export const skillIconUrl = (slug) => `/logos/${slug}.svg`
 
-// Map skill label → Simple Icons slug (or null if it's a concept / not a tool).
+// Brands whose official artwork is a horizontal lockup (symbol + wordmark)
+// rather than a square icon — they publish no symbol-only file, and cropping
+// one out is exactly what their guidelines forbid. These render on a warm
+// paper chip instead, at a size where the wordmark is actually legible.
+export const WIDE_LOGOS = new Set([
+  'apacheairflow',
+  'apachekafka',
+  'espressif',
+  'googlecloud',
+  'langchain',
+  'python',
+  'ros',
+])
+
+// Renders a brand logo at the given height: square product icons sit bare
+// (they're full-colour on transparent, made to work on any background), while
+// dark-ink lockups sit on the paper chip so they read on the cardstock bg.
+export const SkillLogo = ({ slug, size = 18, className = '' }) => {
+  if (!slug) return null
+  const wide = WIDE_LOGOS.has(slug)
+  return (
+    <span
+      className={`brand-logo ${wide ? 'brand-logo-wide' : 'brand-logo-mark'} ${className}`.trim()}
+      style={{ '--logo-h': `${size}px` }}
+      aria-hidden="true"
+    >
+      <img src={skillIconUrl(slug)} alt="" loading="lazy" draggable={false} />
+    </span>
+  )
+}
+
+// Map skill label → logo slug (or null if it's a concept / not a tool).
 export const SKILL_ICONS = {
   // Program & Project Management
   'Scrum / Agile': null,
