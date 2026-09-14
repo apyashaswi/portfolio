@@ -17,6 +17,7 @@ const TARGETS = new Set([
   'msig-cohort.jpg',
   'msig-induction.jpg',
   'msig-roundtable.jpg',
+  'njx-hackathon.jpg',
   'mit-rh-mentor.jpg',
   'mit-scm-session.jpg',
   'harvard-team.jpg',
