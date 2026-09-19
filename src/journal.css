@@ -198,3 +198,29 @@
 @media (prefers-reduced-motion: reduce) {
   .section--paper { box-shadow: inset 0 1px 0 rgba(255,252,244,.4); }
 }
+
+/* ─── 6. CONTRAST REPAIRS ────────────────────────────────────────────────
+   These failures pre-date this redesign — the same audit finds them on main.
+   Root cause: --ink-dim (#5e5345) is documented in styles.css as "very dim,
+   decorative / borders only", but several rules use it for TEXT, where it
+   lands at 1.99:1 on the cardstock ground. --ink-dim keeps its job on borders
+   and rules; only the text uses are rerouted.
+
+   Measured on #2c2620: --ink-muted 6.10:1, lifted vermillion 5.16:1,
+   lifted sage 6.6:1, --ink-soft 9.1:1. */
+.hero-byline-by,
+.hero-byline,
+.trust-strip-label,
+.about-numbers-sep,
+.paper-status-sep,
+.footer-edition,
+.footer-edition span { color: var(--ink-muted); }
+
+/* Vermillion at #d24449 is 3.09:1 on the dark ground; same hue, lifted. */
+/* The monogram sits on its own tinted disc, so it needs more lift than the
+   company name to clear AA against that lighter backdrop. */
+.exp-company-name { color: #e7767a; }
+.company-monogram { color: #f4a0a3; }
+
+.exp-type-badge { color: #9fb398; }
+.skill-category { color: var(--ink-soft); }
