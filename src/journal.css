@@ -104,7 +104,34 @@
 .section--paper::before { pointer-events: none; }
 .section--paper {
   background: var(--bg);
-  box-shadow: inset 0 1px 0 rgba(255, 252, 244, .30);
+  box-shadow:
+    inset 0  1px 0 rgba(255, 252, 244, .30),   /* lit top edge of the sheet */
+    inset 0 -1px 0 rgba(36, 31, 24, .16);      /* its under-edge */
+}
+
+/* THE SHEET.
+   Full-bleed, the cream was a change of background colour and the crisp edge
+   could only ever look like a cut. Inset, the dark wraps around it and the
+   same edge reads as what it is: a sheet of paper laid on a dark surface.
+   That is the whole reason the edge can stay crisp -- you can see all four
+   sides of it.
+
+   Only above 1240px. Content is capped at 980px and the container carries
+   28px of its own padding, so below that there is no slack to give away: at
+   1024px the section is already only 22px wider than its content, and at
+   768px and under the content fills the section edge to edge. On those
+   screens the sheet goes full-bleed, which is correct anyway -- a phone is a
+   single trimmed page, not a page on a desk.
+
+   min(1280px, 100% - 120px) so the sheet settles at a constant page width on
+   wide monitors instead of growing forever, and still keeps a dark margin at
+   the breakpoint itself. At 1240px: 1120px sheet, 60px of dark each side,
+   70px of paper margin around the copy. */
+@media (min-width: 1240px) {
+  .section--paper {
+    max-width: min(1280px, calc(100% - 120px));
+    margin-inline: auto;
+  }
 }
 
 /* The asterism divider is a ::before at top:-50px, so it is painted over the
