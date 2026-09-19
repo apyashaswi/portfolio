@@ -235,19 +235,28 @@
 #root::before {
   content: '';
   position: fixed;
-  inset: -8%;
+  /* oversized so a full tile of travel never exposes an edge */
+  top: -420px; left: -420px; right: -420px; bottom: -420px;
   z-index: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(1.5px 1.5px at 20% 30%, rgba(188, 164, 122, .22), transparent 62%),
-    radial-gradient(1.2px 1.2px at 70% 62%, rgba(188, 164, 122, .15), transparent 62%),
-    radial-gradient(1.7px 1.7px at 45% 82%, rgba(138, 157, 132, .13), transparent 62%);
-  background-size: 340px 340px, 260px 260px, 430px 430px;
-  animation: dust-drift 120s linear infinite;
+    radial-gradient(1.5px 1.5px at 18% 26%, rgba(188, 164, 122, .22), transparent 62%),
+    radial-gradient(1.2px 1.2px at 67% 58%, rgba(188, 164, 122, .15), transparent 62%),
+    radial-gradient(1.7px 1.7px at 41% 83%, rgba(138, 157, 132, .13), transparent 62%);
+  /* ONE tile size for all three layers, so a single transform of exactly one
+     tile loops all of them seamlessly. They had three different sizes and
+     three directions when this animated background-position -- which is not
+     compositable, so it repainted a full-viewport element every frame and
+     cost 10fps in Explorer, where a WebGL globe is already running. Transform
+     is composited; the parallax was not worth the repaint. */
+  background-size: 360px 360px;
+  animation: dust-drift 110s linear infinite;
+  will-change: transform;
 }
 @keyframes dust-drift {
-  from { background-position:     0    0,     0    0,    0    0; }
-  to   { background-position:  340px -340px, -260px 260px, 430px 430px; }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-360px, 360px, 0); }
+}
 }
 
 /* The department rule under each section head gets a slow travelling
