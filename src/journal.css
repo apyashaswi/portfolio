@@ -1,0 +1,193 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   THE JOURNAL EDITION — redesign layer
+   ───────────────────────────────────────────────────────────────────────
+   Loaded after styles.css. Adds no content: every change here is colour,
+   rhythm, weight or order. The existing stylesheet is almost entirely
+   token-driven (100 --ink refs, 94 --accent), so redefining those custom
+   properties inside a scope re-themes the markup underneath without a
+   single specificity fight.
+
+   Three moves:
+     1. PAPER SPREADS  — the page alternates night and cream signatures
+                         instead of being one continuous dark scroll.
+     2. RHYTHM         — one baseline scale and one left margin, so blocks
+                         stop drifting relative to each other.
+     3. QUIETER CHROME — the magazine and the sci-fi HUD were two competing
+                         metaphors around one hero. The magazine wins; the
+                         HUD recedes to a whisper (it is aria-hidden
+                         decoration, so nothing is lost but noise).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── 1. PAPER SPREADS ───────────────────────────────────────────────────
+   --paper already existed in the palette and was barely used. A journal
+   alternates signatures: a dark spread, then a printed cream one. Only the
+   tokens are redefined — the section's own rules then render light for
+   free, which is why this layer is short. */
+.section--paper {
+  /* surfaces */
+  --bg:        #efe3c8;
+  --bg-alt:    #e8dcbe;
+  --bg-card:   #f6efdc;
+  --paper:     #2c2620;        /* inverted: "paper" now means the dark ink */
+
+  /* ink — warm near-black, never pure, to stay in the cardstock world */
+  --ink:       #241f18;
+  --ink-soft:  #413729;
+  --ink-muted: #63563f;        /* 5.9:1 on cream — clears AA for metadata */
+  --ink-dim:   #a1907a;
+  --ink-on-dark: #241f18;
+  --text:      var(--ink);
+  --text-muted: var(--ink-muted);
+  --text-dim:  var(--ink-dim);
+
+  /* Oat cannot survive on cream — #bca47a on #efe3c8 is about 1.5:1. The
+     voice colour is darkened to the same hue at printable weight. */
+  --accent:    #6d5322;
+  --accent2:   #47593f;        /* sage, likewise deepened */
+  --accent3:   #34526b;        /* ink blue */
+  --warm:      #7d5f2b;
+  --gold:      var(--accent);
+
+  --accent-dim:   rgba(109, 83, 34, .10);
+  --accent2-dim:  rgba(71, 89, 63, .10);
+  --accent-glow:  rgba(109, 83, 34, .22);
+  --accent2-glow: rgba(71, 89, 63, .18);
+  --gold-glow:    var(--accent-glow);
+  --border:       rgba(36, 31, 24, .14);
+  --border-t:     rgba(71, 89, 63, .16);
+  --border-hover: rgba(109, 83, 34, .42);
+  --shadow-light: rgba(36, 31, 24, .07);
+  --shadow-medium: rgba(36, 31, 24, .14);
+
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* The seam between signatures. A hairline plus a soft inner shadow at the
+   top edge reads as one sheet laid over another, rather than a colour
+   change with a hard join. */
+.section--paper::after,
+.section--paper::before { pointer-events: none; }
+.section--paper {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 252, 244, .55),
+    inset 0 14px 24px -14px rgba(36, 31, 24, .30),
+    inset 0 -14px 24px -14px rgba(36, 31, 24, .18);
+}
+
+/* The asterism divider inherits --accent, so it re-colours automatically;
+   it just needs to sit on the right side of the seam. */
+.section--paper + .section::before,
+.section--paper::before { color: var(--accent); }
+
+/* Newsprint grain is tuned for a dark ground; on cream it reads as dirt. */
+.section--paper .grain,
+.section--paper::after { opacity: 0; }
+
+/* Images carry a printed border on cream instead of floating. */
+.section--paper img { box-shadow: 0 1px 0 rgba(36,31,24,.18), 0 18px 40px -28px rgba(36,31,24,.55); }
+
+/* Chips/tags were drawn for a dark ground. */
+.section--paper .tech-tag,
+.section--paper .tag {
+  background: rgba(109, 83, 34, .07);
+  border-color: rgba(109, 83, 34, .22);
+  color: var(--ink-soft);
+}
+
+/* ─── 2. RHYTHM ──────────────────────────────────────────────────────────
+   Sections were a flat 96px regardless of what they contained, and inner
+   blocks set their own margins, so the page drifted — a ~250px dead gap
+   under About, and the stat strip starting 110px right of the headings
+   above it. One scale, one margin. */
+:root {
+  --rhythm:   clamp(72px, 7vw, 116px);
+  --rhythm-sm: clamp(28px, 3.2vw, 44px);
+}
+.section { padding: var(--rhythm) 0; }
+
+/* One left margin. .container and .container-prose disagreed by ~110px,
+   which is what made the About stats look detached from their own heading. */
+.container-prose { max-width: var(--column); padding: 0 28px; }
+.about-section .container-prose,
+.about-section .container { max-width: 980px; }
+
+/* The stat strip wrapped mid-run and orphaned the last item on its own line.
+   Flex, not grid: a grid wanted the middot separators hidden, and hiding
+   them would have removed characters that are on the page today. Every
+   glyph stays; the spacing does the work instead. */
+.about-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 18px;
+  row-gap: 10px;
+  padding: var(--rhythm-sm) 0;
+}
+.about-numbers-label { white-space: nowrap; opacity: .72; }
+.about-numbers-sep { opacity: .55; }
+/* each figure holds together, so a wrap breaks between stats, never inside one */
+.about-numbers > .stat-counter,
+.about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label) {
+  white-space: nowrap;
+}
+
+/* Close the dead space under the last block of a section. */
+.section > .container > *:last-child,
+.section > .container-prose > *:last-child { margin-bottom: 0; }
+
+/* ─── 3. QUIETER CHROME ──────────────────────────────────────────────────
+   Eight pieces of furniture framed one hero: status pip, masthead, nav,
+   RENDER·WEBGL, SCENE—EDITORIAL·FUTURISM, LAT/LNG, SCROLL%, chat bubble.
+   The HUD is aria-hidden decoration, so it is dimmed and shrunk rather
+   than removed — nothing is lost except the competition for attention. */
+.hero-hud { opacity: .34; }
+.hero-hud > * { font-size: 9.5px !important; letter-spacing: .16em; }
+.hud-tr, .hud-bl { opacity: .62; }
+
+/* ─── 4. THE HERO ────────────────────────────────────────────────────────
+   On mobile the portrait filled the whole first viewport (840px of an
+   844px screen), so a recruiter met a photograph before a name. The text
+   column now leads and the portrait follows, which is also the order the
+   page already uses in source on desktop. */
+@media (max-width: 860px) {
+  .hero-grid { display: flex; flex-direction: column; gap: var(--rhythm-sm); }
+  .hero-text { order: 1; max-width: none; }
+  .hero-portrait, .hero-figure, .hero-grid > figure { order: 2; }
+  .hero-editorial { min-height: 0; padding: 104px 0 var(--rhythm); }
+  /* a portrait should be a portrait, not a full screen */
+  .hero-grid img { max-height: 46vh; width: auto; margin-inline: auto; }
+}
+
+/* Desktop: the nameplate had ~200px of empty space beneath it because the
+   hero reserved a full viewport regardless of content. */
+@media (min-width: 861px) {
+  .hero-editorial { min-height: min(88dvh, 860px); }
+}
+
+/* ─── 5. EDITORIAL DETAIL ────────────────────────────────────────────────
+   Small print-shop cues the layout was already reaching for. */
+
+/* Section heads get a hairline that runs to the measure, the way a
+   magazine rules off a department. */
+.section-header { position: relative; padding-bottom: 18px; }
+.section-header::after {
+  content: '';
+  position: absolute; left: 0; bottom: 0;
+  width: min(100%, 620px); height: 1px;
+  background: linear-gradient(90deg,
+    var(--accent) 0, var(--accent) 36px,
+    var(--border) 36px, var(--border) 100%);
+  opacity: .9;
+}
+
+/* Tighter display leading — Fraunces at 70px wants less air than the
+   browser default gives it. */
+.hero-name, .section-title { line-height: 1.02; letter-spacing: -.018em; }
+
+/* Links earn their underline on hover rather than wearing it always. */
+.section--paper a:not(.btn):hover { text-decoration-color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .section--paper { box-shadow: inset 0 1px 0 rgba(255,252,244,.4); }
+}

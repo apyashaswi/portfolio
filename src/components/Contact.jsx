@@ -3,7 +3,7 @@ import { fadeUp } from '../utils'
 
 export default function Contact({ recruiterMode }) {
   return (
-    <section id="contact" className="section section-alt">
+    <section id="contact" className="section section-alt section--paper">
       <div className="container-prose contact-section">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Get in Touch</h2>

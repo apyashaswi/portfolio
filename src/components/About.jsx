@@ -4,7 +4,7 @@ import Picture from './Picture'
 
 export default function About() {
   return (
-    <section id="about" className="section about-section">
+    <section id="about" className="section about-section section--paper">
       <div className="container-prose">
         <motion.div className="section-header about-header" {...fadeUp()}>
           <h2 className="section-title">About</h2>

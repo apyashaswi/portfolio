@@ -32,7 +32,7 @@ export default function Research({ recruiterMode }) {
   const published = RESEARCH.papers.filter(p => p.status === 'published')
 
   return (
-    <section id="research" className="section">
+    <section id="research" className="section section--paper">
       <div className="container">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Research</h2>
