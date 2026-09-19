@@ -437,54 +437,42 @@
   color: var(--text-muted);
 }
 
-/* ─── 12. HERO CENTREPIECE ───────────────────────────────────────────────
-   The infinity glass reuses .hero-scene, so its positioning and the
-   text-legibility scrim are inherited from the scene it replaces. Only the
-   two things that differ are set here. */
-.hero-infinity-mount { position: absolute; inset: 0; z-index: 1; }
-/* .hero-scene is pointer-events:none so it can never steal a scroll or a
-   click. The canvas has to opt back in, or the graticule never sees the
-   cursor — but only the canvas, and only where no hero content sits above it.
-   pointermove is passive inside the module, so touch scrolling still works
-   over it. */
-.hero-scene--infinity .hero-infinity-mount canvas { pointer-events: auto; }
-/* Fade in once the module reports it is up, so the glass arrives rather than
-   popping in over the poster — and arrive at 42%, not 100%.
-   At full strength the form is a bright oat mass sitting directly behind the
-   nameplate and the body copy, and cream text on it is unreadable. The
-   standalone piece owns its whole viewport; here it is a backdrop and has to
-   behave like one. */
-.hero-scene--infinity .hero-infinity-mount { opacity: 0; transition: opacity .9s ease; }
-.hero-scene--infinity.is-ready .hero-infinity-mount { opacity: .85; }
+/* ─── 12. THE INFINITY BAND ──────────────────────────────────────────────
+   The glass gets its own full-width band between the hero and About.
 
-/* The inherited scrim was drawn for a field of faint constellation dots. A
-   solid refracting form needs more cover on the reading side, so the text
-   column gets a deeper, wider gradient. Measured against the rendered canvas,
-   not assumed — a CSS contrast audit cannot see through to a <canvas>. */
-/* z-index 2, above the canvas at 1. Without this the scrim is z-index:auto
-   and the glass paints straight over it, which is why lowering the canvas
-   opacity from .42 to .16 moved the measured contrast by nothing: the scrim
-   was never in front of anything. .hero-grid is also 2 and comes later in the
-   DOM, so the text still sits above the scrim. */
-.hero-scene--infinity::after {
-  z-index: 2;
-  /* Holds near-full cover across the reading column (which ends at ~50% of
-     the viewport) and falls away after it, so the form can be bright where
-     there is nothing to read. Measured worst-case across 10 frames WITH the
-     reveal lit, not a single screenshot -- the piece animates, so one frame
-     tells you nothing: sampling once gave 0.90 opacity as failing and 1.0 as
-     passing, which is impossible. */
-  background:
-    linear-gradient(100deg,
-      rgba(44, 38, 32, .985) 0%,
-      rgba(44, 38, 32, .975) 40%,
-      rgba(44, 38, 32, .93) 52%,
-      rgba(44, 38, 32, .58) 64%,
-      rgba(44, 38, 32, .24) 80%,
-      rgba(44, 38, 32, .12) 100%);
+   It was in the hero first and that could not work: copy left, portrait
+   right, so the form was either covered or scrimmed into invisibility. With
+   the reveal lit, the byline failed AA at 0.42 opacity unless the scrim was
+   heavy enough to hide the form too — the two requirements are mutually
+   exclusive in that layout. Here nothing sits over it, so there is no scrim,
+   no opacity compromise and no contrast conflict: it runs at full strength
+   and the whole surface is hoverable. */
+.infinity-band {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: clamp(380px, 54vh, 620px);
+  /* the module sizes its canvas to this box */
+  overflow: hidden;
+}
+.infinity-band-mount { position: absolute; inset: 0; }
+/* Nothing is layered above it, so the canvas simply takes the pointer. */
+.infinity-band-mount canvas { display: block; pointer-events: auto; }
+/* Arrive rather than pop, once the module reports it is up. */
+.infinity-band-mount { opacity: 0; transition: opacity .9s ease; }
+.infinity-band.is-ready .infinity-band-mount { opacity: 1; }
+/* Feather the top and bottom edges so the band joins the page instead of
+   sitting in a hard-edged box. Left and right run to the viewport edge. */
+.infinity-band::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    var(--bg) 0, rgba(44, 38, 32, 0) 16%,
+    rgba(44, 38, 32, 0) 84%, var(--bg) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero-scene--infinity .hero-infinity-mount { transition: none; }
+  .infinity-band-mount { transition: none; }
 }
 
 /* The hero grid is a full-width transparent container sitting above the

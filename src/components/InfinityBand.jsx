@@ -2,28 +2,39 @@ import { useEffect, useRef, useState } from 'react'
 import { useReducedEffects, webglAvailable, saveDataOn } from '../effects'
 
 /**
- * The hero centrepiece: a liquid-glass infinity symbol whose latitude/longitude
- * graticule lights up under the pointer.
+ * A liquid-glass infinity symbol whose latitude/longitude graticule lights up
+ * under the pointer. It gets its own full-width band rather than sitting
+ * behind the hero.
  *
- * Replaces the old react-three-fiber scene. That scene pulled
- * @react-three/fiber + drei + postprocessing into the EAGER bundle for a
- * decorative blob: index.js measured 367KB gzip with it and 118KB without.
- * This module is vanilla three.js and is imported lazily after first paint, so
- * the nameplate renders on the small bundle and the glass arrives after.
+ * It was in the hero first, and that did not work. The hero is full -- copy
+ * left, portrait right -- so the form was either covered by the portrait or
+ * had to be scrimmed until it vanished to keep the copy readable. Measured
+ * with the reveal lit, the byline failed AA at 0.42 opacity unless the scrim
+ * was heavy enough to hide the form as well. Those two requirements cannot
+ * both be met in that layout. Here there is nothing over it: full opacity, no
+ * scrim, hoverable edge to edge.
  *
- * Reuses .hero-scene / .hero-poster, so positioning and the text-legibility
- * scrim are unchanged from the scene it replaces.
+ * The hero keeps the bundle win that swap bought -- it now carries no WebGL at
+ * all. The old react-three-fiber scene pulled @react-three/fiber + drei +
+ * postprocessing into the EAGER bundle for a decorative blob: index.js
+ * measured 367KB gzip with it and 119KB without.
  */
-export default function HeroInfinity() {
+export default function InfinityBand() {
   const wrap = useRef(null)
   const mount = useRef(null)
   const [ready, setReady] = useState(false)
   const reduced = useReducedEffects()
+  // Checked once: webglAvailable() builds a throwaway canvas, and neither of
+  // these changes during a session.
+  const [capable] = useState(() => webglAvailable() && !saveDataOn())
+  // When the piece will never render, the band must not reserve its height --
+  // EFFECTS: OFF otherwise left a 486px hole between the hero and About.
+  const gated = reduced || !capable
 
   useEffect(() => {
     // Same gates the old scene used: a real WebGL context, not Data Saver, and
     // not the manual EFFECTS: OFF preference.
-    if (reduced || !webglAvailable() || saveDataOn()) return
+    if (gated) return
     const el = mount.current
     if (!el) return
 
@@ -36,8 +47,9 @@ export default function HeroInfinity() {
         if (cancelled) return
         piece = await createInfinityGlass({
           container: el,
-          // A hero backdrop should not be the most expensive thing on the
-          // page. autoQuality steps this down further if it cannot hold 30fps.
+          // It has the stage to itself now, so it gets the middle tier rather
+          // than the hero-backdrop tier. autoQuality steps it down further if
+          // it cannot hold 30fps.
           particles: 400000,
           mode: 'reveal',
           autoQuality: true,
@@ -75,12 +87,13 @@ export default function HeroInfinity() {
       piece?.dispose()
       setReady(false)
     }
-  }, [reduced])
+  }, [gated])
+
+  if (gated) return null
 
   return (
-    <div className={`hero-scene hero-scene--infinity${ready ? ' is-ready' : ''}`} aria-hidden="true" ref={wrap}>
-      <div className="hero-poster" />
-      <div className="hero-infinity-mount" ref={mount} />
+    <div className={`infinity-band${ready ? ' is-ready' : ''}`} aria-hidden="true" ref={wrap}>
+      <div className="infinity-band-mount" ref={mount} />
     </div>
   )
 }

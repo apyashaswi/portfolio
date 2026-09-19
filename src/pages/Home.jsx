@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 
 import Hero, { RecruiterHero } from '../components/Hero'
 import TrustStrip from '../components/TrustStrip'
+import InfinityBand from '../components/InfinityBand'
 import About from '../components/About'
 import Experience from '../components/Experience'
 import Journey from '../components/Journey'
@@ -40,6 +41,7 @@ export default function Home({ mode }) {
       >
         {recruiterMode ? <RecruiterHero /> : <Hero />}
         <TrustStrip />
+        <InfinityBand />
         <About />
         <Experience recruiterMode={recruiterMode} />
         {!recruiterMode && <Journey />}
