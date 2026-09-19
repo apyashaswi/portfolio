@@ -8,14 +8,6 @@ import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import ProjectDetail from './pages/ProjectDetail'
-import SectionRoute from './pages/SectionRoute'
-import GlobeSection from './components/GlobeSection'
-import Journey from './components/Journey'
-
-// Sections that live at their own URL rather than on the scroll. Importing
-// the components here is cheap -- each lazy-imports its own heavy chunk
-// internally, so GlobeViz stays a separate bundle and only loads on /globe.
-const ROUTED_SECTIONS = ['/globe', '/journey']
 
 export default function App() {
   const [active, setActive] = useState('hero')
@@ -23,11 +15,7 @@ export default function App() {
     try { return localStorage.getItem('ap-mode') || 'recruiter' } catch { return 'recruiter' }
   })
   const location = useLocation()
-  // Home also renders for section deep links (/research, /skills, ...), which
-  // scroll to that section. Only the routed sections and project details are
-  // genuinely not-home, so the scroll-spy below must stay active for the rest.
-  const isHome = !ROUTED_SECTIONS.includes(location.pathname) &&
-                 !location.pathname.startsWith('/projects/')
+  const isHome = location.pathname === '/'
 
   useEffect(() => {
     try { localStorage.setItem('ap-mode', mode) } catch {}
@@ -70,12 +58,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home mode={mode} />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/globe" element={<SectionRoute><GlobeSection /></SectionRoute>} />
-        <Route path="/journey" element={<SectionRoute><Journey /></SectionRoute>} />
-        {/* Deep links: /research, /skills, ... render the journal and scroll
-            to that section. Declared after the static routes so /globe and
-            /projects/:id win; react-router ranks those higher anyway. */}
-        <Route path="/:section" element={<Home mode={mode} />} />
         <Route path="*" element={<Home mode={mode} />} />
       </Routes>
       <Footer />
