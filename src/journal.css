@@ -8,8 +8,8 @@
    single specificity fight.
 
    Three moves:
-     1. PAPER SPREADS  — the page alternates night and cream signatures
-                         instead of being one continuous dark scroll.
+     1. PAPER SPREADS  — two printed cream signatures break up what was one
+                         continuous dark scroll.
      2. RHYTHM         — one baseline scale and one left margin, so blocks
                          stop drifting relative to each other.
      3. QUIETER CHROME — the magazine and the sci-fi HUD were two competing
@@ -22,7 +22,19 @@
    --paper already existed in the palette and was barely used. A journal
    alternates signatures: a dark spread, then a printed cream one. Only the
    tokens are redefined — the section's own rules then render light for
-   free, which is why this layer is short. */
+   free, which is why this layer is short.
+
+   Only About (1930px) and Projects (2494px) carry it, and that is the whole
+   point: both are taller than a viewport. Research (570px) and Contact
+   (519px) had it too, and in Recruiter mode — which hides the sections that
+   would otherwise pad them out — they were SHORTER than the 900px viewport.
+   A cream section shorter than the screen is framed by dark above and dark
+   below at the same time, so it reads as a stripe laid across the page
+   rather than as a spread you are on. Measured before the change: 56% of
+   the Recruiter scroll had two grounds on screen at once. Restricting the
+   treatment to the two long sections removes the stripe case entirely and
+   costs nothing, where forcing a min-height on the short ones would have
+   bought the same fix with up to 380px of empty cardstock. */
 .section--paper {
   /* surfaces */
   --bg:        #efe3c8;
@@ -63,31 +75,33 @@
   color: var(--ink);
 }
 
-/* The seam between signatures. A hairline plus a soft inner shadow at the
-   top edge reads as one sheet laid over another, rather than a colour
-   change with a hard join. */
+/* The seam between signatures.
+   A hard edge put a horizontal line across the middle of the screen, and at a
+   900px viewport a seam is on screen for a full viewport of scrolling no
+   matter how tall the sections are -- so the edge itself had to go soft. The
+   ground now fades in and out across the section's own padding, where no text
+   ever sits, so the change reads as the page warming into cardstock.
+
+   Painted as a background-IMAGE over a solid background-COLOR, not as a
+   background shorthand fading to transparent. Two reasons: the solid colour
+   underneath is what tooling (and the contrast audit) reads as the real
+   ground, and fading cream to alpha 0 would reveal <body> rather than the
+   neighbouring section, which is a different dark. */
 .section--paper::after,
 .section--paper::before { pointer-events: none; }
 .section--paper {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 252, 244, .55),
-    inset 0 14px 24px -14px rgba(36, 31, 24, .30),
-    inset 0 -14px 24px -14px rgba(36, 31, 24, .18);
-}
-
-/* Recruiter mode hides the sections that separate Projects from Research, so
-   two paper spreads land back to back. Left alone, the first draws its bottom
-   shadow and the second draws its top highlight + top shadow, trapping a dark
-   band in the middle of what should be continuous cardstock. Suppress the
-   inner edges so a run of spreads reads as one signature, which is what a
-   journal actually does when a department runs long. */
-.section--paper:has(+ .section--paper) {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 252, 244, .55),
-    inset 0 14px 24px -14px rgba(36, 31, 24, .30);
-}
-.section--paper + .section--paper {
-  box-shadow: inset 0 -14px 24px -14px rgba(36, 31, 24, .18);
+  /* midpoint of the two darks that can sit next to a spread: #2c2620 (body,
+     hero, plain .section) and #322c25 (.section-alt). Within 3/255 of either,
+     so the join is invisible whichever neighbour it lands against. */
+  --seam-dark: #2f2922;
+  --seam-h: clamp(56px, 5.5vw, 96px);   /* always < --rhythm, so never on text */
+  background-color: var(--bg);
+  background-image: linear-gradient(
+    to bottom,
+    var(--seam-dark) 0,
+    rgba(47, 41, 34, 0) var(--seam-h),
+    rgba(47, 41, 34, 0) calc(100% - var(--seam-h)),
+    var(--seam-dark) 100%);
 }
 
 /* The asterism divider inherits --accent, so it re-colours automatically;
@@ -221,15 +235,9 @@
 /* Links earn their underline on hover rather than wearing it always. */
 .section--paper a:not(.btn):hover { text-decoration-color: var(--accent); }
 
-@media (prefers-reduced-motion: reduce) {
-  /* :has() scores (0,2,0), so the plain .section--paper selector below would
-     lose to the adjacency rule above and leave the first of a pair with its
-     shadows while its neighbours went flat. Match that specificity here. */
-  .section--paper,
-  .section--paper:has(+ .section--paper) { box-shadow: inset 0 1px 0 rgba(255,252,244,.4); }
-  /* same join, minus the shadows: no hairline inside a run of spreads */
-  .section--paper + .section--paper { box-shadow: none; }
-}
+/* The fade is a static background, not motion, so there is nothing here for
+   prefers-reduced-motion to turn off. The old box-shadow seam needed an
+   override; this does not. */
 
 /* ─── 6. CONTRAST REPAIRS ────────────────────────────────────────────────
    These failures pre-date this redesign — the same audit finds them on main.
