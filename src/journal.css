@@ -7,213 +7,22 @@
    properties inside a scope re-themes the markup underneath without a
    single specificity fight.
 
-   Three moves:
-     1. PAPER SPREADS  — two printed cream signatures break up what was one
-                         continuous dark scroll.
+   The two-ground idea is gone. Cream spreads, the sheet inset and the eased
+   ground ramp all came out: one continuous dark ground throughout, with
+   motion rather than colour doing the work of breaking the page up.
+
+   Four moves:
      2. RHYTHM         — one baseline scale and one left margin, so blocks
                          stop drifting relative to each other.
      3. QUIETER CHROME — the magazine and the sci-fi HUD were two competing
                          metaphors around one hero. The magazine wins; the
                          HUD recedes to a whisper (it is aria-hidden
                          decoration, so nothing is lost but noise).
+     7. SKILLS DRIFT   — the skill lists become slow counter-scrolling rows.
+     8. AMBIENT MOTION — quiet drift behind the whole page.
+
+   Sections are numbered as they were; 1 is deliberately absent.
    ═══════════════════════════════════════════════════════════════════════ */
-
-/* ─── 1. PAPER SPREADS ───────────────────────────────────────────────────
-   --paper already existed in the palette and was barely used. A journal
-   alternates signatures: a dark spread, then a printed cream one. Only the
-   tokens are redefined — the section's own rules then render light for
-   free, which is why this layer is short.
-
-   Only About (1930px) and Projects (2494px) carry it, and that is the whole
-   point: both are taller than a viewport. Research (570px) and Contact
-   (519px) had it too, and in Recruiter mode — which hides the sections that
-   would otherwise pad them out — they were SHORTER than the 900px viewport.
-   A cream section shorter than the screen is framed by dark above and dark
-   below at the same time, so it reads as a stripe laid across the page
-   rather than as a spread you are on. Measured before the change: 56% of
-   the Recruiter scroll had two grounds on screen at once. Restricting the
-   treatment to the two long sections removes the stripe case entirely and
-   costs nothing, where forcing a min-height on the short ones would have
-   bought the same fix with up to 380px of empty cardstock. */
-.section--paper {
-  /* surfaces */
-  --bg:        #d9cba8;      /* cardstock, not a lit page — see the seam note */
-  --bg-alt:    #d1c29d;
-  --bg-card:   #e3d8bb;
-  --paper:     #2c2620;        /* inverted: "paper" now means the dark ink */
-
-  /* ink — warm near-black, never pure, to stay in the cardstock world */
-  --ink:       #241f18;
-  --ink-soft:  #413729;
-  --ink-muted: #5e523c;        /* 4.75:1 on the stock — clears AA for metadata */
-  --ink-dim:   #a1907a;
-  --ink-on-dark: #241f18;
-  --text:      var(--ink);
-  --text-muted: var(--ink-muted);
-  --text-dim:  var(--ink-dim);
-
-  /* Oat cannot survive on this stock — #bca47a on #d9cba8 is about 1.3:1. The
-     voice colour is darkened to the same hue at printable weight. Every value
-     below was re-derived when the stock was darkened: at #efe3c8 the old set
-     cleared AA, but on #d9cba8 --ink-muted, --accent and --warm all fell to
-     4.45/4.49/3.68. Hue and saturation held, lightness reduced until each
-     cleared 4.75:1. */
-  --accent:    #684f21;
-  --accent2:   #47593f;        /* sage, likewise deepened */
-  --accent3:   #34526b;        /* ink blue */
-  --warm:      #694f24;
-  --gold:      var(--accent);
-
-  --accent-dim:   rgba(104, 79, 33, .10);
-  --accent2-dim:  rgba(71, 89, 63, .10);
-  --accent-glow:  rgba(104, 79, 33, .22);
-  --accent2-glow: rgba(71, 89, 63, .18);
-  --gold-glow:    var(--accent-glow);
-  --border:       rgba(36, 31, 24, .14);
-  --border-t:     rgba(71, 89, 63, .16);
-  --border-hover: rgba(104, 79, 33, .42);
-  --shadow-light: rgba(36, 31, 24, .07);
-  --shadow-medium: rgba(36, 31, 24, .14);
-
-  background: var(--bg);
-  color: var(--ink);
-}
-
-/* The seam between signatures.
-   Five treatments were built and measured before this one. A 1px rule, a
-   double rule and an outward cast shadow all rendered indistinguishable from
-   a hard cut -- against a ~200-unit luminance step no edge decoration
-   registers, and a shadow cannot darken a near-black ground (measured:
-   rgb(40,34,28) of shadow on a rgb(46,39,33) surface).
-
-   So the ground itself ramps. The first attempt at that read as dirt, for
-   three reasons, all fixed here:
-
-     1. It interpolated in sRGB, which passes from warm dark to warm stock via
-        a desaturated khaki (~rgb(148,139,122)) that exists nowhere in this
-        palette. `in oklab` keeps the whole ramp warm.
-     2. It was LINEAR, so the ramp starts and stops abruptly in its second
-        derivative -- the eye reads those as two extra edges (Mach bands) and
-        the whole thing looks like a band rather than a transition. The stops
-        below follow a smoothstep, which is gentlest exactly at the two ends
-        where the banding was.
-     3. It was 80px, too short for the distance being travelled.
-
-   Measured largest single step down the ramp: 174 for a hard cut, 21 linear,
-   18 eased over this distance.
-
-   --fade is tied to the padding, not a fixed length, so the ramp finishes
-   exactly where the first line of text begins and no copy ever sits on a
-   partial ground. The extra 48px buys the ramp room without putting anything
-   in it.
-
-   NOTE on the stop positions: every multiplication is wrapped in its own
-   parentheses, and the full-length stops are written as plain var(--fade)
-   rather than `var(--fade) * 1`. Without that, `calc(100% - var(--fade) * 1)`
-   resolved to `calc(100% - 52.8px)` instead of 148.8px -- the browser
-   flattened the nested calc in --fade (`calc(clamp(...) + 48px)`) inside the
-   subtraction as `100% - clamp(...) + 48px`. That stop then sat AFTER the
-   ones following it, and since gradient stops must be non-decreasing the
-   browser clamped the next five up to it, collapsing the bottom ramp from
-   148.8px to 53px while the top ramp stayed correct. */
-.section--paper::after,
-.section--paper::before { pointer-events: none; }
-/* .section.section--paper, not .section--paper: the rhythm rule in section 2
-   below sets `.section { padding: var(--rhythm) 0 }` at the same (0,1,0) and
-   lands later in the file, so a bare class here loses and the ramp overruns
-   the padding by 48px -- putting the section header inside it. */
-.section.section--paper {
-  --fade: calc(var(--rhythm) + 48px);
-  padding-top: var(--fade);
-  padding-bottom: var(--fade);
-}
-.section--paper {
-  --fade: calc(var(--rhythm) + 48px);
-  background-color: var(--bg);
-  background-image: linear-gradient(to bottom,
-    #2f2922 0,
-    color-mix(in oklab, #2f2922, var(--bg) 4.3%) calc(var(--fade) * 0.125),
-    color-mix(in oklab, #2f2922, var(--bg) 15.6%) calc(var(--fade) * 0.250),
-    color-mix(in oklab, #2f2922, var(--bg) 31.6%) calc(var(--fade) * 0.375),
-    color-mix(in oklab, #2f2922, var(--bg) 50.0%) calc(var(--fade) * 0.500),
-    color-mix(in oklab, #2f2922, var(--bg) 68.4%) calc(var(--fade) * 0.625),
-    color-mix(in oklab, #2f2922, var(--bg) 84.4%) calc(var(--fade) * 0.750),
-    color-mix(in oklab, #2f2922, var(--bg) 95.7%) calc(var(--fade) * 0.875),
-    var(--bg) var(--fade),
-    var(--bg) calc(100% - var(--fade)),
-    color-mix(in oklab, #2f2922, var(--bg) 95.7%) calc(100% - (var(--fade) * 0.875)),
-    color-mix(in oklab, #2f2922, var(--bg) 84.4%) calc(100% - (var(--fade) * 0.750)),
-    color-mix(in oklab, #2f2922, var(--bg) 68.4%) calc(100% - (var(--fade) * 0.625)),
-    color-mix(in oklab, #2f2922, var(--bg) 50.0%) calc(100% - (var(--fade) * 0.500)),
-    color-mix(in oklab, #2f2922, var(--bg) 31.6%) calc(100% - (var(--fade) * 0.375)),
-    color-mix(in oklab, #2f2922, var(--bg) 15.6%) calc(100% - (var(--fade) * 0.250)),
-    color-mix(in oklab, #2f2922, var(--bg) 4.3%) calc(100% - (var(--fade) * 0.125)),
-    #2f2922 100%);
-}
-
-/* THE SHEET.
-   Full-bleed, the cream was a change of background colour and the crisp edge
-   could only ever look like a cut. Inset, the dark wraps around it and the
-   same edge reads as what it is: a sheet of paper laid on a dark surface.
-   That is the whole reason the edge can stay crisp -- you can see all four
-   sides of it.
-
-   Only above 1240px. Content is capped at 980px and the container carries
-   28px of its own padding, so below that there is no slack to give away: at
-   1024px the section is already only 22px wider than its content, and at
-   768px and under the content fills the section edge to edge. On those
-   screens the sheet goes full-bleed, which is correct anyway -- a phone is a
-   single trimmed page, not a page on a desk.
-
-   min(1280px, 100% - 120px) so the sheet settles at a constant page width on
-   wide monitors instead of growing forever, and still keeps a dark margin at
-   the breakpoint itself. At 1240px: 1120px sheet, 60px of dark each side,
-   70px of paper margin around the copy. */
-@media (min-width: 1240px) {
-  .section--paper {
-    max-width: min(1280px, calc(100% - 120px));
-    margin-inline: auto;
-  }
-}
-
-/* The asterism divider is a ::before at top:-50px, so it is painted over the
-   section BEFORE it, not its own. It therefore has to be coloured for the
-   ground it lands on, which is the opposite of the section that owns it.
-   Literal values, not var(--accent): a custom property resolves in the scope
-   of the element it is used on, so `color: var(--accent)` on
-   `.section--paper + .section` picked up that DARK section's oat and painted
-   it onto cream at about 1.5:1 -- invisible. Same trap in reverse above a
-   spread. */
-/* styles.css owns this at `.section + .section::before`, which is (0,2,0);
-   a bare `.section--paper::before` is (0,1,0) and silently loses, so the
-   divider above a spread kept the paper accent and sat on the DARK section at
-   1.79:1. Matching the specificity (and landing later in the cascade) wins. */
-.section + .section--paper::before { color: #bca47a; }  /* lands on the dark above */
-/* This one lands on the spread ABOVE it, at top:-50px -- which is now inside
-   that spread's bottom ramp, where the ground is mostly dark and a stock-
-   weight accent disappears. No single colour works across a gradient, so the
-   ornament moves clear of the ramp instead: --fade + 40px above the boundary
-   puts it on full stock. Restated rather than var(--fade), because a custom
-   property inherits from the parent, not from the previous sibling. */
-.section--paper + .section::before {
-  color: #684f21;
-  top: calc(-1 * (clamp(72px, 7vw, 116px) + 88px));
-}
-
-/* NOTE: the newsprint grain lives on fixed body::before / body::after
-   overlays, so it cannot be disabled per-section from here. Checked on the
-   cream spreads and it reads as paper tooth rather than dirt, so it stays. */
-
-/* Images carry a printed border on cream instead of floating. */
-.section--paper img { box-shadow: 0 1px 0 rgba(36,31,24,.18), 0 18px 40px -28px rgba(36,31,24,.55); }
-
-/* Chips/tags were drawn for a dark ground. */
-.section--paper .tech-tag,
-.section--paper .tag {
-  background: rgba(104, 79, 33, .07);
-  border-color: rgba(104, 79, 33, .22);
-  color: var(--ink-soft);
-}
 
 /* ─── 2. RHYTHM ──────────────────────────────────────────────────────────
    Sections were a flat 96px regardless of what they contained, and inner
@@ -324,11 +133,7 @@
 .hero-name, .section-title { line-height: 1.02; letter-spacing: -.018em; }
 
 /* Links earn their underline on hover rather than wearing it always. */
-.section--paper a:not(.btn):hover { text-decoration-color: var(--accent); }
-
-/* The fade is a static background, not motion, so there is nothing here for
-   prefers-reduced-motion to turn off. The old box-shadow seam needed an
-   override; this does not. */
+.section a:not(.btn):hover { text-decoration-color: var(--accent); }
 
 /* ─── 6. CONTRAST REPAIRS ────────────────────────────────────────────────
    These failures pre-date this redesign — the same audit finds them on main.
@@ -354,4 +159,145 @@
 .company-monogram { color: #f4a0a3; }
 
 .exp-type-badge { color: #9fb398; }
-.skill-category { color: var(--ink-soft); }
+/* .skill-category keeps its own --cat-accent now. The override that forced
+   --ink-soft here existed for the cream ground, which is gone; on the dark
+   ground each category's colour is what tells the four drifting rows apart. */
+
+/* ─── 7. SKILLS DRIFT ────────────────────────────────────────────────────
+   The skill lists stop being four static cards and become four rows that
+   drift past, counter to each other. Rows alternate direction and their
+   durations are staggered (52s, 65s, 78s, 91s) so they never fall into step
+   and the block never reads as one moving object.
+
+   The category headings stay in the container; only the rows go full-bleed,
+   which is safe here because styles.css:98 already sets
+   `body { overflow-x: hidden }`, so a 100vw child cannot raise a horizontal
+   scrollbar. */
+.skills-drift { display: flex; flex-direction: column; gap: clamp(24px, 2.6vw, 38px); }
+.drift-row { --cat-accent: var(--accent); }
+.drift-row .skill-category-row { margin-bottom: 10px; }
+
+.drift-viewport {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  padding: 5px 0;
+  /* pills should arrive and leave, not be sliced off at the frame edge */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+}
+.drift-track {
+  display: flex;
+  width: max-content;
+  animation: skill-drift var(--drift-dur, 60s) linear infinite;
+  will-change: transform;
+}
+.drift-row[data-dir="right"] .drift-track { animation-direction: reverse; }
+@keyframes skill-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+/* A moving target you cannot read is just noise — stop the row on hover, and
+   on focus-within so it also stops for anyone tabbing through. */
+.drift-viewport:hover .drift-track,
+.drift-viewport:focus-within .drift-track { animation-play-state: paused; }
+
+/* Pills. .skill-item is a 88px/1fr grid built for the old vertical card, so
+   the layout is overridden here; the colour is not, because var(--text)
+   already clears AA on this ground. */
+.drift-track .skill-list {
+  display: flex; align-items: center; gap: 9px;
+  margin: 0; padding: 0 4.5px; list-style: none;
+}
+.drift-track .skill-item {
+  display: inline-flex; align-items: center; gap: 9px;
+  white-space: nowrap;
+  padding: 8px 16px 8px 13px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cat-accent) 5%, transparent);
+  /* the category's colour as a tick on the leading edge, so a row stays
+     legible as one family even once it has drifted away from its heading */
+  box-shadow: inset 2px 0 0 0 color-mix(in srgb, var(--cat-accent) 55%, transparent);
+}
+.drift-track .skill-item:hover { transform: none; }
+.drift-track .skill-icon { width: auto; justify-content: center; flex: none; }
+
+/* ─── 8. AMBIENT MOTION ──────────────────────────────────────────────────
+   A slow dust drift behind everything, so the page is never completely
+   still. Three tiled layers moving at different speeds and directions read
+   as depth rather than as one sliding texture.
+
+   Each layer travels EXACTLY one tile per cycle, so the loop is seamless with
+   no jump. #root::before, not ::after: a ::before is painted before its
+   element's children, so the sections (all position:relative) sit above it.
+   body::before / ::after are already the newsprint grain. */
+#root::before {
+  content: '';
+  position: fixed;
+  inset: -8%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(188, 164, 122, .22), transparent 62%),
+    radial-gradient(1.2px 1.2px at 70% 62%, rgba(188, 164, 122, .15), transparent 62%),
+    radial-gradient(1.7px 1.7px at 45% 82%, rgba(138, 157, 132, .13), transparent 62%);
+  background-size: 340px 340px, 260px 260px, 430px 430px;
+  animation: dust-drift 120s linear infinite;
+}
+@keyframes dust-drift {
+  from { background-position:     0    0,     0    0,    0    0; }
+  to   { background-position:  340px -340px, -260px 260px, 430px 430px; }
+}
+
+/* The department rule under each section head gets a slow travelling
+   highlight — the one piece of motion that sits inside the editorial
+   furniture rather than behind it. */
+.section-header::after { background-size: 100% 100%, 240px 1px; }
+.section-header::after {
+  background-image:
+    linear-gradient(90deg, var(--accent) 0, var(--accent) 36px, var(--border) 36px, var(--border) 100%),
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 70%, transparent), transparent);
+  background-repeat: no-repeat, no-repeat;
+  animation: rule-sheen 9s ease-in-out infinite;
+}
+@keyframes rule-sheen {
+  0%, 12%  { background-position: 0 0, -260px 0; }
+  88%, 100% { background-position: 0 0, 640px 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Everything stops. The drift rows also un-bleed and wrap, and the
+     duplicate copies that only exist to make the loop seamless are removed,
+     so a still page shows each skill exactly once. */
+  .drift-track { animation: none; width: auto; flex-wrap: wrap; gap: 9px; }
+  .drift-track > [aria-hidden="true"] { display: none; }
+  .drift-viewport {
+    width: auto; margin-left: 0; overflow: visible;
+    -webkit-mask-image: none; mask-image: none;
+  }
+  .drift-track .skill-list { flex-wrap: wrap; row-gap: 9px; }
+  #root::before { animation: none; }
+  .section-header::after { animation: none; background-image:
+    linear-gradient(90deg, var(--accent) 0, var(--accent) 36px, var(--border) 36px, var(--border) 100%); }
+}
+
+/* ─── 9. CONTRAST, ONE GROUND ────────────────────────────────────────────
+   These three pre-date this branch — the same audit finds them on main. They
+   were hidden for a while because Projects was a cream spread; with one dark
+   ground throughout they are back, so they get fixed properly.
+
+   Root cause is a tint stacking with a card: .project-metric and .tag both
+   sit on rgba(188,164,122,.1) over the #3a342c card, which composites to
+   rgb(71,63,52) — light enough to pull oat down to 4.30:1. Foregrounds lifted
+   against that real composited ground, hue and saturation held.
+
+   Lifted for the WORST ground, not the average: one tag sits on
+   rgb(76,68,55) rather than rgb(71,63,52), and a first pass computed against
+   the lighter tint left it at 4.28:1. These values clear 4.6:1 on both. */
+.project-metric-label { color: #bfb39e; }          /* 4.24:1 -> 4.64:1 */
+.project-metric-value,
+.tag.tech-tag { color: #c6b28e; }                  /* 4.27:1 -> 4.64:1 */
+/* Not scoped to .project-tilt: a second tech-tag lives outside it and was
+   still failing at 4.28:1. A lighter oat only ever raises contrast on these
+   dark grounds, so the global selector is safe. */

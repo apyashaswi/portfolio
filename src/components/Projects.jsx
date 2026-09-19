@@ -44,7 +44,7 @@ export default function Projects() {
   const featured = PROJECTS.find(p => p.featured)
   const rest = PROJECTS.filter(p => !p.featured)
   return (
-    <section id="projects" className="section section-alt section--paper">
+    <section id="projects" className="section section-alt">
       <div className="container">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Selected Projects</h2>
