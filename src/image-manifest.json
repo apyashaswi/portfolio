@@ -1,0 +1,92 @@
+{
+  "/APY_with_Paws.jpg": {
+    "full": 1200,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "/harvard-team.jpg": {
+    "full": 1600,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/mit-rh-mentor.jpg": {
+    "full": 1600,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/mit-rh-team.jpg": {
+    "full": 600,
+    "widths": [
+      400
+    ]
+  },
+  "/mit-scm-session.jpg": {
+    "full": 1200,
+    "widths": [
+      400,
+      800
+    ]
+  },
+  "/mit-souvenir.jpg": {
+    "full": 768,
+    "widths": [
+      400
+    ]
+  },
+  "/msig-ceo-award.jpg": {
+    "full": 1600,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/msig-cohort.jpg": {
+    "full": 1280,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/msig-induction.jpg": {
+    "full": 1280,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/msig-roundtable.jpg": {
+    "full": 1280,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/njx-hackathon.jpg": {
+    "full": 1600,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  },
+  "/pm-class-northeastern.jpg": {
+    "full": 1600,
+    "widths": [
+      400,
+      800,
+      1200
+    ]
+  }
+}

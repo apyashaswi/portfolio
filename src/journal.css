@@ -400,3 +400,39 @@
   .etl-stage.is-active .etl-stage-bar::after { animation: none; transform: scaleX(1); }
   .skills-drift { transition: none; }
 }
+
+/* ─── 11. GLOBE, ON REQUEST ──────────────────────────────────────────────
+   The globe chunk is ~1.25MB. It used to load on scroll, which only defers
+   the cost — on a single long page everyone who scrolls that far pays it.
+   Now it is a button, so it is opt-in, and the idle state has to look like a
+   deliberate panel rather than something that failed to load. */
+.globe-placeholder--idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 3%, transparent),
+    transparent 70%);
+}
+.globe-load-btn {
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid var(--border-hover);
+  border-radius: 999px;
+  padding: 13px 26px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.globe-load-btn:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); border-color: var(--accent); }
+/* Stating the cost is the honest part of making it opt-in. */
+.globe-load-note {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-muted);
+}
