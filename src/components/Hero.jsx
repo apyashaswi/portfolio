@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import Picture from './Picture'
-import HeroScene from './HeroScene'
+import HeroInfinity from './HeroInfinity'
 import HeroHUD from './HeroHUD'
 import { INTRO_DONE, introWillShow } from '../intro'
 import { revealTransition } from '../utils'
@@ -54,7 +54,7 @@ function HeroBody({ recruiter }) {
 
   return (
     <section id="hero" className={`hero hero-editorial hero-futurist${recruiter ? ' hero-recruiter' : ''}`}>
-      <HeroScene />
+      <HeroInfinity />
       <HeroHUD />
       <div className="hero-grid container">
         <div className="hero-text">

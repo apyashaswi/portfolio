@@ -436,3 +436,46 @@
   font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
   color: var(--text-muted);
 }
+
+/* ─── 12. HERO CENTREPIECE ───────────────────────────────────────────────
+   The infinity glass reuses .hero-scene, so its positioning and the
+   text-legibility scrim are inherited from the scene it replaces. Only the
+   two things that differ are set here. */
+.hero-infinity-mount { position: absolute; inset: 0; z-index: 1; }
+/* .hero-scene is pointer-events:none so it can never steal a scroll or a
+   click. The canvas has to opt back in, or the graticule never sees the
+   cursor — but only the canvas, and only where no hero content sits above it.
+   pointermove is passive inside the module, so touch scrolling still works
+   over it. */
+.hero-scene--infinity .hero-infinity-mount canvas { pointer-events: auto; }
+/* Fade in once the module reports it is up, so the glass arrives rather than
+   popping in over the poster — and arrive at 42%, not 100%.
+   At full strength the form is a bright oat mass sitting directly behind the
+   nameplate and the body copy, and cream text on it is unreadable. The
+   standalone piece owns its whole viewport; here it is a backdrop and has to
+   behave like one. */
+.hero-scene--infinity .hero-infinity-mount { opacity: 0; transition: opacity .9s ease; }
+.hero-scene--infinity.is-ready .hero-infinity-mount { opacity: .42; }
+
+/* The inherited scrim was drawn for a field of faint constellation dots. A
+   solid refracting form needs more cover on the reading side, so the text
+   column gets a deeper, wider gradient. Measured against the rendered canvas,
+   not assumed — a CSS contrast audit cannot see through to a <canvas>. */
+/* z-index 2, above the canvas at 1. Without this the scrim is z-index:auto
+   and the glass paints straight over it, which is why lowering the canvas
+   opacity from .42 to .16 moved the measured contrast by nothing: the scrim
+   was never in front of anything. .hero-grid is also 2 and comes later in the
+   DOM, so the text still sits above the scrim. */
+.hero-scene--infinity::after {
+  z-index: 2;
+  background:
+    linear-gradient(100deg,
+      rgba(44, 38, 32, .97) 0%,
+      rgba(44, 38, 32, .93) 34%,
+      rgba(44, 38, 32, .72) 52%,
+      rgba(44, 38, 32, .38) 70%,
+      rgba(44, 38, 32, .22) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scene--infinity .hero-infinity-mount { transition: none; }
+}
