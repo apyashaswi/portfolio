@@ -80,9 +80,9 @@
 .section--paper + .section::before,
 .section--paper::before { color: var(--accent); }
 
-/* Newsprint grain is tuned for a dark ground; on cream it reads as dirt. */
-.section--paper .grain,
-.section--paper::after { opacity: 0; }
+/* NOTE: the newsprint grain lives on fixed body::before / body::after
+   overlays, so it cannot be disabled per-section from here. Checked on the
+   cream spreads and it reads as paper tooth rather than dirt, so it stays. */
 
 /* Images carry a printed border on cream instead of floating. */
 .section--paper img { box-shadow: 0 1px 0 rgba(36,31,24,.18), 0 18px 40px -28px rgba(36,31,24,.55); }
@@ -124,8 +124,12 @@
   row-gap: 10px;
   padding: var(--rhythm-sm) 0;
 }
-.about-numbers-label { white-space: nowrap; opacity: .72; }
-.about-numbers-sep { opacity: .55; }
+/* Hierarchy by COLOUR, never opacity. --ink-muted clears AA at 5.62:1, but
+   opacity composites toward the background: .72 dropped it to 3.15:1 and the
+   separators at .55 to 2.30:1, both failing. The mono 11px uppercase label is
+   already visually subordinate without dimming it. */
+.about-numbers-label { white-space: nowrap; color: var(--ink-muted); }
+.about-numbers-sep { color: var(--ink-muted); }
 /* each figure holds together, so a wrap breaks between stats, never inside one */
 .about-numbers > .stat-counter,
 .about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label) {
@@ -150,7 +154,10 @@
    844px screen), so a recruiter met a photograph before a name. The text
    column now leads and the portrait follows, which is also the order the
    page already uses in source on desktop. */
-@media (max-width: 860px) {
+/* 900px, not 860: styles.css already stacks the hero and sets
+   .hero-portrait { order: -1 } at max-width 900px, so a 860px breakpoint left
+   the 861-900px band still showing the portrait first. */
+@media (max-width: 900px) {
   .hero-grid { display: flex; flex-direction: column; gap: var(--rhythm-sm); }
   .hero-text { order: 1; max-width: none; }
   .hero-portrait, .hero-figure, .hero-grid > figure { order: 2; }
@@ -161,7 +168,7 @@
 
 /* Desktop: the nameplate had ~200px of empty space beneath it because the
    hero reserved a full viewport regardless of content. */
-@media (min-width: 861px) {
+@media (min-width: 901px) {
   .hero-editorial { min-height: min(88dvh, 860px); }
 }
 
