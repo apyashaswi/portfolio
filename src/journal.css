@@ -455,7 +455,7 @@
    standalone piece owns its whole viewport; here it is a backdrop and has to
    behave like one. */
 .hero-scene--infinity .hero-infinity-mount { opacity: 0; transition: opacity .9s ease; }
-.hero-scene--infinity.is-ready .hero-infinity-mount { opacity: .42; }
+.hero-scene--infinity.is-ready .hero-infinity-mount { opacity: .85; }
 
 /* The inherited scrim was drawn for a field of faint constellation dots. A
    solid refracting form needs more cover on the reading side, so the text
@@ -468,14 +468,40 @@
    DOM, so the text still sits above the scrim. */
 .hero-scene--infinity::after {
   z-index: 2;
+  /* Holds near-full cover across the reading column (which ends at ~50% of
+     the viewport) and falls away after it, so the form can be bright where
+     there is nothing to read. Measured worst-case across 10 frames WITH the
+     reveal lit, not a single screenshot -- the piece animates, so one frame
+     tells you nothing: sampling once gave 0.90 opacity as failing and 1.0 as
+     passing, which is impossible. */
   background:
     linear-gradient(100deg,
-      rgba(44, 38, 32, .97) 0%,
-      rgba(44, 38, 32, .93) 34%,
-      rgba(44, 38, 32, .72) 52%,
-      rgba(44, 38, 32, .38) 70%,
-      rgba(44, 38, 32, .22) 100%);
+      rgba(44, 38, 32, .985) 0%,
+      rgba(44, 38, 32, .975) 40%,
+      rgba(44, 38, 32, .93) 52%,
+      rgba(44, 38, 32, .58) 64%,
+      rgba(44, 38, 32, .24) 80%,
+      rgba(44, 38, 32, .12) 100%);
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-scene--infinity .hero-infinity-mount { transition: none; }
 }
+
+/* The hero grid is a full-width transparent container sitting above the
+   canvas, so it swallowed the pointer across the whole middle band — exactly
+   where the glass is most visible. Sampled before this rule, the canvas was
+   the topmost element at only 41% of hero points, all of them at the margins.
+   The containers become transparent to the pointer and everything actually
+   interactive opts back in. Cost: the hero copy is no longer selectable,
+   which is the trade for the form reacting where you can see it. */
+.hero-futurist .hero-grid,
+.hero-futurist .hero-text,
+.hero-futurist .hero-kicker,
+.hero-futurist .hero-name,
+.hero-futurist .hero-byline,
+.hero-futurist .hero-lead,
+.hero-futurist .hero-ctas { pointer-events: none; }
+.hero-futurist .hero-grid a,
+.hero-futurist .hero-grid button,
+.hero-futurist .hero-portrait,
+.hero-futurist .hero-figure { pointer-events: auto; }
