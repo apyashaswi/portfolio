@@ -37,37 +37,41 @@
    bought the same fix with up to 380px of empty cardstock. */
 .section--paper {
   /* surfaces */
-  --bg:        #efe3c8;
-  --bg-alt:    #e8dcbe;
-  --bg-card:   #f6efdc;
+  --bg:        #d9cba8;      /* cardstock, not a lit page — see the seam note */
+  --bg-alt:    #d1c29d;
+  --bg-card:   #e3d8bb;
   --paper:     #2c2620;        /* inverted: "paper" now means the dark ink */
 
   /* ink — warm near-black, never pure, to stay in the cardstock world */
   --ink:       #241f18;
   --ink-soft:  #413729;
-  --ink-muted: #63563f;        /* 5.9:1 on cream — clears AA for metadata */
+  --ink-muted: #5e523c;        /* 4.75:1 on the stock — clears AA for metadata */
   --ink-dim:   #a1907a;
   --ink-on-dark: #241f18;
   --text:      var(--ink);
   --text-muted: var(--ink-muted);
   --text-dim:  var(--ink-dim);
 
-  /* Oat cannot survive on cream — #bca47a on #efe3c8 is about 1.5:1. The
-     voice colour is darkened to the same hue at printable weight. */
-  --accent:    #6d5322;
+  /* Oat cannot survive on this stock — #bca47a on #d9cba8 is about 1.3:1. The
+     voice colour is darkened to the same hue at printable weight. Every value
+     below was re-derived when the stock was darkened: at #efe3c8 the old set
+     cleared AA, but on #d9cba8 --ink-muted, --accent and --warm all fell to
+     4.45/4.49/3.68. Hue and saturation held, lightness reduced until each
+     cleared 4.75:1. */
+  --accent:    #684f21;
   --accent2:   #47593f;        /* sage, likewise deepened */
   --accent3:   #34526b;        /* ink blue */
-  --warm:      #7d5f2b;
+  --warm:      #694f24;
   --gold:      var(--accent);
 
-  --accent-dim:   rgba(109, 83, 34, .10);
+  --accent-dim:   rgba(104, 79, 33, .10);
   --accent2-dim:  rgba(71, 89, 63, .10);
-  --accent-glow:  rgba(109, 83, 34, .22);
+  --accent-glow:  rgba(104, 79, 33, .22);
   --accent2-glow: rgba(71, 89, 63, .18);
   --gold-glow:    var(--accent-glow);
   --border:       rgba(36, 31, 24, .14);
   --border-t:     rgba(71, 89, 63, .16);
-  --border-hover: rgba(109, 83, 34, .42);
+  --border-hover: rgba(104, 79, 33, .42);
   --shadow-light: rgba(36, 31, 24, .07);
   --shadow-medium: rgba(36, 31, 24, .14);
 
@@ -76,38 +80,47 @@
 }
 
 /* The seam between signatures.
-   A hard edge put a horizontal line across the middle of the screen, and at a
-   900px viewport a seam is on screen for a full viewport of scrolling no
-   matter how tall the sections are -- so the edge itself had to go soft. The
-   ground now fades in and out across the section's own padding, where no text
-   ever sits, so the change reads as the page warming into cardstock.
+   Three treatments were built and looked at before this one.
 
-   Painted as a background-IMAGE over a solid background-COLOR, not as a
-   background shorthand fading to transparent. Two reasons: the solid colour
-   underneath is what tooling (and the contrast audit) reads as the real
-   ground, and fading cream to alpha 0 would reveal <body> rather than the
-   neighbouring section, which is a different dark. */
+   A ~80px ground fade blurred the EDGE, which was wrong: it was the only
+   soft-focus element on a page built from hairlines and sharp serifs, the
+   sRGB ramp passed through a desaturated khaki (~rgb(148,139,122)) that
+   exists nowhere in this palette so it read as dirt, and it swallowed the
+   asterism divider that sits at the bottom join.
+
+   A crisp edge with an outward CAST shadow was next -- paper on a desk. It
+   measured as a no-op: the shadow landed at rgb(40,34,28) on a ground of
+   rgb(46,39,33). You cannot cast a visible shadow onto a near-black surface.
+   A 1px rule and a double rule at the boundary failed the same way. Against a
+   ~200-unit luminance step, no edge decoration registers at all.
+
+   So the edge is not the problem -- the size of the jump is. #efe3c8 against
+   #2c2620 is 11.74:1, which is why the join reads as glare no matter how it
+   is dressed. The stock is now #d9cba8: still unmistakably paper, but 9.29:1
+   against the dark, a ~21% gentler collision. The edge stays crisp and honest,
+   with a single lit pixel along the sheet's top, the way a page actually
+   catches light. */
 .section--paper::after,
 .section--paper::before { pointer-events: none; }
 .section--paper {
-  /* midpoint of the two darks that can sit next to a spread: #2c2620 (body,
-     hero, plain .section) and #322c25 (.section-alt). Within 3/255 of either,
-     so the join is invisible whichever neighbour it lands against. */
-  --seam-dark: #2f2922;
-  --seam-h: clamp(56px, 5.5vw, 96px);   /* always < --rhythm, so never on text */
-  background-color: var(--bg);
-  background-image: linear-gradient(
-    to bottom,
-    var(--seam-dark) 0,
-    rgba(47, 41, 34, 0) var(--seam-h),
-    rgba(47, 41, 34, 0) calc(100% - var(--seam-h)),
-    var(--seam-dark) 100%);
+  background: var(--bg);
+  box-shadow: inset 0 1px 0 rgba(255, 252, 244, .30);
 }
 
-/* The asterism divider inherits --accent, so it re-colours automatically;
-   it just needs to sit on the right side of the seam. */
-.section--paper + .section::before,
-.section--paper::before { color: var(--accent); }
+/* The asterism divider is a ::before at top:-50px, so it is painted over the
+   section BEFORE it, not its own. It therefore has to be coloured for the
+   ground it lands on, which is the opposite of the section that owns it.
+   Literal values, not var(--accent): a custom property resolves in the scope
+   of the element it is used on, so `color: var(--accent)` on
+   `.section--paper + .section` picked up that DARK section's oat and painted
+   it onto cream at about 1.5:1 -- invisible. Same trap in reverse above a
+   spread. */
+/* styles.css owns this at `.section + .section::before`, which is (0,2,0);
+   a bare `.section--paper::before` is (0,1,0) and silently loses, so the
+   divider above a spread kept the paper accent and sat on the DARK section at
+   1.79:1. Matching the specificity (and landing later in the cascade) wins. */
+.section + .section--paper::before { color: #bca47a; }  /* lands on the dark above */
+.section--paper + .section::before { color: #684f21; }  /* lands on the stock above */
 
 /* NOTE: the newsprint grain lives on fixed body::before / body::after
    overlays, so it cannot be disabled per-section from here. Checked on the
@@ -119,8 +132,8 @@
 /* Chips/tags were drawn for a dark ground. */
 .section--paper .tech-tag,
 .section--paper .tag {
-  background: rgba(109, 83, 34, .07);
-  border-color: rgba(109, 83, 34, .22);
+  background: rgba(104, 79, 33, .07);
+  border-color: rgba(104, 79, 33, .22);
   color: var(--ink-soft);
 }
 
