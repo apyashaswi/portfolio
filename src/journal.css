@@ -75,6 +75,21 @@
     inset 0 -14px 24px -14px rgba(36, 31, 24, .18);
 }
 
+/* Recruiter mode hides the sections that separate Projects from Research, so
+   two paper spreads land back to back. Left alone, the first draws its bottom
+   shadow and the second draws its top highlight + top shadow, trapping a dark
+   band in the middle of what should be continuous cardstock. Suppress the
+   inner edges so a run of spreads reads as one signature, which is what a
+   journal actually does when a department runs long. */
+.section--paper:has(+ .section--paper) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 252, 244, .55),
+    inset 0 14px 24px -14px rgba(36, 31, 24, .30);
+}
+.section--paper + .section--paper {
+  box-shadow: inset 0 -14px 24px -14px rgba(36, 31, 24, .18);
+}
+
 /* The asterism divider inherits --accent, so it re-colours automatically;
    it just needs to sit on the right side of the seam. */
 .section--paper + .section::before,
@@ -116,14 +131,25 @@
    Flex, not grid: a grid wanted the middot separators hidden, and hiding
    them would have removed characters that are on the page today. Every
    glyph stays; the spacing does the work instead. */
+/* Inline, not flex. Flex can break between ANY two items, which at <=860px
+   ended a line on a dangling middot and orphaned the last stat by itself.
+   JSX leaves no whitespace text nodes between these spans, so inline layout
+   has no break opportunities of its own -- which means we get to place them:
+   one generated space after each separator, set at font-size 0 so it is a
+   break opportunity with no advance width. (U+200B was the obvious choice and
+   was wrong: IBM Plex Mono has no glyph for it, so it rendered as a visible
+   tofu box.) Lines can then only break FOLLOWING a middot, so they end with
+   the separator and begin with a stat, never the reverse. text-wrap:balance
+   evens the line lengths so no line is left holding one stat alone. */
 .about-numbers {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  column-gap: 18px;
-  row-gap: 10px;
+  display: block;
   padding: var(--rhythm-sm) 0;
+  line-height: 2.05;
+  text-wrap: balance;
 }
+.about-numbers > * { display: inline; }
+.about-numbers-sep::after { content: ' '; font-size: 0; }
+.about-numbers-sep { margin: 0 9px; }
 /* Hierarchy by COLOUR, never opacity. --ink-muted clears AA at 5.62:1, but
    opacity composites toward the background: .72 dropped it to 3.15:1 and the
    separators at .55 to 2.30:1, both failing. The mono 11px uppercase label is
@@ -196,7 +222,13 @@
 .section--paper a:not(.btn):hover { text-decoration-color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
-  .section--paper { box-shadow: inset 0 1px 0 rgba(255,252,244,.4); }
+  /* :has() scores (0,2,0), so the plain .section--paper selector below would
+     lose to the adjacency rule above and leave the first of a pair with its
+     shadows while its neighbours went flat. Match that specificity here. */
+  .section--paper,
+  .section--paper:has(+ .section--paper) { box-shadow: inset 0 1px 0 rgba(255,252,244,.4); }
+  /* same join, minus the shadows: no hairline inside a run of spreads */
+  .section--paper + .section--paper { box-shadow: none; }
 }
 
 /* ─── 6. CONTRAST REPAIRS ────────────────────────────────────────────────
