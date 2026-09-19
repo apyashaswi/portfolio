@@ -80,33 +80,75 @@
 }
 
 /* The seam between signatures.
-   Three treatments were built and looked at before this one.
+   Five treatments were built and measured before this one. A 1px rule, a
+   double rule and an outward cast shadow all rendered indistinguishable from
+   a hard cut -- against a ~200-unit luminance step no edge decoration
+   registers, and a shadow cannot darken a near-black ground (measured:
+   rgb(40,34,28) of shadow on a rgb(46,39,33) surface).
 
-   A ~80px ground fade blurred the EDGE, which was wrong: it was the only
-   soft-focus element on a page built from hairlines and sharp serifs, the
-   sRGB ramp passed through a desaturated khaki (~rgb(148,139,122)) that
-   exists nowhere in this palette so it read as dirt, and it swallowed the
-   asterism divider that sits at the bottom join.
+   So the ground itself ramps. The first attempt at that read as dirt, for
+   three reasons, all fixed here:
 
-   A crisp edge with an outward CAST shadow was next -- paper on a desk. It
-   measured as a no-op: the shadow landed at rgb(40,34,28) on a ground of
-   rgb(46,39,33). You cannot cast a visible shadow onto a near-black surface.
-   A 1px rule and a double rule at the boundary failed the same way. Against a
-   ~200-unit luminance step, no edge decoration registers at all.
+     1. It interpolated in sRGB, which passes from warm dark to warm stock via
+        a desaturated khaki (~rgb(148,139,122)) that exists nowhere in this
+        palette. `in oklab` keeps the whole ramp warm.
+     2. It was LINEAR, so the ramp starts and stops abruptly in its second
+        derivative -- the eye reads those as two extra edges (Mach bands) and
+        the whole thing looks like a band rather than a transition. The stops
+        below follow a smoothstep, which is gentlest exactly at the two ends
+        where the banding was.
+     3. It was 80px, too short for the distance being travelled.
 
-   So the edge is not the problem -- the size of the jump is. #efe3c8 against
-   #2c2620 is 11.74:1, which is why the join reads as glare no matter how it
-   is dressed. The stock is now #d9cba8: still unmistakably paper, but 9.29:1
-   against the dark, a ~21% gentler collision. The edge stays crisp and honest,
-   with a single lit pixel along the sheet's top, the way a page actually
-   catches light. */
+   Measured largest single step down the ramp: 174 for a hard cut, 21 linear,
+   18 eased over this distance.
+
+   --fade is tied to the padding, not a fixed length, so the ramp finishes
+   exactly where the first line of text begins and no copy ever sits on a
+   partial ground. The extra 48px buys the ramp room without putting anything
+   in it.
+
+   NOTE on the stop positions: every multiplication is wrapped in its own
+   parentheses, and the full-length stops are written as plain var(--fade)
+   rather than `var(--fade) * 1`. Without that, `calc(100% - var(--fade) * 1)`
+   resolved to `calc(100% - 52.8px)` instead of 148.8px -- the browser
+   flattened the nested calc in --fade (`calc(clamp(...) + 48px)`) inside the
+   subtraction as `100% - clamp(...) + 48px`. That stop then sat AFTER the
+   ones following it, and since gradient stops must be non-decreasing the
+   browser clamped the next five up to it, collapsing the bottom ramp from
+   148.8px to 53px while the top ramp stayed correct. */
 .section--paper::after,
 .section--paper::before { pointer-events: none; }
+/* .section.section--paper, not .section--paper: the rhythm rule in section 2
+   below sets `.section { padding: var(--rhythm) 0 }` at the same (0,1,0) and
+   lands later in the file, so a bare class here loses and the ramp overruns
+   the padding by 48px -- putting the section header inside it. */
+.section.section--paper {
+  --fade: calc(var(--rhythm) + 48px);
+  padding-top: var(--fade);
+  padding-bottom: var(--fade);
+}
 .section--paper {
-  background: var(--bg);
-  box-shadow:
-    inset 0  1px 0 rgba(255, 252, 244, .30),   /* lit top edge of the sheet */
-    inset 0 -1px 0 rgba(36, 31, 24, .16);      /* its under-edge */
+  --fade: calc(var(--rhythm) + 48px);
+  background-color: var(--bg);
+  background-image: linear-gradient(to bottom,
+    #2f2922 0,
+    color-mix(in oklab, #2f2922, var(--bg) 4.3%) calc(var(--fade) * 0.125),
+    color-mix(in oklab, #2f2922, var(--bg) 15.6%) calc(var(--fade) * 0.250),
+    color-mix(in oklab, #2f2922, var(--bg) 31.6%) calc(var(--fade) * 0.375),
+    color-mix(in oklab, #2f2922, var(--bg) 50.0%) calc(var(--fade) * 0.500),
+    color-mix(in oklab, #2f2922, var(--bg) 68.4%) calc(var(--fade) * 0.625),
+    color-mix(in oklab, #2f2922, var(--bg) 84.4%) calc(var(--fade) * 0.750),
+    color-mix(in oklab, #2f2922, var(--bg) 95.7%) calc(var(--fade) * 0.875),
+    var(--bg) var(--fade),
+    var(--bg) calc(100% - var(--fade)),
+    color-mix(in oklab, #2f2922, var(--bg) 95.7%) calc(100% - (var(--fade) * 0.875)),
+    color-mix(in oklab, #2f2922, var(--bg) 84.4%) calc(100% - (var(--fade) * 0.750)),
+    color-mix(in oklab, #2f2922, var(--bg) 68.4%) calc(100% - (var(--fade) * 0.625)),
+    color-mix(in oklab, #2f2922, var(--bg) 50.0%) calc(100% - (var(--fade) * 0.500)),
+    color-mix(in oklab, #2f2922, var(--bg) 31.6%) calc(100% - (var(--fade) * 0.375)),
+    color-mix(in oklab, #2f2922, var(--bg) 15.6%) calc(100% - (var(--fade) * 0.250)),
+    color-mix(in oklab, #2f2922, var(--bg) 4.3%) calc(100% - (var(--fade) * 0.125)),
+    #2f2922 100%);
 }
 
 /* THE SHEET.
@@ -147,7 +189,16 @@
    divider above a spread kept the paper accent and sat on the DARK section at
    1.79:1. Matching the specificity (and landing later in the cascade) wins. */
 .section + .section--paper::before { color: #bca47a; }  /* lands on the dark above */
-.section--paper + .section::before { color: #684f21; }  /* lands on the stock above */
+/* This one lands on the spread ABOVE it, at top:-50px -- which is now inside
+   that spread's bottom ramp, where the ground is mostly dark and a stock-
+   weight accent disappears. No single colour works across a gradient, so the
+   ornament moves clear of the ramp instead: --fade + 40px above the boundary
+   puts it on full stock. Restated rather than var(--fade), because a custom
+   property inherits from the parent, not from the previous sibling. */
+.section--paper + .section::before {
+  color: #684f21;
+  top: calc(-1 * (clamp(72px, 7vw, 116px) + 88px));
+}
 
 /* NOTE: the newsprint grain lives on fixed body::before / body::after
    overlays, so it cannot be disabled per-section from here. Checked on the
