@@ -304,3 +304,77 @@
 
 .exp-type-badge { color: #9fb398; }
 .skill-category { color: var(--ink-soft); }
+
+/* ─── 7. ROUTES ──────────────────────────────────────────────────────────
+   Supporting styles for the hybrid navigation: the journal scroll stays the
+   spine, but Globe and Journey live at their own URLs (GlobeViz alone is
+   ~1.25MB, and on one long page that weight is paid by everyone who scrolls
+   far enough), and every section has a real deep link.
+
+   Nothing here is loaded by styles.css, so removing the journal.css import
+   still reverts the whole layer. */
+
+/* A routed section has no hero above it, so it needs to clear the fixed
+   masthead + nav itself. */
+.route-page { padding-top: 124px; }
+.route-back {
+  max-width: var(--column);
+  margin: 0 auto;
+  padding: 0 28px var(--rhythm);
+}
+.route-back-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-hover);
+  padding-bottom: 3px;
+}
+.route-back-link:hover { border-bottom-color: var(--accent); }
+
+/* Nav hover preview. Hover REVEALS, click NAVIGATES — hover-to-navigate would
+   strand every touch and keyboard user, since neither has a hover state to
+   fire it, and it misfires whenever the pointer merely crosses the bar. */
+.nav-preview {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  max-width: min(720px, calc(100vw - 48px));
+  padding: 9px 18px;
+  background: #1a1611;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 44px -26px rgba(0, 0, 0, .95);
+  /* the panel must never intercept a click aimed at the page behind it */
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.nav-preview-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  flex: none;
+}
+.nav-preview-text {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* No hover on touch, and below 900px the links live in the overlay menu. */
+@media (max-width: 900px) { .nav-preview { display: none; } }
+
+/* NOTE: no scroll offset needed here. styles.css:88-91 already sets
+   `html { scroll-padding-top: 104px }` and `section[id] { scroll-margin-top:
+   104px }`, so deep links land exactly where the existing in-page anchors
+   always have. Adding a second scroll-margin here just duplicated that rule. */
