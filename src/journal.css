@@ -159,9 +159,17 @@
 .company-monogram { color: #f4a0a3; }
 
 .exp-type-badge { color: #9fb398; }
-/* .skill-category keeps its own --cat-accent now. The override that forced
-   --ink-soft here existed for the cream ground, which is gone; on the dark
-   ground each category's colour is what tells the four drifting rows apart. */
+/* Each category's colour is what tells the four drifting rows apart, so the
+   label keeps its own --cat-accent rather than being flattened to --ink-soft
+   (that override existed for the cream ground, which is gone).
+
+   But three of the four accents fail AA as 12px text on this ground straight
+   out of CATEGORY_META: sage 4.03:1, ink-blue 3.83:1, the warm brown 3.16:1 —
+   only oat clears at 5.73:1. Lifting every one toward white by the same 26%
+   keeps them distinguishable from each other and clears 4.5:1 for all four.
+   Applied to the LABEL only: the glyph tile beside it is an icon, and
+   non-text contrast needs 3:1, which the raw accents already meet. */
+.skill-category { color: color-mix(in srgb, var(--cat-accent), #fff 26%); }
 
 /* ─── 7. SKILLS DRIFT ────────────────────────────────────────────────────
    The skill lists stop being four static cards and become four rows that
