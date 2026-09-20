@@ -1,9 +1,7 @@
-import { Suspense, lazy, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
 import StatCounter from './StatCounter'
 import { fadeUp } from '../utils'
-
-const GlobeViz = lazy(() => import('../GlobeViz'))
 
 export default function GlobeSection() {
   // Click to load, not scroll to load. The three.js / globe.gl chunk is
@@ -11,12 +9,37 @@ export default function GlobeSection() {
   // long page everyone who scrolls this far still pays it, whether or not
   // they wanted a globe. Behind a click it is opt-in, and Explorer's total
   // drops by the whole chunk for everyone who does not ask for it.
-  const [load, setLoad] = useState(false)
+  // Explicit state rather than lazy() + Suspense, so a failed chunk fetch is
+  // recoverable. With Suspense alone a rejected import leaves the fallback on
+  // screen forever: the button is gone, nothing reports the failure, and the
+  // only way out is a manual reload. That is not hypothetical -- every
+  // rebuild re-hashes the chunk filenames and empties dist, so any tab opened
+  // before a deploy asks for a file that no longer exists.
+  // On error the action is a RELOAD, not a retry. ESM caches a rejected
+  // dynamic import, so re-requesting the same specifier fails again without
+  // touching the network -- and in the common cause (a tab open across a
+  // deploy, where the hashed filename no longer exists) the file is genuinely
+  // gone. Fresh HTML is the only thing that fixes it.
+  const [phase, setPhase] = useState('idle')   // idle | loading | ready | error
+  const [Viz, setViz] = useState(null)
 
-  // Warm the chunk on hover/focus so the click itself feels instant. Harmless
-  // if it never comes -- the import is cached, and a pointer landing on the
-  // button is a much stronger signal of intent than a viewport intersection.
-  const prefetch = useCallback(() => { import('../GlobeViz') }, [])
+  const load = useCallback(async () => {
+    setPhase('loading')
+    try {
+      const mod = await import('../GlobeViz')
+      setViz(() => mod.default)
+      setPhase('ready')
+    } catch {
+      setPhase('error')
+    }
+  }, [])
+
+  // Warm the chunk on hover/focus so the click itself feels instant. A
+  // pointer landing on the button is a much stronger signal of intent than a
+  // viewport intersection. The catch is load-bearing: a bare import() here
+  // turns any fetch failure into an unhandled rejection, which surfaces as a
+  // page error even though the click path handles the same failure fine.
+  const prefetch = useCallback(() => { import('../GlobeViz').catch(() => {}) }, [])
 
   return (
     <section id="globe" className="section section-alt">
@@ -26,22 +49,24 @@ export default function GlobeSection() {
           <p className="section-subtitle">Places that shaped the journey — professional &amp; personal</p>
         </motion.div>
         <motion.div {...fadeUp(0.1)}>
-          {load ? (
-            <Suspense fallback={<div className="globe-placeholder">Loading globe…</div>}>
-              <GlobeViz />
-            </Suspense>
+          {phase === 'ready' && Viz ? (
+            <Viz />
+          ) : phase === 'loading' ? (
+            <div className="globe-placeholder">Loading globe…</div>
           ) : (
             <div className="globe-placeholder globe-placeholder--idle">
               <button
                 type="button"
                 className="globe-load-btn"
-                onClick={() => setLoad(true)}
+                onClick={phase === 'error' ? () => location.reload() : load}
                 onMouseEnter={prefetch}
                 onFocus={prefetch}
               >
-                Load the interactive globe
+                {phase === 'error' ? 'Reload the page' : 'Load the interactive globe'}
               </button>
-              <span className="globe-load-note">1.2 MB · three.js</span>
+              <span className="globe-load-note">
+                {phase === 'error' ? 'Load failed — the page was likely updated' : '1.2 MB · three.js'}
+              </span>
             </div>
           )}
         </motion.div>
