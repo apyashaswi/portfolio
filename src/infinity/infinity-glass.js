@@ -10,7 +10,7 @@
  * side effects that survive dispose(). See README for the React wrapper.
  */
 import * as THREE from 'three';
-import { A, B, R0, makeCurve, radiusAt, buildTube } from './ig-geometry.js';
+import { A, B, R0, makeCurve, radiusAt, buildTube } from './ap-monogram.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
@@ -56,6 +56,12 @@ async function build(opts, own) {
     // 'shatter' — the cursor is a damage brush and the glass breaks.
     mode = 'reveal',
     reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches,
+    // The backdrop plane is the surface the glass refracts, and it is right
+    // for a piece that owns its viewport. Embedded at a few hundred pixels it
+    // reads as a lit box sitting on the page — an embedded player, not a mark.
+    // With it off the canvas is transparent and the form floats on whatever
+    // the page's own ground is.
+    backdrop = true,
     onProgress = null,
   } = opts;
 
@@ -125,7 +131,9 @@ async function build(opts, own) {
   /* ── renderer ──────────────────────────────────────────────────────── */
   const renderer = new THREE.WebGLRenderer({
     antialias: true, powerPreference: 'high-performance',
+    alpha: !backdrop,
   });
+  if (!backdrop) renderer.setClearAlpha(0);
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -226,9 +234,9 @@ async function build(opts, own) {
     depthWrite: true,
   });
   const backdropGeo = new THREE.PlaneGeometry(1, 1);
-  const backdrop = new THREE.Mesh(backdropGeo, backdropMat);
-  backdrop.position.z = -6.2;
-  scene.add(backdrop);
+  const backdropMesh = new THREE.Mesh(backdropGeo, backdropMat);
+  backdropMesh.position.z = -6.2;
+  if (backdrop) scene.add(backdropMesh);
 
   // The form spans about 3.2 x 2.0 units. On a narrow or portrait viewport a
   // fixed distance cropped it, so pull back to whatever actually fits.
@@ -244,9 +252,9 @@ async function build(opts, own) {
   function fitBackdrop() {
     // sized against the BASE camera z, with generous margin, because the
     // camera now orbits and must never reveal the plane's edge
-    const d = CAM_Z - backdrop.position.z;
+    const d = CAM_Z - backdropMesh.position.z;
     const h = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d;
-    backdrop.scale.set(h * camera.aspect * 2.6, h * 2.6, 1);
+    backdropMesh.scale.set(h * camera.aspect * 2.6, h * 2.6, 1);
     backdropMat.uniforms.uAspect.value = camera.aspect;
   }
   fitBackdrop();
@@ -513,11 +521,11 @@ async function build(opts, own) {
       ].join('\n'));
   };
 
-  const glassGeo = own(buildTube(curve, 1024, 48));
+  const glassGeo = own(buildTube(curve, 1024, 48, false));
   const glass = new THREE.Mesh(glassGeo, glassMat);
   scene.add(glass);
 
-  const proxyGeo = own(buildTube(curve, 220, 16));
+  const proxyGeo = own(buildTube(curve, 220, 16, false));
   const proxyMat = new THREE.MeshBasicMaterial({ visible: false });
   const proxy = new THREE.Mesh(proxyGeo, proxyMat);
   scene.add(proxy);
@@ -530,14 +538,14 @@ async function build(opts, own) {
   const cp = new Float32Array((SEG + 1) * 3), cn = new Float32Array((SEG + 1) * 3),
         cb = new Float32Array((SEG + 1) * 3), cr = new Float32Array(SEG + 1);
   {
-    const fr = curve.computeFrenetFrames(SEG, true), P = new THREE.Vector3();
+    const fr = curve.computeFrenetFrames(SEG, false), P = new THREE.Vector3();
     for (let i = 0; i <= SEG; i++) {
       curve.getPointAt(i / SEG, P);
       cp[i * 3] = P.x; cp[i * 3 + 1] = P.y; cp[i * 3 + 2] = P.z;
       const N = fr.normals[i], Bn = fr.binormals[i];
       cn[i * 3] = N.x; cn[i * 3 + 1] = N.y; cn[i * 3 + 2] = N.z;
       cb[i * 3] = Bn.x; cb[i * 3 + 1] = Bn.y; cb[i * 3 + 2] = Bn.z;
-      cr[i] = radiusAt(P);
+      cr[i] = typeof curve.radiusAt === 'function' ? curve.radiusAt(i / SEG, P) : radiusAt(P);
     }
   }
 

@@ -2,24 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import { useReducedEffects, webglAvailable, saveDataOn } from '../effects'
 
 /**
- * A liquid-glass infinity symbol whose latitude/longitude graticule lights up
- * under the pointer. It gets its own full-width band rather than sitting
- * behind the hero.
+ * The AP monogram, drawn in glass, as the journal's sign-off.
  *
- * It was in the hero first, and that did not work. The hero is full -- copy
- * left, portrait right -- so the form was either covered by the portrait or
- * had to be scrimmed until it vanished to keep the copy readable. Measured
- * with the reveal lit, the byline failed AA at 0.42 opacity unless the scrim
- * was heavy enough to hide the form as well. Those two requirements cannot
- * both be met in that layout. Here there is nothing over it: full opacity, no
- * scrim, hoverable edge to edge.
+ * It was an infinity symbol first, in the hero and then in a band of its own,
+ * and it meant nothing in either place — a shape with no connection to
+ * anything on the page. The mark is the site's own: .nav-logo and
+ * .footer-monogram are both var(--font-hand), so it is drawn the way that
+ * mark is written rather than extruded from letterform outlines.
  *
- * The hero keeps the bundle win that swap bought -- it now carries no WebGL at
- * all. The old react-three-fiber scene pulled @react-three/fiber + drei +
- * postprocessing into the EAGER bundle for a decorative blob: index.js
- * measured 367KB gzip with it and 119KB without.
+ * It sits under "Thank you for reading." because that is where a signature
+ * goes. Nothing is layered over it, so there is no scrim and no opacity
+ * compromise: full strength, hoverable across its whole surface.
  */
-export default function InfinityBand() {
+export default function MonogramMark() {
   const wrap = useRef(null)
   const mount = useRef(null)
   const [ready, setReady] = useState(false)
@@ -52,6 +47,8 @@ export default function InfinityBand() {
           // it cannot hold 30fps.
           particles: 400000,
           mode: 'reveal',
+          // no lit plane behind it — the mark floats on the footer's own ground
+          backdrop: false,
           autoQuality: true,
           reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
         })
@@ -92,8 +89,8 @@ export default function InfinityBand() {
   if (gated) return null
 
   return (
-    <div className={`infinity-band${ready ? ' is-ready' : ''}`} aria-hidden="true" ref={wrap}>
-      <div className="infinity-band-mount" ref={mount} />
+    <div className={`monogram-mark${ready ? ' is-ready' : ''}`} aria-hidden="true" ref={wrap}>
+      <div className="monogram-mark-mount" ref={mount} />
     </div>
   )
 }
