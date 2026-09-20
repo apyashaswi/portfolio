@@ -1,4 +1,3 @@
-import MonogramMark from './MonogramMark'
 // Editorial sign-off — the back leaf of the journal.
 // A quiet closing line, a handwritten monogram, and a magazine colophon.
 export default function Footer() {
@@ -7,8 +6,6 @@ export default function Footer() {
       <div className="footer-inner">
         <p className="footer-closing">Thank you for reading.</p>
 
-        {/* the sign-off mark — where a signature goes */}
-        <MonogramMark />
 
         <div className="footer-grid">
           <div className="footer-sign">
