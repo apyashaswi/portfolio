@@ -6,6 +6,7 @@ export default function Footer() {
       <div className="footer-inner">
         <p className="footer-closing">Thank you for reading.</p>
 
+
         <div className="footer-grid">
           <div className="footer-sign">
             <span className="footer-monogram" aria-hidden="true">AP</span>
