@@ -73,9 +73,25 @@ export const revealTransition = (delay = 0) => {
   }
 }
 
+// The cinematic layer's one easing curve (expo-out). Mirrors --ease-out-expo
+// in cinematic.css so CSS transitions and framer-motion land on the same feel.
+export const EASE = [0.16, 1, 0.3, 1]
+
+// Scroll reveal: a long, settling expo-out rise. Everything that enters on
+// scroll goes through here so the whole page moves with one hand.
 export const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 32 },
+  initial: { opacity: 0, y: 34 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: revealTransition(delay),
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.9, ease: EASE, delay: Math.min(delay, MAX_STAGGER_DELAY) },
 })
+
+// Variant form of the same reveal, for parents that stagger their children.
+export const revealVariants = {
+  hidden: { opacity: 0, y: 34 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.9, ease: EASE, delay: Math.min(i * 0.08, MAX_STAGGER_DELAY) },
+  }),
+}

@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Masthead from './components/Masthead'
 import ScrollTop from './components/ScrollTop'
 import IntroOverlay from './components/IntroOverlay'
+import AmbientMesh from './components/AmbientMesh'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -52,6 +53,7 @@ export default function App() {
   return (
     <>
       <a href="#main" className="skip-link">Skip to content</a>
+      <AmbientMesh />
       <IntroOverlay />
       <Masthead mode={mode} setMode={setMode} />
       <Nav active={active} bannerVisible={true} mode={mode} />
