@@ -61,21 +61,21 @@ export const useDocumentMeta = (title, description) => {
 // transition that needs the same policy (e.g. Skills' per-tag list).
 export const MAX_STAGGER_DELAY = 0.3
 
-// The site's one canonical reveal recipe: a physics-based spring on position,
-// a quick simple ease on opacity so content reads before the motion settles.
-// Shared by fadeUp() (scroll-triggered) and any mount-triggered reveal
-// (Nav, ScrollTop, Hero) so the timing can't drift into N different tunings.
-export const revealTransition = (delay = 0) => {
-  const d = Math.min(delay, MAX_STAGGER_DELAY)
-  return {
-    y: { type: 'spring', duration: 0.45, bounce: 0.16, delay: d },
-    opacity: { duration: 0.28, ease: 'easeOut', delay: d },
-  }
-}
-
 // The cinematic layer's one easing curve (expo-out). Mirrors --ease-out-expo
 // in cinematic.css so CSS transitions and framer-motion land on the same feel.
 export const EASE = [0.16, 1, 0.3, 1]
+
+// The site's one canonical reveal recipe, now on the same expo-out curve as
+// everything else: position settles long, opacity lands early so content
+// reads before the motion finishes. Shared by mount-triggered reveals (Nav,
+// ScrollTop, Hero) so the timing can't drift into N different tunings.
+export const revealTransition = (delay = 0) => {
+  const d = Math.min(delay, MAX_STAGGER_DELAY)
+  return {
+    y: { duration: 0.9, ease: EASE, delay: d },
+    opacity: { duration: 0.5, ease: EASE, delay: d },
+  }
+}
 
 // Scroll reveal: a long, settling expo-out rise. Everything that enters on
 // scroll goes through here so the whole page moves with one hand.

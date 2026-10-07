@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
+import { useReducedEffects } from '../effects'
 
 // Quiet authority row — the affiliations a recruiter scans for in the first
 // few seconds. Text wordmarks (not logos) keep it on-brand and avoid brand
@@ -20,8 +21,11 @@ const AFFILIATIONS = [
 const PASSES = 4
 
 export default function TrustStrip() {
+  // "Effects: off" in the masthead is the site's pause control for every
+  // looping motion, this marquee included (WCAG 2.2.2).
+  const still = useReducedEffects()
   return (
-    <motion.section className="trust-strip trust-marquee" aria-label="Affiliations" {...fadeUp(0.1)}>
+    <motion.section className={`trust-strip trust-marquee${still ? ' is-still' : ''}`} aria-label="Affiliations" {...fadeUp(0.1)}>
       <div className="container trust-strip-inner">
         <span className="trust-strip-label">Seen across</span>
       </div>

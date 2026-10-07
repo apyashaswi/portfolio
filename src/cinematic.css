@@ -26,6 +26,12 @@
   --grad-voice-short: linear-gradient(120deg, var(--accent), var(--warm));
   --grad-ink: linear-gradient(120deg, var(--ink) 30%, var(--ink-muted));
 
+  /* Sage for small TEXT on glass. --accent2 (#8a9d84) is ~4.2:1 once the
+     glass-2 hover fill is composited over the ground; this lift (the same
+     one journal.css already uses for badges) holds ~5.9:1. Fills, rules and
+     blobs keep --accent2. */
+  --sage-text: #9fb398;
+
   --glow-voice: 0 0 80px rgba(188, 164, 122, 0.22);
   --glow-sage: 0 0 60px rgba(125, 144, 121, 0.18);
 

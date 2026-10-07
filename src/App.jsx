@@ -41,9 +41,12 @@ export default function App() {
       // crossing it is the active one. A ratio threshold (0.3) never fires
       // for sections taller than ~3 viewports, which left the nav stuck on
       // the previous section through all of Leadership and the showcase.
+      // Pixels, not percentages: percentage rootMargins resolve against the
+      // viewport WIDTH, which on a landscape screen collapses the band.
+      const vh = window.innerHeight
       obs = new IntersectionObserver(
         entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
-        { rootMargin: '-45% 0px -54% 0px', threshold: 0 }
+        { rootMargin: `-${Math.round(vh * 0.45)}px 0px -${Math.round(vh * 0.54)}px 0px`, threshold: 0 }
       )
       sections.forEach(s => obs.observe(s))
     }
@@ -51,7 +54,8 @@ export default function App() {
     const main = document.getElementById('main')
     const mo = main && new MutationObserver(attach)
     mo?.observe(main, { childList: true, subtree: true })
-    return () => { obs?.disconnect(); mo?.disconnect() }
+    window.addEventListener('resize', attach)
+    return () => { obs?.disconnect(); mo?.disconnect(); window.removeEventListener('resize', attach) }
   }, [mode, isHome, location.pathname])
 
   return (

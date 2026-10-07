@@ -96,9 +96,13 @@
     position: fixed; inset: 0;
     background: rgba(26, 22, 18, .97);
     -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
-    flex-direction: column; justify-content: center; align-items: center;
+    flex-direction: column; justify-content: safe center; align-items: center;
     gap: 6px;
     z-index: 999;
+    /* short phones / landscape: the sheet scrolls instead of clipping links */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(132px + env(safe-area-inset-top)) 0 calc(32px + env(safe-area-inset-bottom));
     transform: translateY(-110%);
     opacity: 0;
     visibility: hidden;
@@ -251,3 +255,6 @@
 /* Anchored headings land below the taller floating chrome (masthead 44 + nav ~76). */
 html { scroll-padding-top: 132px; }
 section[id] { scroll-margin-top: 132px; }
+
+/* the inherited name shimmer rides the same expo-out curve */
+.hero-name.is-revealed::after { animation-timing-function: var(--ease-out-expo); }

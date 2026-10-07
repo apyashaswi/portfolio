@@ -23,12 +23,19 @@ function warmEnvironment(renderer) {
   tex.mapping = THREE.EquirectangularReflectionMapping
   tex.colorSpace = THREE.SRGBColorSpace
   const pmrem = new THREE.PMREMGenerator(renderer)
-  const env = pmrem.fromEquirectangular(tex).texture
-  tex.dispose()
-  pmrem.dispose()
-  return env
+  try {
+    // Keep the render target, not just its .texture: disposing the texture
+    // alone leaves the target's framebuffer allocated on the GPU.
+    return pmrem.fromEquirectangular(tex)
+  } finally {
+    tex.dispose()
+    pmrem.dispose()
+  }
 }
 
+// Throws if a WebGL context cannot be created -- the caller falls back to the
+// static grid. Per-frame motion is scaled by elapsed time, so the object turns
+// at the same speed on 60Hz and 144Hz screens.
 export function createShowcaseScene(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75))
@@ -38,8 +45,8 @@ export function createShowcaseScene(canvas) {
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100)
   camera.position.set(0, 0, 5.1)
 
-  let env = null
-  try { env = warmEnvironment(renderer); scene.environment = env } catch { /* falls back to lights only */ }
+  let envTarget = null
+  try { envTarget = warmEnvironment(renderer); scene.environment = envTarget.texture } catch { /* falls back to lights only */ }
 
   const group = new THREE.Group()
   scene.add(group)
@@ -105,12 +112,14 @@ export function createShowcaseScene(canvas) {
       camera.updateProjectionMatrix()
     },
     // p: 0..1 progress through the pinned section; nv: 0..1 scroll speed;
-    // mx/my: pointer offset from centre, -0.5..0.5.
-    frame(p, nv, mx, my) {
-      t += 0.004
-      spin += nv * 0.55                       // momentum: spins up, settles when idle
-      tx += (my * 0.4 - tx) * 0.06
-      ty += (mx * 0.6 - ty) * 0.06
+    // mx/my: pointer offset from centre, -0.5..0.5; f: elapsed time in
+    // 60fps frames (1 at 60Hz, ~0.42 at 144Hz).
+    frame(p, nv, mx, my, f = 1) {
+      t += 0.004 * f
+      spin += nv * 0.55 * f                   // momentum: spins up, settles when idle
+      const k = 1 - Math.pow(1 - 0.06, f)     // frame-rate independent lerp
+      tx += (my * 0.4 - tx) * k
+      ty += (mx * 0.6 - ty) * k
       group.rotation.y = p * Math.PI * 4 + t + ty + spin
       group.rotation.x = Math.sin(p * Math.PI) * 0.35 + tx
       shell.rotation.y = -t * 1.6 - spin * 0.6
@@ -127,7 +136,7 @@ export function createShowcaseScene(canvas) {
       ;[coreGeo, shellGeo, ptsGeo].forEach(g => g.dispose())
       ;[coreMat, shellMat, ptsMat].forEach(m => m.dispose())
       dotTex.dispose()
-      env?.dispose()
+      envTarget?.dispose()
       renderer.dispose()
     },
   }

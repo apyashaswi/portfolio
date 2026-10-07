@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
@@ -11,16 +11,33 @@ export default function Nav({ active, bannerVisible, mode }) {
   const navigate = useNavigate()
   const location = useLocation()
 
-  // While the mobile menu overlay is open: lock body scroll and let Escape close it.
+  const sheetRef = useRef(null)
+  const burgerRef = useRef(null)
+
+  // While the mobile menu overlay is open: lock body scroll, move focus into
+  // the sheet and keep Tab cycling inside it (links + the close button), let
+  // Escape close it, and hand focus back to the burger afterwards.
   useEffect(() => {
     if (!open) return
-    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    const focusables = () => [...(sheetRef.current?.querySelectorAll('button, a[href]') ?? []), burgerRef.current].filter(Boolean)
+    const onKey = (e) => {
+      if (e.key === 'Escape') { setOpen(false); return }
+      if (e.key !== 'Tab') return
+      const els = focusables()
+      if (!els.length) return
+      const i = els.indexOf(document.activeElement)
+      const next = e.shiftKey ? (i <= 0 ? els.length - 1 : i - 1) : (i === els.length - 1 || i === -1 ? 0 : i + 1)
+      e.preventDefault()
+      els[next].focus()
+    }
     document.addEventListener('keydown', onKey)
     const prevOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    focusables()[0]?.focus()
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prevOverflow
+      if (sheetRef.current?.contains(document.activeElement) || document.activeElement === document.body) burgerRef.current?.focus()
     }
   }, [open])
 
@@ -53,7 +70,7 @@ export default function Nav({ active, bannerVisible, mode }) {
         <button className="nav-logo" onClick={goHome}>
           AP<span className="nav-status-dot" />
         </button>
-        <div id="nav-links" className={`nav-links${open ? ' open' : ''}`}>
+        <div id="nav-links" ref={sheetRef} className={`nav-links${open ? ' open' : ''}`}>
           {links.map(l => {
             const isActive = active === l.toLowerCase()
             const isCta = l === 'Contact'
@@ -79,6 +96,7 @@ export default function Nav({ active, bannerVisible, mode }) {
         </div>
         <div className="nav-right">
           <button
+            ref={burgerRef}
             className="hamburger"
             onClick={() => setOpen(v => !v)}
             aria-label={open ? 'Close menu' : 'Open menu'}

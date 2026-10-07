@@ -21,8 +21,8 @@ export default function AmbientMesh() {
     const c = ref.current
     const x = c?.getContext('2d')
     if (!x) return
-    const still = reducedEffects || window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    let w = 0, h = 0, t = 0, raf = 0
+    const motionMq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let w = 0, h = 0, t = 0, raf = 0, last = 0
 
     const size = () => {
       w = c.width = Math.ceil(window.innerWidth * SCALE)
@@ -44,19 +44,37 @@ export default function AmbientMesh() {
         x.fill()
       })
     }
-    const loop = () => {
+    const still = () => reducedEffects || motionMq.matches
+    const loop = (now) => {
+      if (still() || document.hidden) { raf = 0; return }
       raf = requestAnimationFrame(loop)
-      if (document.hidden) return
-      t++
+      // t counts 60fps frames of elapsed time, so the drift speed does not
+      // depend on the display's refresh rate
+      t += last ? Math.min(4, (now - last) / (1000 / 60)) : 1
+      last = now
       draw()
     }
-    const onResize = () => { size(); if (still) draw() }
+    const start = () => {
+      cancelAnimationFrame(raf)
+      raf = 0
+      last = 0
+      if (still()) draw()
+      else raf = requestAnimationFrame(loop)
+    }
+    const onResize = () => { size(); draw() }
+    const onVisible = () => { if (!document.hidden && !raf) start() }
 
     size()
-    if (still) draw()
-    else loop()
+    start()
     window.addEventListener('resize', onResize)
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', onResize) }
+    document.addEventListener('visibilitychange', onVisible)
+    motionMq.addEventListener('change', start)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
+      document.removeEventListener('visibilitychange', onVisible)
+      motionMq.removeEventListener('change', start)
+    }
   }, [reducedEffects])
 
   return (

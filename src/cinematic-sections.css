@@ -49,12 +49,17 @@
 }
 @keyframes cine-marquee { to { transform: translateX(-50%); } }
 
-/* Reduced motion: one still, centred, wrapping pass. */
+/* Reduced motion, or Effects: off — one still, centred, wrapping pass. */
+.trust-marquee.is-still .marquee { -webkit-mask-image: none; mask-image: none; }
+.trust-marquee.is-still .marquee-track { animation: none; width: auto; justify-content: center; }
+.trust-marquee.is-still .marquee-pass[aria-hidden="true"] { display: none; }
+.trust-marquee.is-still .marquee-pass.trust-strip-list { flex-wrap: wrap; justify-content: center; row-gap: 6px; padding: 0 var(--gutter); }
+.trust-marquee.is-still .marquee-pass li:last-child .trust-strip-sep { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .marquee { -webkit-mask-image: none; mask-image: none; }
   .marquee-track { animation: none; width: auto; justify-content: center; }
   .marquee-pass[aria-hidden="true"] { display: none; }
-  .marquee-pass.trust-strip-list { flex-wrap: wrap; justify-content: center; row-gap: 6px; }
+  .marquee-pass.trust-strip-list { flex-wrap: wrap; justify-content: center; row-gap: 6px; padding: 0 var(--gutter); }
   .marquee-pass li:last-child .trust-strip-sep { display: none; }
 }
 
@@ -176,7 +181,7 @@
 }
 .exp-company { font-family: var(--font-ui); }
 /* Company names speak in the quiet sage, so oat stays the only loud colour. */
-.exp-company-name { color: var(--accent2); font-weight: 600; }
+.exp-company-name { color: var(--sage-text); font-weight: 600; }
 .exp-period {
   display: inline-block;
   font-family: var(--font-mono);

@@ -17,7 +17,7 @@
 .cine-tag::before { content: ""; width: 30px; height: 1px; background: var(--accent); flex: none; }
 
 /* ─── Pinned version ───────────────────────────────────────────────────── */
-.showcase { position: relative; z-index: 2; height: 360vh; }
+.showcase { position: relative; z-index: 2; height: 300vh; }
 .showcase-sticky {
   position: sticky; top: 0;
   height: 100vh; height: 100svh;
@@ -57,7 +57,7 @@
 .showcase-copy {
   position: relative; z-index: 3;
   width: min(720px, 88vw);
-  height: 360px;
+  height: 440px;
   text-align: center;
   pointer-events: none;
 }
@@ -81,12 +81,13 @@
   transform: translateY(30px);
   transition: opacity .65s var(--ease-out-expo), transform .65s var(--ease-out-expo);
 }
-.showcase-cap.on { opacity: 1; transform: none; }
+.showcase-cap.on { opacity: 1; transform: none; pointer-events: auto; }
+.showcase-cap-cta { margin-top: 26px; min-height: 44px; padding: 10px 22px; font-size: 14px; }
 .showcase-cap-project {
   font-family: var(--font-ui);
   font-size: 15px;
   font-weight: 600;
-  color: var(--accent2);
+  color: var(--sage-text);
   margin-bottom: 14px;
 }
 .showcase-cap-value {
@@ -156,7 +157,7 @@
   font-family: var(--font-ui);
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent2);
+  color: var(--sage-text);
   margin-bottom: 16px;
 }
 .impact-card-value {

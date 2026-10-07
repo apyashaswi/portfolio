@@ -45,7 +45,7 @@
   letter-spacing: -.02em;
   font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
 }
-.project-context { color: var(--accent2); }
+.project-context { color: var(--sage-text); }
 .project-bullets li::before {
   content: "";
   top: .66em; left: 2px;
@@ -127,7 +127,7 @@
 }
 .paper-entry:hover { transform: translateY(-4px); border-color: var(--glass-border-strong); }
 .paper-title { font-weight: 700; letter-spacing: -.015em; }
-.paper-venue { color: var(--accent2); }
+.paper-venue { color: var(--sage-text); }
 .paper-tag { border-radius: var(--radius-pill); }
 
 /* ─── Skills ───────────────────────────────────────────────────────────── */
@@ -165,7 +165,7 @@
 }
 .leadership-entry:hover .leadership-body { transform: translateX(6px); border-color: var(--glass-border-strong); }
 .leadership-role { font-weight: 700; letter-spacing: -.01em; }
-.leadership-org { color: var(--accent2); }
+.leadership-org { color: var(--sage-text); }
 @media (max-width: 768px) {
   .leadership-entry:hover .leadership-body { transform: none; }
 }
