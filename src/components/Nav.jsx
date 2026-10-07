@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
-import { EASE, revealTransition, useScrollY } from '../utils'
+import { revealTransition, scrollToSection, useScrollY } from '../utils'
 
 export default function Nav({ active, bannerVisible, mode }) {
   const scrolled = useScrollY() > 40
@@ -46,7 +46,7 @@ export default function Nav({ active, bannerVisible, mode }) {
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: target } })
     } else {
-      document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+      scrollToSection(target)
     }
     setOpen(false)
   }
@@ -81,12 +81,7 @@ export default function Nav({ active, bannerVisible, mode }) {
                 aria-current={isActive ? 'true' : undefined}
                 onClick={() => go(l)}
               >
-                {/* One glass pill slides between links instead of each link
-                    fading its own background in and out. */}
-                {isActive && !isCta && (
-                  <motion.span className="nav-pill" layoutId="nav-pill" transition={{ duration: 0.5, ease: EASE }} aria-hidden="true" />
-                )}
-                <span className="nav-link-label">{l}</span>
+                {l}
               </button>
             )
           })}

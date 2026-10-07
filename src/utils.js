@@ -26,6 +26,29 @@ export const useScrollY = (enabled = true) => {
   return y
 }
 
+// In-page jump to a section. Off-screen sections are content-visibility:auto,
+// so their height is only an estimate until they render -- a single smooth
+// scroll can stop short or overshoot. Once the scroll settles (scrollend, or a
+// timeout where it is unsupported) the now-rendered layout is exact, so one
+// instant re-align lands the heading precisely under the fixed chrome.
+export const scrollToSection = (id) => {
+  const el = typeof id === 'string' ? document.getElementById(id) : id
+  if (!el) return
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  let done = false
+  const settle = () => {
+    if (done) return
+    done = true
+    window.removeEventListener('scrollend', settle)
+    // two passes: the first may itself render more sections above the target
+    el.scrollIntoView({ behavior: 'instant', block: 'start' })
+    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'instant', block: 'start' }))
+  }
+  window.addEventListener('scrollend', settle, { once: true })
+  setTimeout(settle, 1400)
+}
+
 export const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768
 
 // Per-route <title> + meta description (and og:/twitter: mirrors) for SPA routes

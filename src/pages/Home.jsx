@@ -15,6 +15,7 @@ import Research from '../components/Research'
 import Skills from '../components/Skills'
 import Leadership from '../components/Leadership'
 import Contact from '../components/Contact'
+import { scrollToSection } from '../utils'
 
 export default function Home({ mode }) {
   const recruiterMode = mode === 'recruiter'
@@ -24,7 +25,7 @@ export default function Home({ mode }) {
     const target = location.state?.scrollTo
     if (target) {
       requestAnimationFrame(() => {
-        document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
+        scrollToSection(target)
       })
     }
   }, [location.state])

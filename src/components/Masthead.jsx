@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import ModeToggle from './ModeToggle'
 import EffectsToggle from './EffectsToggle'
+import { scrollToSection } from '../utils'
 
 // Permanent editorial masthead — replaces the dismissible promo banner.
 // Folds the "open to roles" message into a journal-style nameplate.
@@ -13,7 +14,7 @@ export default function Masthead({ mode, setMode }) {
     if (location.pathname !== '/') {
       navigate('/', { state: { scrollTo: 'contact' } })
     } else {
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+      scrollToSection('contact')
     }
   }
 

@@ -4,7 +4,7 @@ import Picture from './Picture'
 
 import HeroHUD from './HeroHUD'
 import { INTRO_DONE, introWillShow } from '../intro'
-import { EASE, revealTransition, useScrollY } from '../utils'
+import { EASE, revealTransition, scrollToSection, useScrollY } from '../utils'
 
 const HERO_LINES = [
   'Yashaswi',
@@ -16,7 +16,8 @@ const HERO_LINES = [
 function ScrollCue() {
   const gone = useScrollY() > 70
   return (
-    <a href="#about" className={`scroll-cue${gone ? ' gone' : ''}`} aria-label="Scroll to About" tabIndex={gone ? -1 : 0}>
+    <a href="#about" className={`scroll-cue${gone ? ' gone' : ''}`} aria-label="Scroll to About" tabIndex={gone ? -1 : 0}
+      onClick={(e) => { e.preventDefault(); scrollToSection('about') }}>
       <span className="scroll-cue-label" aria-hidden="true">Scroll</span>
       <span className="scroll-cue-line" aria-hidden="true" />
     </a>
@@ -59,7 +60,7 @@ function HeroBody({ recruiter }) {
   const reduced = useReducedMotion()
   const revealed = useHeroReveal()
   const reveal = makeReveal(reduced)
-  const go = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+  const go = (id) => scrollToSection(id)
   const openChat = () => typeof window.chatbase === 'function' && window.chatbase('open')
 
   const anim = (i) => ({

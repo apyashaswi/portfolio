@@ -69,14 +69,22 @@
 .nav-link:hover { color: var(--ink); }
 .nav-link.active { color: var(--ink); font-style: normal; }
 .nav-link.active::after { display: none; }
-.nav-pill {
+/* Active pill: a CSS fade per link. (A framer layoutId pill that slid
+   between links was tried and dropped -- its projection pass re-measured the
+   whole 20k-px page on every scroll-spy change, ~400ms of main thread on a
+   throttled phone.) */
+.nav-link:not(.nav-cta)::before {
+  content: "";
   position: absolute; inset: 0;
   z-index: -1;
   border-radius: 10px;
   background: var(--glass-2);
   border: 1px solid var(--glass-border);
+  opacity: 0;
+  transform: scale(.92);
+  transition: opacity .45s var(--ease-out-expo), transform .45s var(--ease-out-expo);
 }
-.nav-link-label { position: relative; }
+.nav-link.active:not(.nav-cta)::before { opacity: 1; transform: none; }
 .nav-cta {
   margin-left: 8px;
   background: var(--ink);

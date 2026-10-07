@@ -150,3 +150,18 @@ body { overflow-x: clip; }
   max-width: 620px;
   margin-top: 20px;
 }
+
+/* ─── Rendering budget ────────────────────────────────────────────────────
+   The page is ~20k px tall. framer-motion reads window.innerWidth as each
+   motion component mounts, which forces a full-document layout during load
+   (the bulk of Total Blocking Time on a throttled phone). content-visibility
+   lets the browser skip layout/paint of far-off-screen sections until they
+   approach; `auto` in contain-intrinsic-size remembers each section's real
+   height once rendered. Because unrendered sections use the 1100px estimate,
+   in-page jumps go through scrollToSection() (utils.js), which re-aligns once
+   the smooth scroll ends. Hero and the pinned showcase are left out. */
+#main > section.section:not(.hero),
+.footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1100px;
+}

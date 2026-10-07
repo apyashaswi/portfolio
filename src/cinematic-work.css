@@ -348,3 +348,34 @@
   .project-detail { padding-top: 140px; }
   .pd-title { font-size: 40px; }
 }
+
+/* ─── Journey ECG: AA repairs (pre-existing alpha-oat labels measured
+   2.35–4.08:1 by axe). Solid tokens instead of opacity-composited oat. */
+.ecg-vitals-label,
+.ecg-live-badge,
+.ecg-speed-btn,
+.ecg-scale-label { color: var(--ink-muted); }
+.ecg-speed-btn:hover { color: var(--ink); }
+.ecg-speed-btn.active { color: var(--paper); }
+.ecg-card-year { color: var(--ink-muted); }
+/* small oat-on-oat-tint badges: cream text keeps the tint, clears AA.
+   The ECG badge sets its colour inline per category; the category still
+   reads from its tinted fill and border. */
+.leadership-active { color: var(--paper); }
+.ecg-badge { color: var(--paper) !important; }
+
+/* ─── Phones: glass without the blur ───────────────────────────────────────
+   Behind a card on a phone there is only the soft ambient light, so a
+   backdrop blur is visually near-identical to the plain translucent fill --
+   but dozens of blurred layers are the single biggest paint cost on a
+   throttled mobile CPU. The nav bar and the menu sheet keep their blur. */
+@media (max-width: 768px) {
+  .glass, .btn-pill-ghost, .hero-eyebrow,
+  .timeline-content, .about-edu-row, .about-numbers > span,
+  .project-tilt, .research-stat, .paper-entry, .leadership-body,
+  .drift-track .skill-item, .globe-placeholder, .contact-section,
+  .impact-card, .pd-metric-card, .pd-other-card, .contact-secondary a {
+    -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+  }
+}
