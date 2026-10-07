@@ -167,3 +167,21 @@ Every section opens with the same three-part pattern: a 36×1px oat hairline rul
 - **Don't** add default card-shadow chrome; shadows are reserved for real photographs and live-status pips only.
 - **Don't** use pure black or pure white anywhere; every surface and ink value stays on the warm cardstock/cream family.
 - **Don't** use emoji as structural icons; all icons are inline SVG from `src/icons.jsx`.
+
+## 7. The Cinematic Layer (branch `Redesign_APY_2026-10-06`)
+
+A glass-and-light pass modelled on the interaction design of a cinematic ML-engineer portfolio, rebuilt entirely in this palette. It lives in five stylesheets loaded **after** `styles.css` / `journal.css` (`cinematic.css` tokens + primitives, `cinematic-chrome.css` nav/hero/intro, `cinematic-showcase.css`, `cinematic-sections.css`, `cinematic-work.css`), so removing those imports and `AmbientMesh` / `Showcase` returns the Journal exactly. No copy, link, image or data value was changed.
+
+**It deliberately supersedes four rules in §6** — on this branch only, pending your sign-off:
+- *Gradient text*: allowed for the voice gradient (`--grad-voice`, oat → honey → cream) on the hero surname, the showcase metrics, stat numbers and the contact email. Never on body copy.
+- *Card grids*: Projects, Research, Experience, Leadership and the About stats render as frosted glass cards (`--glass`, `--glass-border`, 20–26px radii).
+- *Boxed CTAs*: primary actions are pill buttons (`.btn-pill-primary` cream on ink, `.btn-pill-ghost` glass).
+- *Flat-by-default*: cards lift on hover (−6px; timeline/leadership cards slide +6px instead), with a faint oat corner glow.
+
+**What it keeps:** the One Voice Rule (oat still carries; sage is quiet — small sage *text* uses `--sage-text #9fb398` for AA on glass; ink-blue appears only as the hero status dot), the section-header triad, Fraunces / Newsreader / Plex Mono / DM Sans, the masthead, the 760px prose column, no pure black/white.
+
+**Motion:** one curve everywhere — `--ease-out-expo` / `EASE = [0.16, 1, 0.3, 1]` (utils.js). Scroll reveals rise 34px over .9s; hero name lines rise out of clipped slots over 1.1s.
+
+**New pieces:** `AmbientMesh` (drifting oat/honey/sage light; still frame on phones, reduced motion, or Effects: off) · `Showcase` (pinned 300vh "selected impact" band with a lazy three.js bronze icosahedron, captions from each project's first case-study metric; static glass grid on phones / no-WebGL / reduced effects; skipped in Recruiter mode) · Trust-strip marquee (stops with Effects: off) · ECG trace in the intro.
+
+**Performance guardrails:** three.js loads only near the showcase; card backdrop-blur is off ≤768px; off-screen sections use `content-visibility:auto`, so in-page jumps must go through `scrollToSection()` (utils.js), which re-aligns after the smooth scroll ends.
