@@ -274,3 +274,19 @@ section[id] { scroll-margin-top: 132px; }
   overflow: visible;
   filter: drop-shadow(0 0 6px rgba(125, 144, 121, .55));
 }
+
+/* Legacy ghost buttons (the nav Résumé link) join the pill family. */
+.btn-ghost {
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border-strong);
+  background: var(--glass);
+  color: var(--ink);
+  transition: background .4s var(--ease-out-expo), border-color .4s var(--ease-out-expo), transform .4s var(--ease-out-expo), color .3s;
+}
+.btn-ghost:hover { background: var(--glass-2); border-color: var(--accent); color: var(--ink); transform: translateY(-1px); }
+.nav-resume-btn { margin-left: 6px; font-size: 14px !important; padding: 9px 18px !important; }
