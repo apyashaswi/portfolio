@@ -1,0 +1,216 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CINEMATIC LAYER · SECTIONS — trust marquee, About, Experience
+   (Redesign_APY_2026-10-06). Uses tokens from cinematic.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── Trust strip → endless marquee ────────────────────────────────────── */
+.trust-marquee {
+  position: relative; z-index: 2;
+  padding: 34px 0 38px;
+  border-top: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--glass-border);
+}
+.trust-marquee .trust-strip-inner { justify-content: center; margin-bottom: 18px; }
+.trust-marquee .trust-strip-label { font-size: 11px; color: var(--ink-muted); }
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 140px, #000 calc(100% - 140px), transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 140px, #000 calc(100% - 140px), transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: cine-marquee 40s linear infinite;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-pass.trust-strip-list {
+  display: flex; flex-wrap: nowrap;
+  gap: 0;
+  align-items: baseline;
+}
+.trust-marquee .trust-strip-item {
+  display: inline-flex; align-items: baseline;
+  gap: 0;
+  font-family: var(--font-display);
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--ink-muted);
+  transition: color .35s var(--ease-out-expo);
+}
+.trust-marquee .trust-strip-item:hover { color: var(--ink); }
+.trust-marquee .trust-strip-sep {
+  margin: 0 .9em;
+  color: var(--accent);
+  opacity: .7;
+}
+@keyframes cine-marquee { to { transform: translateX(-50%); } }
+
+/* Reduced motion, or Effects: off — one still, centred, wrapping pass. */
+.trust-marquee.is-still .marquee { -webkit-mask-image: none; mask-image: none; }
+.trust-marquee.is-still .marquee-track { animation: none; width: auto; justify-content: center; }
+.trust-marquee.is-still .marquee-pass[aria-hidden="true"] { display: none; }
+.trust-marquee.is-still .marquee-pass.trust-strip-list { flex-wrap: wrap; justify-content: center; row-gap: 6px; padding: 0 var(--gutter); }
+.trust-marquee.is-still .marquee-pass li:last-child .trust-strip-sep { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee-track { animation: none; width: auto; justify-content: center; }
+  .marquee-pass[aria-hidden="true"] { display: none; }
+  .marquee-pass.trust-strip-list { flex-wrap: wrap; justify-content: center; row-gap: 6px; padding: 0 var(--gutter); }
+  .marquee-pass li:last-child .trust-strip-sep { display: none; }
+}
+
+/* ─── About ────────────────────────────────────────────────────────────── */
+.about-figure img {
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .6);
+}
+
+/* "By the numbers" → a row of glass stat tiles. Same spans, same words. */
+.about-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin: 48px 0 36px;
+  padding: 0;
+  border: 0;
+  line-height: 1.4;
+  text-wrap: initial;
+}
+.about-numbers > * { display: flex; }
+.about-numbers-label { grid-column: 1 / -1; margin: 0 0 2px; }
+.about-numbers-sep { display: none; }
+.about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label) {
+  flex-direction: column;
+  gap: 4px;
+  white-space: normal;
+  padding: 20px 20px 18px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink-muted);
+  position: relative;
+  overflow: hidden;
+  transition: transform .45s var(--ease-out-expo), border-color .45s var(--ease-out-expo);
+}
+.about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label)::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity .5s var(--ease-out-expo);
+}
+.about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label):hover {
+  transform: translateY(-4px);
+  border-color: var(--glass-border-strong);
+}
+.about-numbers > span:not(.about-numbers-sep):not(.about-numbers-label):hover::before { opacity: 1; }
+.about-numbers b {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+  margin: 0;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  background: var(--grad-ink);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  padding-bottom: .04em;
+}
+@media (max-width: 640px) {
+  .about-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Education → two glass fact tiles */
+.about-education {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.about-edu-row {
+  display: block;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.about-edu-row::before { display: none; }
+.about-edu-degree { font-size: 18px; font-weight: 600; }
+.about-edu-meta { color: var(--accent); margin-top: 10px; }
+@media (max-width: 640px) {
+  .about-education { grid-template-columns: 1fr; }
+}
+
+/* ─── Experience → glowing timeline of glass cards ─────────────────────── */
+.timeline-item-v2 { gap: 26px; padding-bottom: 28px; }
+.timeline-content {
+  padding: 28px 30px 26px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  transition: transform .45s var(--ease-out-expo), border-color .45s var(--ease-out-expo), background .45s var(--ease-out-expo);
+  min-width: 0;
+}
+/* Timeline cards move sideways, along the rail -- unlike grid cards, which lift. */
+.timeline-item-v2:hover .timeline-content {
+  transform: translateX(6px);
+  border-color: var(--glass-border-strong);
+  background: var(--glass-2);
+}
+.timeline-line-v2 {
+  background: linear-gradient(to bottom, rgba(188, 164, 122, .45), rgba(188, 164, 122, .08) 70%, transparent);
+}
+.company-mark {
+  box-shadow: 0 0 0 5px rgba(188, 164, 122, .06);
+}
+.exp-title {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.exp-company { font-family: var(--font-ui); }
+/* Company names speak in the quiet sage, so oat stays the only loud colour. */
+.exp-company-name { color: var(--sage-text); font-weight: 600; }
+.exp-period {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  color: var(--accent);
+  padding: 4px 12px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background: var(--glass);
+  white-space: nowrap;
+}
+.exp-location { font-family: var(--font-ui); color: var(--ink-muted); margin-top: 8px; }
+.exp-desc { font-family: var(--font-serif); font-size: 15.5px; color: var(--ink-soft); }
+.exp-bullets li {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--ink-muted);
+  padding-left: 22px;
+}
+.exp-bullets li::before {
+  content: "";
+  left: 2px; top: .62em;
+  width: 6px; height: 6px;
+  border-radius: 2px;
+  background: var(--grad-voice-short);
+}
+@media (max-width: 768px) {
+  .timeline-content { padding: 22px 20px; }
+  .timeline-item-v2:hover .timeline-content { transform: none; }
+}

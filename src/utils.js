@@ -26,6 +26,43 @@ export const useScrollY = (enabled = true) => {
   return y
 }
 
+// In-page jump to a section. Off-screen sections are content-visibility:auto,
+// so their height is only an estimate until they render -- a single smooth
+// scroll can stop short or overshoot. Once the scroll settles (scrollend, or a
+// timeout where it is unsupported) the now-rendered layout is exact, so one
+// instant re-align lands the heading precisely under the fixed chrome.
+// Only one jump is ever in flight: a new jump replaces it, and any input from
+// the reader (wheel, touch, keys) cancels the correction so it never yanks
+// them back to a target they have scrolled away from.
+let cancelJump = null
+export const scrollToSection = (id) => {
+  const el = typeof id === 'string' ? document.getElementById(id) : id
+  if (!el) return
+  cancelJump?.()
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  let timer = 0, raf = 0
+  const cleanup = () => {
+    window.removeEventListener('scrollend', settle)
+    INTERRUPTS.forEach(t => window.removeEventListener(t, cancel, true))
+    clearTimeout(timer)
+    cancelAnimationFrame(raf)
+    if (cancelJump === cancel) cancelJump = null
+  }
+  const cancel = () => cleanup()
+  const settle = () => {
+    cleanup()
+    // two passes: the first may itself render more sections above the target
+    el.scrollIntoView({ behavior: 'instant', block: 'start' })
+    raf = requestAnimationFrame(() => el.scrollIntoView({ behavior: 'instant', block: 'start' }))
+  }
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
+  window.addEventListener('scrollend', settle, { once: true })
+  INTERRUPTS.forEach(t => window.addEventListener(t, cancel, { capture: true, passive: true, once: true }))
+  timer = setTimeout(settle, 1400)
+  cancelJump = cancel
+}
+const INTERRUPTS = ['wheel', 'touchstart', 'keydown', 'pointerdown']
+
 export const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768
 
 // Per-route <title> + meta description (and og:/twitter: mirrors) for SPA routes
@@ -61,21 +98,37 @@ export const useDocumentMeta = (title, description) => {
 // transition that needs the same policy (e.g. Skills' per-tag list).
 export const MAX_STAGGER_DELAY = 0.3
 
-// The site's one canonical reveal recipe: a physics-based spring on position,
-// a quick simple ease on opacity so content reads before the motion settles.
-// Shared by fadeUp() (scroll-triggered) and any mount-triggered reveal
-// (Nav, ScrollTop, Hero) so the timing can't drift into N different tunings.
+// The cinematic layer's one easing curve (expo-out). Mirrors --ease-out-expo
+// in cinematic.css so CSS transitions and framer-motion land on the same feel.
+export const EASE = [0.16, 1, 0.3, 1]
+
+// The site's one canonical reveal recipe, now on the same expo-out curve as
+// everything else: position settles long, opacity lands early so content
+// reads before the motion finishes. Shared by mount-triggered reveals (Nav,
+// ScrollTop, Hero) so the timing can't drift into N different tunings.
 export const revealTransition = (delay = 0) => {
   const d = Math.min(delay, MAX_STAGGER_DELAY)
   return {
-    y: { type: 'spring', duration: 0.45, bounce: 0.16, delay: d },
-    opacity: { duration: 0.28, ease: 'easeOut', delay: d },
+    y: { duration: 0.9, ease: EASE, delay: d },
+    opacity: { duration: 0.5, ease: EASE, delay: d },
   }
 }
 
+// Scroll reveal: a long, settling expo-out rise. Everything that enters on
+// scroll goes through here so the whole page moves with one hand.
 export const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 32 },
+  initial: { opacity: 0, y: 34 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-60px' },
-  transition: revealTransition(delay),
+  viewport: { once: true, amount: 0.12 },
+  transition: { duration: 0.9, ease: EASE, delay: Math.min(delay, MAX_STAGGER_DELAY) },
 })
+
+// Variant form of the same reveal, for parents that stagger their children.
+export const revealVariants = {
+  hidden: { opacity: 0, y: 34 },
+  show: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.9, ease: EASE, delay: Math.min(i * 0.08, MAX_STAGGER_DELAY) },
+  }),
+}

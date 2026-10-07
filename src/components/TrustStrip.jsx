@@ -1,9 +1,11 @@
 import { motion } from 'framer-motion'
 import { fadeUp } from '../utils'
+import { useReducedEffects } from '../effects'
 
 // Quiet authority row — the affiliations a recruiter scans for in the first
 // few seconds. Text wordmarks (not logos) keep it on-brand and avoid brand
-// misuse; the editorial mono treatment makes it read as a masthead credit line.
+// misuse. It drifts as an endless marquee; the edge fades keep the loop's
+// seam out of sight.
 const AFFILIATIONS = [
   'MSIG USA',
   'MIT Reality Hack',
@@ -12,19 +14,36 @@ const AFFILIATIONS = [
   'PES University',
 ]
 
+// The track translates -50%, so each half must already be wider than the
+// viewport: one pass of five names is not, so each half holds two passes.
+// Only the very first pass is real; every copy is aria-hidden so assistive
+// tech reads each affiliation once, and reduced motion shows the first only.
+const PASSES = 4
+
 export default function TrustStrip() {
+  // "Effects: off" in the masthead is the site's pause control for every
+  // looping motion, this marquee included (WCAG 2.2.2).
+  const still = useReducedEffects()
   return (
-    <motion.section className="trust-strip" aria-label="Affiliations" {...fadeUp(0.1)}>
+    <motion.section className={`trust-strip trust-marquee${still ? ' is-still' : ''}`} aria-label="Affiliations" {...fadeUp(0.1)}>
       <div className="container trust-strip-inner">
         <span className="trust-strip-label">Seen across</span>
-        <ul className="trust-strip-list">
-          {AFFILIATIONS.map((a, i) => (
-            <li key={a} className="trust-strip-item">
-              {a}
-              {i < AFFILIATIONS.length - 1 && <span className="trust-strip-sep" aria-hidden="true">·</span>}
-            </li>
+      </div>
+      <div className="marquee">
+        <div className="marquee-track">
+          {Array.from({ length: PASSES }, (_, pass) => (
+            <ul key={pass} className="trust-strip-list marquee-pass" aria-hidden={pass > 0 ? 'true' : undefined}>
+              {AFFILIATIONS.map(a => (
+                <li key={a} className="trust-strip-item">
+                  {a}
+                  {/* every name carries its separator so all passes are the
+                      same width and the -50% loop has no seam */}
+                  <span className="trust-strip-sep" aria-hidden="true">·</span>
+                </li>
+              ))}
+            </ul>
           ))}
-        </ul>
+        </div>
       </div>
     </motion.section>
   )

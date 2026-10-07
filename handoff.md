@@ -1,3 +1,5 @@
+> **Newer work:** the cinematic-glass redesign has its own handoff — see `HANDOFF-Redesign_APY_2026-10-06.md`. This file covers the July design-review backlog.
+
 # Portfolio Design Review — Handoff
 
 > Status as of **2026-07-30**. Branch: `design-review-fixes` (pushed, draft PR open against `main`). Nothing from this pass is merged yet — this branch currently contains review/setup artifacts only, no actual fixes.

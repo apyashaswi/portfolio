@@ -1,0 +1,292 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CINEMATIC LAYER · CHROME — nav + hero (Redesign_APY_2026-10-06)
+   Loaded right after cinematic.css; uses its tokens.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ─── NAV — floating bar that turns to glass ───────────────────────────── */
+.nav {
+  padding: 18px 0;
+  background: transparent;
+  transition: padding .4s var(--ease-out-expo);
+}
+.nav.scrolled {
+  padding: 10px 0;
+  background: transparent;
+  border-bottom-color: transparent;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+}
+.nav-inner {
+  position: relative;
+  max-width: var(--maxw);
+  padding: 10px 22px;
+  border-radius: 18px;
+  margin-inline: max(var(--gutter), calc((100% - var(--maxw)) / 2));
+}
+/* The glass lives on a pseudo-element, not on .nav-inner itself: a
+   backdrop-filter on an ancestor becomes the containing block for
+   position:fixed descendants, which would trap the full-screen mobile menu
+   inside the 60px bar. */
+.nav-inner::before {
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  border: 1px solid transparent;
+  pointer-events: none;
+  z-index: -1;
+  transition: background .5s var(--ease-out-expo), border-color .5s var(--ease-out-expo), box-shadow .5s var(--ease-out-expo);
+}
+.nav.scrolled .nav-inner::before {
+  background: rgba(34, 29, 24, .62);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+          backdrop-filter: blur(20px) saturate(160%);
+  border-color: var(--glass-border);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, .35);
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0;
+  background: var(--grad-voice-short);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  min-height: 44px;
+  display: inline-flex; align-items: center;
+}
+.nav-links { gap: 4px; }
+.nav-link {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  font-style: normal;
+  padding: 8px 13px;
+  border-radius: 10px;
+  color: var(--ink-muted);
+  transition: color .3s var(--ease-out-expo);
+  isolation: isolate;
+}
+.nav-link:hover { color: var(--ink); }
+.nav-link.active { color: var(--ink); font-style: normal; }
+.nav-link.active::after { display: none; }
+/* Active pill: a CSS fade per link. (A framer layoutId pill that slid
+   between links was tried and dropped -- its projection pass re-measured the
+   whole 20k-px page on every scroll-spy change, ~400ms of main thread on a
+   throttled phone.) */
+.nav-link:not(.nav-cta)::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  border-radius: 10px;
+  background: var(--glass-2);
+  border: 1px solid var(--glass-border);
+  opacity: 0;
+  transform: scale(.92);
+  transition: opacity .45s var(--ease-out-expo), transform .45s var(--ease-out-expo);
+}
+.nav-link.active:not(.nav-cta)::before { opacity: 1; transform: none; }
+.nav-cta {
+  margin-left: 8px;
+  background: var(--ink);
+  color: var(--bg) !important;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  transition: background .3s, transform .4s var(--ease-out-expo), box-shadow .4s var(--ease-out-expo);
+}
+.nav-cta:hover { background: var(--paper); transform: translateY(-1px); box-shadow: var(--glow-voice); }
+
+/* Mobile: full-screen glass sheet that slides down from the top. */
+@media (max-width: 768px) {
+  .nav-links,
+  .nav-links.open {
+    display: flex;
+    position: fixed; inset: 0;
+    background: rgba(26, 22, 18, .97);
+    -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+    flex-direction: column; justify-content: safe center; align-items: center;
+    gap: 6px;
+    z-index: 999;
+    /* short phones / landscape: the sheet scrolls instead of clipping links */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(132px + env(safe-area-inset-top)) 0 calc(32px + env(safe-area-inset-bottom));
+    transform: translateY(-110%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform .5s var(--ease-out-expo), opacity .4s var(--ease-out-expo), visibility 0s .5s;
+  }
+  .nav-links.open {
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: transform .5s var(--ease-out-expo), opacity .4s var(--ease-out-expo), visibility 0s 0s;
+  }
+  .nav-link {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    padding: 10px 26px;
+    min-height: 48px;
+  }
+  .nav-cta { margin: 14px 0 0; font-family: var(--font-ui); font-size: 18px; padding: 12px 30px; }
+  .hamburger { position: relative; z-index: 1001; }
+  .hamburger[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .hamburger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+
+/* ─── HERO ──────────────────────────────────────────────────────────────── */
+.hero-editorial {
+  background:
+    radial-gradient(70% 60% at 70% 40%, rgba(188, 164, 122, .08), transparent 70%),
+    linear-gradient(180deg, rgba(34, 29, 24, .55), rgba(34, 29, 24, 0) 85%);
+}
+.hero-poster { background: transparent; }
+.hero-scene::after {
+  background: linear-gradient(180deg, rgba(34, 29, 24, 0) 70%, rgba(44, 38, 32, .6) 100%);
+}
+.hero-grid {
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, .85fr);
+  gap: 64px;
+}
+.hero-text { max-width: none; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: none;
+  color: var(--ink-muted);
+  margin-bottom: 34px;
+}
+/* The one rare ink-blue touch in the hero. */
+.hero-eyebrow-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent3);
+  box-shadow: 0 0 12px var(--accent3);
+  animation: cine-pulse 2s ease-in-out infinite;
+  flex: none;
+}
+@keyframes cine-pulse { 0%, 100% { opacity: 1 } 50% { opacity: .4 } }
+
+.hero-name-cine {
+  display: block;
+  font-size: clamp(44px, 5.6vw, 96px);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.04em;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  margin-bottom: 30px;
+}
+.hero-line {
+  display: block;
+  overflow: hidden;
+  /* room for descenders (the y in Yashaswi) inside the clip */
+  padding-bottom: .1em;
+  margin-bottom: -.1em;
+}
+.hero-line-inner { display: block; will-change: transform; }
+.hero-name-cine .hero-name-stop { color: var(--accent); }
+
+.hero-byline { font-size: 15px; }
+.hero-lead { font-size: clamp(17px, 1.5vw, 20px); max-width: 56ch; color: var(--ink-soft); }
+.hero-ctas { gap: 14px; margin-top: 8px; }
+
+.hero-portrait img,
+.hero-futurist .hero-portrait img {
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .7), var(--glow-voice);
+}
+.hero-portrait figcaption { margin-top: 16px; }
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute;
+  left: 50%; bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  min-width: 44px;
+  padding: 6px 10px;
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  transition: opacity .45s var(--ease-out-expo), transform .45s var(--ease-out-expo);
+}
+.scroll-cue.gone { opacity: 0; pointer-events: none; transform: translate(-50%, 14px); }
+.scroll-cue-line {
+  width: 1px; height: 46px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(var(--ink-dim), transparent);
+}
+.scroll-cue-line::after {
+  content: "";
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 14px;
+  background: var(--accent);
+  animation: cine-scrolldown 2.2s var(--ease-out-expo) infinite;
+}
+@keyframes cine-scrolldown { 0% { transform: translateY(-14px) } 60%, 100% { transform: translateY(46px) } }
+
+@media (max-width: 900px) {
+  .hero-grid { gap: 40px; }
+  .scroll-cue { display: none; }
+}
+@media (max-width: 480px) {
+  .hero-ctas { flex-direction: row; }
+  .hero-ctas .btn-pill { flex: 1 1 auto; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue-line::after, .hero-eyebrow-dot { animation: none; }
+}
+
+/* Spacing: the fixed chrome is masthead (44) + floating nav (~76). */
+.hero-editorial { padding-top: 168px; padding-bottom: 128px; }
+.hud-tl, .hud-tr { top: 150px; }
+@media (max-width: 900px) {
+  .hero-editorial { padding-top: 148px; padding-bottom: 72px; }
+}
+
+/* Anchored headings land below the taller floating chrome (masthead 44 + nav ~76). */
+html { scroll-padding-top: 132px; }
+section[id] { scroll-margin-top: 132px; }
+
+/* the inherited name shimmer rides the same expo-out curve */
+.hero-name.is-revealed::after { animation-timing-function: var(--ease-out-expo); }
+
+/* Intro: ECG trace under the monogram (replaces the plain rule). */
+.intro-ecg {
+  width: 220px; height: 40px;
+  margin-top: 14px;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(125, 144, 121, .55));
+}
+
+/* Legacy ghost buttons (the nav Résumé link) join the pill family. */
+.btn-ghost {
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--glass-border-strong);
+  background: var(--glass);
+  color: var(--ink);
+  transition: background .4s var(--ease-out-expo), border-color .4s var(--ease-out-expo), transform .4s var(--ease-out-expo), color .3s;
+}
+.btn-ghost:hover { background: var(--glass-2); border-color: var(--accent); color: var(--ink); transform: translateY(-1px); }
+.nav-resume-btn { margin-left: 6px; font-size: 14px !important; padding: 9px 18px !important; }
