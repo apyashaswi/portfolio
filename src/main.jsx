@@ -5,6 +5,7 @@ import { MotionConfig } from 'framer-motion'
 import './styles.css'
 import './journal.css'
 import './cinematic.css'
+import './cinematic-chrome.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(

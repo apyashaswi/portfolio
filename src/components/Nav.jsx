@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { NAV_LINKS, RECRUITER_NAV } from '../data'
-import { revealTransition, useScrollY } from '../utils'
+import { EASE, revealTransition, useScrollY } from '../utils'
 
 export default function Nav({ active, bannerVisible, mode }) {
-  const scrolled = useScrollY() > 50
+  const scrolled = useScrollY() > 40
   const [open, setOpen] = useState(false)
   const links = mode === 'recruiter' ? RECRUITER_NAV : NAV_LINKS
   const navigate = useNavigate()
@@ -54,9 +54,25 @@ export default function Nav({ active, bannerVisible, mode }) {
           AP<span className="nav-status-dot" />
         </button>
         <div id="nav-links" className={`nav-links${open ? ' open' : ''}`}>
-          {links.map(l => (
-            <button key={l} className={`nav-link${active === l.toLowerCase() ? ' active' : ''}`} onClick={() => go(l)}>{l}</button>
-          ))}
+          {links.map(l => {
+            const isActive = active === l.toLowerCase()
+            const isCta = l === 'Contact'
+            return (
+              <button
+                key={l}
+                className={`nav-link${isActive ? ' active' : ''}${isCta ? ' nav-cta' : ''}`}
+                aria-current={isActive ? 'true' : undefined}
+                onClick={() => go(l)}
+              >
+                {/* One glass pill slides between links instead of each link
+                    fading its own background in and out. */}
+                {isActive && !isCta && (
+                  <motion.span className="nav-pill" layoutId="nav-pill" transition={{ duration: 0.5, ease: EASE }} aria-hidden="true" />
+                )}
+                <span className="nav-link-label">{l}</span>
+              </button>
+            )
+          })}
           {mode === 'recruiter' && (
             <a href="https://www.linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer" className="btn-ghost nav-resume-btn">Résumé</a>
           )}

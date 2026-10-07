@@ -4,7 +4,24 @@ import Picture from './Picture'
 
 import HeroHUD from './HeroHUD'
 import { INTRO_DONE, introWillShow } from '../intro'
-import { revealTransition } from '../utils'
+import { EASE, revealTransition, useScrollY } from '../utils'
+
+const HERO_LINES = [
+  'Yashaswi',
+  <>Alur <span className="grad-voice">Prasannakumar</span><span className="hero-name-stop">.</span></>,
+]
+
+// The thin animated rule at the foot of the hero; it bows out once the
+// reader has started scrolling, so it never sits over content.
+function ScrollCue() {
+  const gone = useScrollY() > 70
+  return (
+    <a href="#about" className={`scroll-cue${gone ? ' gone' : ''}`} aria-label="Scroll to About" tabIndex={gone ? -1 : 0}>
+      <span className="scroll-cue-label" aria-hidden="true">Scroll</span>
+      <span className="scroll-cue-line" aria-hidden="true" />
+    </a>
+  )
+}
 
 // Reveal begins the instant the intro overlay lifts (or immediately if the
 // intro was already shown this session) — so the cold-open and the hero land
@@ -61,14 +78,25 @@ function HeroBody({ recruiter }) {
       <HeroHUD />
       <div className="hero-grid container">
         <div className="hero-text">
-          <motion.div className="hero-kicker" {...anim(0)}>
-            <span className="hero-kicker-rule" />
+          <motion.div className="hero-kicker hero-eyebrow" {...anim(0)}>
+            <span className="hero-eyebrow-dot" aria-hidden="true" />
             Edition '26 · An Editorial Portfolio
           </motion.div>
-          <motion.h1 className={`hero-name${revealed ? ' is-revealed' : ''}`} {...anim(1)}>
-            <span className="hero-name-first">Yashaswi</span>
-            <span className="hero-name-last">Alur Prasannakumar<span className="hero-name-stop">.</span></span>
-          </motion.h1>
+          {/* Line-mask reveal: each line rises out of its own clipped slot. */}
+          <h1 className={`hero-name hero-name-cine${revealed ? ' is-revealed' : ''}`}>
+            {HERO_LINES.map((line, i) => (
+              <span key={i} className={`hero-line hero-line-${i}`}>
+                <motion.span
+                  className="hero-line-inner"
+                  initial={reduced ? false : { y: '110%' }}
+                  animate={revealed || reduced ? { y: 0 } : { y: '110%' }}
+                  transition={{ duration: 1.1, ease: EASE, delay: 0.08 + i * 0.09 }}
+                >
+                  {line}
+                </motion.span>
+              </span>
+            ))}
+          </h1>
           <motion.div className="hero-byline" {...anim(2)}>
             <span className="hero-byline-by">by</span> Yashaswi Alur Prasannakumar &middot;{' '}
             <span className="hero-byline-loc">Boston, MA</span>
@@ -82,20 +110,20 @@ function HeroBody({ recruiter }) {
           <motion.div className="hero-ctas" {...anim(4)}>
             {recruiter ? (
               <>
-                <a href="https://www.linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer" className="hero-link hero-link-primary">
-                  Résumé <span aria-hidden="true">→</span>
+                <a href="https://www.linkedin.com/in/apyashaswi" target="_blank" rel="noopener noreferrer" className="btn-pill btn-pill-primary">
+                  Résumé <span className="arrow" aria-hidden="true">→</span>
                 </a>
-                <button className="hero-link" onClick={() => go('experience')}>
-                  View experience <span aria-hidden="true">→</span>
+                <button className="btn-pill btn-pill-ghost" onClick={() => go('experience')}>
+                  View experience <span className="arrow" aria-hidden="true">→</span>
                 </button>
               </>
             ) : (
               <>
-                <button className="hero-link hero-link-primary" onClick={openChat}>
-                  Chat with my AI <span aria-hidden="true">→</span>
+                <button className="btn-pill btn-pill-primary" onClick={openChat}>
+                  Chat with my AI <span className="arrow" aria-hidden="true">→</span>
                 </button>
-                <button className="hero-link" onClick={() => go('projects')}>
-                  See the work <span aria-hidden="true">→</span>
+                <button className="btn-pill btn-pill-ghost" onClick={() => go('projects')}>
+                  See the work <span className="arrow" aria-hidden="true">→</span>
                 </button>
               </>
             )}
@@ -106,6 +134,7 @@ function HeroBody({ recruiter }) {
           <figcaption>Northeastern University, Boston</figcaption>
         </motion.figure>
       </div>
+      <ScrollCue />
     </section>
   )
 }
