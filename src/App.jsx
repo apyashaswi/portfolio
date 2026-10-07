@@ -37,9 +37,13 @@ export default function App() {
     const attach = () => {
       obs?.disconnect()
       const sections = document.querySelectorAll('section[id]')
+      // A thin band across the middle of the viewport: whichever section is
+      // crossing it is the active one. A ratio threshold (0.3) never fires
+      // for sections taller than ~3 viewports, which left the nav stuck on
+      // the previous section through all of Leadership and the showcase.
       obs = new IntersectionObserver(
         entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
-        { threshold: 0.3 }
+        { rootMargin: '-45% 0px -54% 0px', threshold: 0 }
       )
       sections.forEach(s => obs.observe(s))
     }

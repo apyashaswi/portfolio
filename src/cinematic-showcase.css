@@ -178,3 +178,6 @@
 }
 @media (max-width: 980px) { .impact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 420px) { .impact-card-value { font-size: 38px; } .impact-card { padding: 22px 18px; } }
+
+/* numbers sit on one baseline across the row even when titles wrap */
+.impact-card-value { margin-top: auto; }
