@@ -298,3 +298,53 @@
 
 /* Mobile: keep a gutter around the contact card. */
 .contact-section { margin-inline: max(var(--gutter), calc((100% - 980px) / 2)); max-width: none; }
+
+/* ─── Project detail pages ─────────────────────────────────────────────── */
+.project-detail { padding-top: 160px; }
+.pd-title {
+  font-size: clamp(40px, 6vw, 76px);
+  font-weight: 800;
+  letter-spacing: -.035em;
+  line-height: .98;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+}
+.pd-context { color: var(--sage-text); }
+.pd-metrics {
+  gap: 14px;
+  border: 0;
+}
+.pd-metric-card {
+  padding: 22px 20px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.pd-metric-value {
+  font-weight: 800;
+  font-size: 38px;
+  letter-spacing: -.03em;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  background: var(--grad-voice);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-bottom: .05em;
+}
+.pd-other-grid { gap: 14px; }
+.pd-other-card {
+  padding: 18px 20px;
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+  transition: transform .45s var(--ease-out-expo), border-color .45s var(--ease-out-expo), background .45s var(--ease-out-expo), color .3s;
+}
+.pd-other-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--glass-border-strong);
+  background: var(--glass-2);
+}
+@media (max-width: 768px) {
+  .project-detail { padding-top: 140px; }
+  .pd-title { font-size: 40px; }
+}
