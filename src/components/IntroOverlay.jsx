@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { introWillShow, fireIntroDone } from '../intro'
+import { EASE } from '../utils'
+
+// flat · beat · flat · beat · flat
+const ECG_PATH = 'M0 20 H58 L64 20 L68 8 L73 33 L78 4 L84 26 L88 20 H132 L138 20 L142 8 L147 33 L152 4 L158 26 L162 20 H220'
 
 /* Cinematic cold-open as an ACCESSIBLE modal dialog: it exposes a real focusable
    "Skip intro" button (focus moves to it on open, restores on close), dismisses
@@ -76,22 +80,30 @@ export default function IntroOverlay() {
             initial={{ opacity: 0, scale: 0.86, letterSpacing: '0.5em' }}
             animate={{ opacity: 1, scale: 1, letterSpacing: '0.16em' }}
             exit={{ scale: 1.35, opacity: 0, transition: { duration: 0.45, ease: [0.7, 0, 0.2, 1] } }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.6, ease: EASE }}
           >
             AP
           </motion.div>
-          <motion.div
-            className="intro-rule"
-            aria-hidden="true"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ delay: 0.25, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          />
+          {/* The rule under the monogram is an ECG trace -- two beats, the
+              same motif as the Journey monitor -- drawn left to right. */}
+          <svg className="intro-ecg" viewBox="0 0 220 40" aria-hidden="true">
+            <motion.path
+              d={ECG_PATH}
+              fill="none"
+              stroke="var(--accent)"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              initial={{ pathLength: 0, opacity: 0 }}
+              animate={{ pathLength: 1, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.8, ease: EASE }}
+            />
+          </svg>
           <motion.div
             className="intro-tagline"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ delay: 0.4, duration: 0.4, ease: EASE }}
           >
             Yashaswi Alur Prasannakumar
           </motion.div>

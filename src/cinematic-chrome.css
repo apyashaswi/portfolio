@@ -258,3 +258,11 @@ section[id] { scroll-margin-top: 132px; }
 
 /* the inherited name shimmer rides the same expo-out curve */
 .hero-name.is-revealed::after { animation-timing-function: var(--ease-out-expo); }
+
+/* Intro: ECG trace under the monogram (replaces the plain rule). */
+.intro-ecg {
+  width: 220px; height: 40px;
+  margin-top: 14px;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(125, 144, 121, .55));
+}
