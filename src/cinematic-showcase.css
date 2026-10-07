@@ -1,0 +1,180 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   CINEMATIC LAYER · SHOWCASE — the pinned 3D "selected impact" band
+   (Redesign_APY_2026-10-06). Uses tokens from cinematic.css.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* Mono tag with a leading oat rule -- the small label above a feature. */
+.cine-tag {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 22px;
+}
+.cine-tag::before { content: ""; width: 30px; height: 1px; background: var(--accent); flex: none; }
+
+/* ─── Pinned version ───────────────────────────────────────────────────── */
+.showcase { position: relative; z-index: 2; height: 360vh; }
+.showcase-sticky {
+  position: sticky; top: 0;
+  height: 100vh; height: 100svh;
+  overflow: hidden;
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, transparent, rgba(34, 29, 24, .55) 12%, rgba(34, 29, 24, .55) 88%, transparent);
+}
+.showcase-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(58% 50% at 50% 46%, rgba(188, 164, 122, .10), transparent 70%);
+}
+.showcase-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+.showcase-speedlines {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(240, 226, 197, .06) 0deg .5deg, transparent .5deg 3.4deg);
+  -webkit-mask-image: radial-gradient(circle, transparent 20%, #000 62%);
+          mask-image: radial-gradient(circle, transparent 20%, #000 62%);
+}
+.showcase-warp {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .35s var(--ease-out-expo);
+  background: radial-gradient(circle at 50% 50%, rgba(188, 164, 122, .25), transparent 55%);
+}
+
+.showcase-copy {
+  position: relative; z-index: 3;
+  width: min(720px, 88vw);
+  height: 360px;
+  text-align: center;
+  pointer-events: none;
+}
+/* A soft dark backing so the type always reads over the bright metal. */
+.showcase-copy::before {
+  content: "";
+  position: absolute; inset: -30px -90px;
+  z-index: -1;
+  filter: blur(26px);
+  background: radial-gradient(closest-side, rgba(26, 22, 18, .62), transparent);
+}
+.showcase-tag {
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  justify-content: center;
+}
+.showcase-cap {
+  position: absolute; top: 56px; left: 0; right: 0;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .65s var(--ease-out-expo), transform .65s var(--ease-out-expo);
+}
+.showcase-cap.on { opacity: 1; transform: none; }
+.showcase-cap-project {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent2);
+  margin-bottom: 14px;
+}
+.showcase-cap-value {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 9vw, 120px);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -.04em;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
+  background: var(--grad-voice);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  padding-bottom: .06em;
+}
+.showcase-cap-label {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  margin-top: 6px;
+}
+.showcase-cap-line {
+  font-family: var(--font-serif);
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 560px;
+  margin: 18px auto 0;
+}
+.showcase-progress {
+  position: absolute; bottom: 44px; left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex; gap: 10px;
+}
+.showcase-progress span {
+  width: 28px; height: 2px;
+  border-radius: 2px;
+  background: var(--ink-dim);
+  transition: background .5s var(--ease-out-expo), width .5s var(--ease-out-expo);
+}
+.showcase-progress span.on { background: var(--accent); width: 44px; }
+
+/* ─── Static version ───────────────────────────────────────────────────── */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+.impact-card {
+  display: flex; flex-direction: column;
+  height: 100%;
+  padding: 26px 24px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.impact-card::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity .5s var(--ease-out-expo);
+}
+.impact-card:hover::before { opacity: 1; }
+.impact-card-title {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent2);
+  margin-bottom: 16px;
+}
+.impact-card-value {
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+  background: var(--grad-ink);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  padding-bottom: .05em;
+}
+.impact-card-label {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-top: 6px;
+}
+@media (max-width: 980px) { .impact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .impact-card-value { font-size: 38px; } .impact-card { padding: 22px 18px; } }
