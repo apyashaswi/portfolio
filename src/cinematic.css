@@ -165,3 +165,8 @@ body { overflow-x: clip; }
   content-visibility: auto;
   contain-intrinsic-size: auto 1100px;
 }
+
+@media print {
+  #main > section.section, .footer { content-visibility: visible; }
+  .ambient-mesh, .ambient-vignette { display: none; }
+}

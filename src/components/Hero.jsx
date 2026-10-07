@@ -17,7 +17,20 @@ function ScrollCue() {
   const gone = useScrollY() > 70
   return (
     <a href="#about" className={`scroll-cue${gone ? ' gone' : ''}`} aria-label="Scroll to About" tabIndex={gone ? -1 : 0}
-      onClick={(e) => { e.preventDefault(); scrollToSection('about') }}>
+      onClick={(e) => {
+        // modified clicks (new tab, etc.) keep native behaviour
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+        e.preventDefault()
+        // keep what the native #about jump did: the hash + a history entry,
+        // and a focus point so the next Tab continues from About
+        history.pushState(null, '', '#about')
+        const target = document.getElementById('about')
+        if (target) {
+          target.setAttribute('tabindex', '-1')
+          target.focus({ preventScroll: true })
+        }
+        scrollToSection('about')
+      }}>
       <span className="scroll-cue-label" aria-hidden="true">Scroll</span>
       <span className="scroll-cue-line" aria-hidden="true" />
     </a>
@@ -43,7 +56,7 @@ const makeReveal = (reduced) => ({
   hidden: reduced ? { opacity: 0 } : { opacity: 0, y: 26, filter: 'blur(7px)' },
   show: (i = 0) => {
     if (reduced) {
-      return { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4, delay: 0, ease: [0.22, 1, 0.36, 1] } }
+      return { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4, delay: 0, ease: EASE } }
     }
     const delay = i * 0.06
     const t = revealTransition(delay)

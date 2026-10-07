@@ -15,11 +15,19 @@ import Research from '../components/Research'
 import Skills from '../components/Skills'
 import Leadership from '../components/Leadership'
 import Contact from '../components/Contact'
-import { scrollToSection } from '../utils'
+import { EASE, scrollToSection } from '../utils'
 
 export default function Home({ mode }) {
   const recruiterMode = mode === 'recruiter'
   const location = useLocation()
+
+  // A deep link like /#projects: the browser's own jump happens before the
+  // content-visibility sections above it have real heights, so re-run it
+  // through the correcting helper once the page has mounted.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1))
+    if (id && document.getElementById(id)) requestAnimationFrame(() => scrollToSection(id))
+  }, [])
 
   useEffect(() => {
     const target = location.state?.scrollTo
@@ -38,7 +46,7 @@ export default function Home({ mode }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.35 }}
+        transition={{ duration: 0.35, ease: EASE }}
       >
         {recruiterMode ? <RecruiterHero /> : <Hero />}
         <TrustStrip />

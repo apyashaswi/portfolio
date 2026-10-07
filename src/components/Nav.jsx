@@ -17,6 +17,16 @@ export default function Nav({ active, bannerVisible, mode }) {
   // While the mobile menu overlay is open: lock body scroll, move focus into
   // the sheet and keep Tab cycling inside it (links + the close button), let
   // Escape close it, and hand focus back to the burger afterwards.
+  // The sheet only exists below 769px: widening past that while it is open
+  // closes it, which releases the scroll lock and the focus containment.
+  useEffect(() => {
+    if (!open) return
+    const mq = window.matchMedia('(min-width: 769px)')
+    const onChange = () => { if (mq.matches) setOpen(false) }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [open])
+
   useEffect(() => {
     if (!open) return
     const focusables = () => [...(sheetRef.current?.querySelectorAll('button, a[href]') ?? []), burgerRef.current].filter(Boolean)
@@ -37,7 +47,10 @@ export default function Nav({ active, bannerVisible, mode }) {
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = prevOverflow
-      if (sheetRef.current?.contains(document.activeElement) || document.activeElement === document.body) burgerRef.current?.focus()
+      if (sheetRef.current?.contains(document.activeElement) || document.activeElement === document.body || document.activeElement === burgerRef.current) {
+        const burgerVisible = burgerRef.current && burgerRef.current.offsetParent !== null
+        ;(burgerVisible ? burgerRef.current : document.querySelector('.nav-logo'))?.focus()
+      }
     }
   }, [open])
 

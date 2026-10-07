@@ -65,21 +65,21 @@ export default function IntroOverlay() {
           aria-modal="true"
           aria-label="Intro animation"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.08, filter: 'blur(6px)', transition: { duration: 0.5, ease: [0.7, 0, 0.2, 1] } }}
+          exit={{ opacity: 0, scale: 1.08, filter: 'blur(6px)', transition: { duration: 0.5, ease: EASE } }}
         >
           <motion.div
             className="intro-flash"
             aria-hidden="true"
             initial={{ opacity: 0, scale: 0.2 }}
             animate={{ opacity: [0, 0, 0.9, 0], scale: [0.2, 0.2, 1.6, 2.2] }}
-            transition={{ duration: 1.0, times: [0, 0.75, 0.85, 1], ease: 'easeOut' }}
+            transition={{ duration: 1.0, times: [0, 0.75, 0.85, 1], ease: EASE }}
           />
           <motion.div
             className="intro-monogram"
             aria-hidden="true"
             initial={{ opacity: 0, scale: 0.86, letterSpacing: '0.5em' }}
             animate={{ opacity: 1, scale: 1, letterSpacing: '0.16em' }}
-            exit={{ scale: 1.35, opacity: 0, transition: { duration: 0.45, ease: [0.7, 0, 0.2, 1] } }}
+            exit={{ scale: 1.35, opacity: 0, transition: { duration: 0.45, ease: EASE } }}
             transition={{ duration: 0.6, ease: EASE }}
           >
             AP

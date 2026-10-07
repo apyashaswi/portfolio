@@ -85,6 +85,7 @@ export default function AmbientMesh() {
     window.addEventListener('resize', onResize)
     document.addEventListener('visibilitychange', onVisible)
     motionMq.addEventListener('change', start)
+    smallMq.addEventListener('change', start)
     return () => {
       cancelAnimationFrame(raf)
       if (idle) ('cancelIdleCallback' in window ? window.cancelIdleCallback(idle) : clearTimeout(idle))
@@ -92,6 +93,7 @@ export default function AmbientMesh() {
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', onVisible)
       motionMq.removeEventListener('change', start)
+      smallMq.removeEventListener('change', start)
     }
   }, [reducedEffects])
 

@@ -31,23 +31,37 @@ export const useScrollY = (enabled = true) => {
 // scroll can stop short or overshoot. Once the scroll settles (scrollend, or a
 // timeout where it is unsupported) the now-rendered layout is exact, so one
 // instant re-align lands the heading precisely under the fixed chrome.
+// Only one jump is ever in flight: a new jump replaces it, and any input from
+// the reader (wheel, touch, keys) cancels the correction so it never yanks
+// them back to a target they have scrolled away from.
+let cancelJump = null
 export const scrollToSection = (id) => {
   const el = typeof id === 'string' ? document.getElementById(id) : id
   if (!el) return
+  cancelJump?.()
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
-  let done = false
-  const settle = () => {
-    if (done) return
-    done = true
+  let timer = 0, raf = 0
+  const cleanup = () => {
     window.removeEventListener('scrollend', settle)
+    INTERRUPTS.forEach(t => window.removeEventListener(t, cancel, true))
+    clearTimeout(timer)
+    cancelAnimationFrame(raf)
+    if (cancelJump === cancel) cancelJump = null
+  }
+  const cancel = () => cleanup()
+  const settle = () => {
+    cleanup()
     // two passes: the first may itself render more sections above the target
     el.scrollIntoView({ behavior: 'instant', block: 'start' })
-    requestAnimationFrame(() => el.scrollIntoView({ behavior: 'instant', block: 'start' }))
+    raf = requestAnimationFrame(() => el.scrollIntoView({ behavior: 'instant', block: 'start' }))
   }
+  el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' })
   window.addEventListener('scrollend', settle, { once: true })
-  setTimeout(settle, 1400)
+  INTERRUPTS.forEach(t => window.addEventListener(t, cancel, { capture: true, passive: true, once: true }))
+  timer = setTimeout(settle, 1400)
+  cancelJump = cancel
 }
+const INTERRUPTS = ['wheel', 'touchstart', 'keydown', 'pointerdown']
 
 export const isMobileDevice = () => typeof window !== 'undefined' && window.innerWidth < 768
 
