@@ -17,9 +17,46 @@ import { useReducedEffects } from '../effects'
    - if the browser drops the context (GPU reset, too many contexts), the sky
      is rebuilt on a new canvas a few times before settling on the poster;
    - the EFFECTS switch never reveals the canvas before its first frame;
-   - a viewport resize re-pins the day phases to the sections. */
+   - a viewport resize re-pins the day phases to the sections;
+   - the readability tokens are written in visible steps, not every frame. */
 
 const MAX_REBUILDS = 3
+const TOKEN_STEP = 0.01
+
+/* sky.js writes --sky-glow and --sky-scrim on <html> on every frame it draws.
+   A custom property on the root restyles the whole document, and while
+   scrolling that alone costs 4x-throttled phones ~100ms a frame (measured).
+   createSky takes a `root` option, so it gets this stand-in: the real <html>
+   for scrollHeight, and a style object that rounds each token to TOKEN_STEP
+   and skips writes that wouldn't change it. The panes move in 1.5% alpha
+   steps, well under what the eye can see; restyles drop to a few dozen per
+   full scroll. */
+function quantizedRoot() {
+  const html = document.documentElement
+  const last = new Map()
+  const round = (n) => (Math.round(n / TOKEN_STEP) * TOKEN_STEP).toFixed(2)
+  const quantize = (value) => {
+    const m = /^rgba\((\d+),(\d+),(\d+),([\d.]+)\)$/.exec(value)
+    if (m) return `rgba(${m[1]},${m[2]},${m[3]},${round(+m[4])})`
+    const n = Number(value)
+    return Number.isFinite(n) ? round(n) : value
+  }
+  return {
+    get scrollHeight() { return html.scrollHeight },
+    style: {
+      setProperty(name, value) {
+        const q = quantize(value)
+        if (last.get(name) === q) return
+        last.set(name, q)
+        html.style.setProperty(name, q)
+      },
+      removeProperty(name) {
+        last.delete(name)
+        html.style.removeProperty(name)
+      },
+    },
+  }
+}
 
 export default function SkyBackground() {
   const effectsReduced = useReducedEffects()
@@ -67,7 +104,7 @@ export default function SkyBackground() {
       }
       document.body.prepend(canvas)
       canvas.addEventListener('webglcontextlost', onLost)
-      sky = createSky({ canvas })
+      sky = createSky({ canvas, root: quantizedRoot() })
       // sky.js logs a shader compile error but carries on with an unusable
       // program; without this check that would fade a black canvas over the poster.
       const program = gl && !gl.isContextLost() ? gl.getParameter(gl.CURRENT_PROGRAM) : null
