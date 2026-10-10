@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 // Shared rAF-gated scroll-position hook — avoids each consumer (Nav,
-// ScrollTop, HeroHUD) attaching its own unthrottled `scroll` listener and
+// ScrollTop) attaching its own unthrottled `scroll` listener and
 // re-rendering on every native scroll tick, which can fire far more often
 // than once per animation frame. Pass `enabled=false` to skip subscribing
 // entirely (e.g. under reduced motion).

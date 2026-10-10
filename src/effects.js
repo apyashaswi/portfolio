@@ -25,19 +25,3 @@ export const useReducedEffects = () => {
   }, [])
   return reduced
 }
-
-// True only if the browser can actually create a WebGL context.
-export const webglAvailable = () => {
-  if (typeof window === 'undefined') return false
-  try {
-    const c = document.createElement('canvas')
-    return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')))
-  } catch {
-    return false
-  }
-}
-
-// Honour Data Saver — skip the heavy 3D for users who asked to conserve data.
-export const saveDataOn = () => {
-  try { return !!navigator.connection?.saveData } catch { return false }
-}

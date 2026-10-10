@@ -2430,10 +2430,9 @@ a, button { cursor: pointer; }
   .pd-title { font-size: 32px; }
 }
 
-/* ─── EDITORIAL-FUTURISM: 3D hero substrate (experiment only) ───────────────
-   A WebGL particle constellation + distorted core sits behind the editorial
-   hero. Content stays above it; scrims keep the type at AA contrast. The scene
-   itself freezes under prefers-reduced-motion (handled in HeroScene.jsx). */
+/* ─── EDITORIAL-FUTURISM: hero frame ────────────────────────────────────────
+   The hero sits directly on the site-wide orbital sky (src/lib/sky.js,
+   src/sky.css); content stays above it. */
 .hero-futurist {
   position: relative;
   overflow: hidden;
@@ -2441,40 +2440,7 @@ a, button { cursor: pointer; }
   display: flex;
   align-items: center;
 }
-.hero-scene {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;          /* never steal scroll/clicks from the page */
-}
-.hero-scene canvas { display: block; }
-/* Legibility scrim: warm-paper ground darkened toward the text column (left),
-   feathered to transparent over the constellation (right). */
-.hero-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(120% 90% at 18% 50%, rgba(44, 38, 32, 0.92) 0%, rgba(44, 38, 32, 0.55) 38%, rgba(44, 38, 32, 0) 70%),
-    linear-gradient(180deg, rgba(44, 38, 32, 0.55) 0%, rgba(44, 38, 32, 0) 22%, rgba(44, 38, 32, 0) 78%, var(--bg) 100%);
-}
 .hero-futurist .hero-grid { position: relative; z-index: 2; }
-
-/* A faint engineering grid — the "schematic" register under the masthead. */
-.hero-futurist::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.5;
-  background-image:
-    linear-gradient(rgba(188, 164, 122, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(188, 164, 122, 0.05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(80% 70% at 70% 45%, #000 0%, transparent 75%);
-          mask-image: radial-gradient(80% 70% at 70% 45%, #000 0%, transparent 75%);
-}
 
 /* Portrait gains a quiet oat rim so it belongs in the lit 3D space. */
 .hero-futurist .hero-portrait img {
@@ -2486,37 +2452,7 @@ a, button { cursor: pointer; }
 }
 @media (max-width: 720px) {
   .hero-futurist { min-height: auto; }
-  .hero-scene::after {
-    background: linear-gradient(180deg, rgba(44,38,32,0.4) 0%, rgba(44,38,32,0.75) 60%, var(--bg) 100%);
-  }
 }
-
-/* ─── HUD telemetry overlay (experiment) ──────────────────────────────────── */
-.hero-hud {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(188, 164, 122, 0.52);
-}
-.hero-hud > div { position: absolute; display: flex; align-items: center; gap: 8px; }
-.hud-tl { top: 88px; left: 28px; }
-.hud-tr { top: 88px; right: 28px; }
-.hud-bl { bottom: 26px; left: 28px; }
-.hud-br { bottom: 26px; right: 28px; color: rgba(138, 157, 132, 0.6); }
-.hud-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  animation: hud-blink 1.8s ease-in-out infinite;
-}
-@keyframes hud-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
-@media (max-width: 720px) { .hero-hud { display: none; } }
-@media (prefers-reduced-motion: reduce) { .hud-dot { animation: none; } }
 
 /* ─── Project cards: flat well styling (no tilt/glare — that interaction was removed) ──── */
 .project-tilt {
@@ -2560,18 +2496,6 @@ a, button { cursor: pointer; }
   overflow: hidden; clip: rect(0, 0, 0, 0);
   white-space: nowrap; border: 0;
 }
-
-/* Hero CSS poster — resting look + fallback when 3D is deferred/off/unsupported */
-.hero-poster {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(46% 60% at 72% 46%, rgba(188, 164, 122, 0.22), rgba(188, 164, 122, 0) 70%),
-    radial-gradient(40% 55% at 60% 50%, rgba(125, 144, 121, 0.10), transparent 72%),
-    var(--bg);
-}
-.hero-scene canvas.hero-canvas { position: absolute; inset: 0; z-index: 1; }
 
 /* In-page "reduce effects" toggle (sits beside the mode toggle in the masthead) */
 .effects-toggle {
