@@ -1,0 +1,58 @@
+/* AP AI launcher: the owner's portrait in an oat disc, with an "Ask AP AI"
+   label on desktop. Replaces Chatbase's default bubble (hidden in index.html).
+   Same surface, border and shadow language as the back-to-top button. */
+.ask-ai {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 95;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 18px 5px 5px;
+  border: 1px solid rgba(188, 164, 122, 0.35);
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg));
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(188, 164, 122, 0.08);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.ask-ai-avatar {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(188, 164, 122, 0.55);
+  transition: box-shadow 0.18s ease;
+}
+.ask-ai-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ask-ai:hover, .ask-ai:focus-visible {
+  border-color: rgba(125, 144, 121, 0.55);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), 0 0 18px rgba(125, 144, 121, 0.25);
+}
+.ask-ai:hover .ask-ai-avatar, .ask-ai:focus-visible .ask-ai-avatar { box-shadow: 0 0 0 2px var(--accent2); }
+.ask-ai:not(.is-still):hover { transform: translateY(-2px); }
+.ask-ai:active { transform: translateY(0); }
+.ask-ai.is-open .ask-ai-avatar { box-shadow: 0 0 0 3px var(--accent2); }
+
+/* Phones: icon only, so the pill never covers content. */
+@media (max-width: 820px) {
+  .ask-ai { right: 16px; bottom: 16px; padding: 4px; gap: 0; }
+  .ask-ai-label { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ask-ai, .ask-ai-avatar { transition: none; }
+  .ask-ai:hover { transform: none; }
+}
+
+/* Back-to-top shares the corner: stack it above the launcher. */
+.scroll-top-btn { bottom: 92px; right: 30px; }
+@media (max-width: 820px) { .scroll-top-btn { bottom: 76px; right: 20px; } }

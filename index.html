@@ -91,6 +91,9 @@
          button (#chatbase-bubble-button) — hiding it here doesn't touch
          either of those, so Hero.jsx's openChat() CTA keeps working. */
       #chatbase-message-bubbles { display: none !important; }
+      /* The site renders its own launcher (src/components/AskAI.jsx) that opens
+         and closes the chat through the chatbase API, so hide the default bubble. */
+      #chatbase-bubble-button { display: none !important; }
     </style>
   </head>
   <body>

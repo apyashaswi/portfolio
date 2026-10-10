@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 
 import Masthead from './components/Masthead'
 import ScrollTop from './components/ScrollTop'
+import AskAI from './components/AskAI'
 import IntroOverlay from './components/IntroOverlay'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
@@ -62,6 +63,7 @@ export default function App() {
       </Routes>
       <Footer />
       <ScrollTop />
+      <AskAI />
     </>
   )
 }
