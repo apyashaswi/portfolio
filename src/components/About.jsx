@@ -56,6 +56,8 @@ export default function About() {
           <span><b>10+</b> leadership roles</span>
           <span className="about-numbers-sep">·</span>
           <span><b>1</b> hackathon award</span>
+          <span className="about-numbers-sep">·</span>
+          <span><b>3</b> US hackathons on the judging panel</span>
         </motion.div>
 
         <motion.div className="about-education" {...fadeUp(0.3)}>
