@@ -148,7 +148,7 @@ export default function GlobeViz() {
           height={dims.h}
           // Use solid section-alt background color instead of transparent
           // to avoid WebGL ghost-rendering artifacts on canvas edges
-          backgroundColor="#2c2620"
+          backgroundColor="rgba(0,0,0,0)"   // transparent: the globe floats on its section's pane over the sky
 
           customGlobeMaterial={globeMaterial}
 

@@ -61,3 +61,18 @@
 /* .sky-scrim isolates each section, which would trap the globe's fixed hover
    card inside its section and let the next section paint over it. */
 #globe { z-index: 2; }
+
+/* Print: sky.css drops the sky and paints the page white, so the site's cream
+   type has to turn to ink, and the fixed chrome stays off the paper. */
+@media print {
+  .sky-page, .sky-page * {
+    color: #1b1612 !important;
+    -webkit-text-fill-color: currentColor !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+  }
+  .masthead, .nav, .ask-ai, .scroll-top-btn, .skip-link,
+  #chatbase-bubble-window, #chatbase-message-bubbles { display: none !important; }
+}
