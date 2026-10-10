@@ -241,7 +241,8 @@ a, button { cursor: pointer; }
 .section-alt { background: transparent; }   /* the orbital sky is the ground now */
 /* Editorial asterism divider â€” vermillion ornament centered between
    stacked sections, sized to read across the column. */
-.section + .section::before {
+/* (::after, so ::before stays free for the sky's .sky-scrim pool) */
+.section + .section::after {
   content: '\2042'; /* ASTERISM */
   position: absolute;
   top: -50px; left: 50%; transform: translateX(-50%);
@@ -565,7 +566,7 @@ a, button { cursor: pointer; }
 
 /* Asterism between hero and the first section reads as a flourish under the
    nameplate. Suppress it so the hero feels like a title spread. */
-.hero + .section::before { display: none; }
+.hero + .section::after { display: none; }
 
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
