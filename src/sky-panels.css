@@ -37,8 +37,12 @@
   -webkit-backdrop-filter: blur(20px) saturate(1.05);
           backdrop-filter: blur(20px) saturate(1.05);
 }
-/* the one-line credit strip under the hero: a slim pane, not a sheet */
-.trust-strip > .trust-strip-inner::before { inset: -12px 0; border-radius: 999px; }
+/* the one-line credit strip under the hero: a slim pane, not a sheet. It sits
+   on the pre-dawn crest glow, where --sky-scrim is still ~0, so it starts darker. */
+.trust-strip > .trust-strip-inner::before {
+  inset: -12px 0; border-radius: 999px;
+  background: rgba(12, 9, 7, min(0.92, calc(0.68 + var(--sky-scrim, 0) * 1.5)));
+}
 /* the photo caption: shrink-wrap the (centred) line so its pane hugs it */
 .about-figure > figcaption { width: fit-content; margin-inline: auto; }
 .about-figure > figcaption::before,
@@ -48,6 +52,16 @@
   .sky-scrim > .container-prose::before,
   .footer > .footer-inner::before { inset: -28px 12px; border-radius: 16px; }
   .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
+  /* Phones stack the portrait above the hero copy, which pushes the copy down
+     onto the glowing limb; on desktop it clears the limb and needs no pane. */
+  .hero-futurist .hero-text { position: relative; isolation: isolate; }
+  .hero-futurist .hero-text::before {
+    content: ""; position: absolute; inset: -24px -16px; z-index: -1; pointer-events: none;
+    border-radius: 16px; border: 1px solid var(--border);
+    background: rgba(12, 9, 7, min(0.92, calc(0.62 + var(--sky-scrim, 0) * 1.5)));
+    -webkit-backdrop-filter: blur(20px) saturate(1.05);
+            backdrop-filter: blur(20px) saturate(1.05);
+  }
 }
 @media print {
   .sky-scrim > .container::before,
