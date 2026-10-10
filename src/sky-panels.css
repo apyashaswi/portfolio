@@ -73,7 +73,8 @@
   .footer > .footer-inner::before,
   .trust-strip > .trust-strip-inner::before,
   .about-figure > figcaption::before,
-  .hero-portrait > figcaption::before { display: none; }
+  .hero-portrait > figcaption::before,
+  .hero-futurist .hero-text::before { display: none; }
 }
 
 /* Print: sky.css drops the sky and paints the page white, so the site's cream
@@ -81,12 +82,18 @@
 @media print {
   .sky-page, .sky-page * {
     color: #1b1612 !important;
+    /* dark cards/chips would print as dark blocks under "Background graphics" */
+    background-color: transparent !important;
+    background-image: none !important;
     -webkit-text-fill-color: currentColor !important;
     text-shadow: none !important;
     box-shadow: none !important;
     -webkit-backdrop-filter: none !important;
             backdrop-filter: none !important;
   }
+  /* entrance animations that never ran (sections below the fold) must not print blank */
+  .sky-page * { opacity: 1 !important; transform: none !important; filter: none !important; }
+  body::before, body::after { display: none !important; }   /* paper grain */
   .masthead, .nav, .ask-ai, .scroll-top-btn, .skip-link,
   #chatbase-bubble-window, #chatbase-message-bubbles { display: none !important; }
 }
