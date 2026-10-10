@@ -18,6 +18,7 @@ export const EXPERIENCE = [
       'Developed the PCT/Prosci Change Triangle Assessment Framework — a 29-deliverable, 16-condition project health methodology presented to VP/Director leadership as a proposed organizational standard',
       'Authored EDM Monthly Status Tracking decks for leadership covering onboarding throughput, interview pipeline, risks, and mitigations; acted as trusted operational anchor for delivery directors and data leads',
       'Supported Microsoft Fabric tenant-to-tenant migration across database tables and delivered Fabric enablement training for 20 actuarial participants on F64 capacity',
+      'Worked on downstream mapping, reducing mapping time from 24 hours to under 30 minutes',
     ],
     tags: ['Microsoft Fabric', 'Azure DevOps', 'Scrum / Agile', 'PI Planning', 'Change Management', 'Hiring Operations', 'Executive Reporting', 'Prosci'],
     current: false,
