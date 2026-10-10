@@ -13,6 +13,7 @@
 
 .sky-scrim > .container,
 .sky-scrim > .container-prose,
+.project-detail > .pd-container,
 .footer > .footer-inner,
 .trust-strip > .trust-strip-inner,
 .about-figure > figcaption,
@@ -22,6 +23,7 @@
 }
 .sky-scrim > .container::before,
 .sky-scrim > .container-prose::before,
+.project-detail > .pd-container::before,
 .footer > .footer-inner::before,
 .trust-strip > .trust-strip-inner::before,
 .about-figure > figcaption::before,
@@ -33,7 +35,7 @@
   pointer-events: none;
   border-radius: 20px;
   border: 1px solid var(--border);
-  background: rgba(12, 9, 7, min(0.92, calc(0.58 + var(--sky-scrim, 0) * 1.5)));
+  background: rgba(12, 9, 7, min(0.92, calc(0.62 + var(--sky-scrim, 0) * 1.5)));
   -webkit-backdrop-filter: blur(20px) saturate(1.05);
           backdrop-filter: blur(20px) saturate(1.05);
 }
@@ -50,6 +52,7 @@
 @media (max-width: 720px) {
   .sky-scrim > .container::before,
   .sky-scrim > .container-prose::before,
+  .project-detail > .pd-container::before,
   .footer > .footer-inner::before { inset: -28px 12px; border-radius: 16px; }
   .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
   /* Phones stack the portrait above the hero copy, which pushes the copy down
@@ -66,15 +69,12 @@
 @media print {
   .sky-scrim > .container::before,
   .sky-scrim > .container-prose::before,
+  .project-detail > .pd-container::before,
   .footer > .footer-inner::before,
   .trust-strip > .trust-strip-inner::before,
   .about-figure > figcaption::before,
   .hero-portrait > figcaption::before { display: none; }
 }
-
-/* .sky-scrim isolates each section, which would trap the globe's fixed hover
-   card inside its section and let the next section paint over it. */
-#globe { z-index: 2; }
 
 /* Print: sky.css drops the sky and paints the page white, so the site's cream
    type has to turn to ink, and the fixed chrome stays off the paper. */

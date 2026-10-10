@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import Globe from 'react-globe.gl'
 import * as THREE from 'three'
 import { useReducedEffects } from './effects'
@@ -146,9 +147,9 @@ export default function GlobeViz() {
           ref={globeEl}
           width={dims.w}
           height={dims.h}
-          // Use solid section-alt background color instead of transparent
-          // to avoid WebGL ghost-rendering artifacts on canvas edges
-          backgroundColor="rgba(0,0,0,0)"   // transparent: the globe floats on its section's pane over the sky
+          // Transparent, so the globe floats on its section's pane over the sky
+          // (checked for edge artifacts against the orbital sky background).
+          backgroundColor="rgba(0,0,0,0)"
 
           customGlobeMaterial={globeMaterial}
 
@@ -197,7 +198,9 @@ export default function GlobeViz() {
           ringAltitude={0.006}
         />
 
-        {tooltip && (
+        {/* Portalled to <body>: inside the page it would be capped by the
+            section's stacking context and slide under the nav and corner buttons. */}
+        {tooltip && createPortal(
           <div
             className="globe-tooltip"
             style={{
@@ -211,7 +214,8 @@ export default function GlobeViz() {
               <div className="gt-label">{tooltip.label}</div>
             </div>
             <div className="gt-detail">{tooltip.detail}</div>
-          </div>
+          </div>,
+          document.body
         )}
 
         <div className="globe-legend">
