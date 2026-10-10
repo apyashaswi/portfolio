@@ -22,7 +22,7 @@ function CompanyMark({ exp }) {
 export default function Experience({ recruiterMode }) {
   const list = recruiterMode ? EXPERIENCE.slice(0, 1) : EXPERIENCE
   return (
-    <section id="experience" className="section section-alt">
+    <section id="experience" className="section section-alt sky-scrim">
       <div className="container">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Experience</h2>

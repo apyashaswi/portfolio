@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Masthead from './components/Masthead'
 import ScrollTop from './components/ScrollTop'
 import AskAI from './components/AskAI'
+import SkyBackground from './components/SkyBackground'
 import IntroOverlay from './components/IntroOverlay'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
@@ -21,6 +22,17 @@ export default function App() {
   useEffect(() => {
     try { localStorage.setItem('ap-mode', mode) } catch {}
   }, [mode])
+
+  // The sky pins its day phases to section positions. A mode toggle swaps the
+  // sections only after the 0.35s exit animation (AnimatePresence mode="wait"),
+  // and a route change swaps the page, so re-measure once the new DOM is in.
+  // (Height changes from lazy chunks and images reach it via its ResizeObserver.)
+  useEffect(() => {
+    const relayout = () => window.__sky?.relayout()
+    const raf = requestAnimationFrame(relayout)
+    const t = setTimeout(relayout, 450)
+    return () => { cancelAnimationFrame(raf); clearTimeout(t) }
+  }, [mode, location.pathname])
 
   useEffect(() => {
     if (!isHome) return
@@ -52,18 +64,22 @@ export default function App() {
 
   return (
     <>
-      <a href="#main" className="skip-link">Skip to content</a>
+      <SkyBackground />
+      {/* the cold-open overlay stays outside .sky-page's stacking context, above the paper grain as before */}
       <IntroOverlay />
-      <Masthead mode={mode} setMode={setMode} />
-      <Nav active={active} bannerVisible={true} mode={mode} />
-      <Routes>
-        <Route path="/" element={<Home mode={mode} />} />
-        <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="*" element={<Home mode={mode} />} />
-      </Routes>
-      <Footer />
-      <ScrollTop />
-      <AskAI />
+      <div className="sky-page">
+        <a href="#main" className="skip-link">Skip to content</a>
+        <Masthead mode={mode} setMode={setMode} />
+        <Nav active={active} bannerVisible={true} mode={mode} />
+        <Routes>
+          <Route path="/" element={<Home mode={mode} />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} />
+          <Route path="*" element={<Home mode={mode} />} />
+        </Routes>
+        <Footer />
+        <ScrollTop />
+        <AskAI />
+      </div>
     </>
   )
 }

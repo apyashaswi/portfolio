@@ -397,7 +397,7 @@ export default function JourneyECG() {
   const bs  = BADGE_STYLE[ms.badge]   || BADGE_STYLE.Milestone
 
   return (
-    <section id="journey" className="section ecg-section" ref={sectionRef}>
+    <section id="journey" className="section ecg-section sky-scrim" ref={sectionRef}>
       <div className="container">
 
         {/* Section header */}

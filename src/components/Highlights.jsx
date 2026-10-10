@@ -6,7 +6,7 @@ import { TrophyIcon } from '../icons'
 
 export default function Highlights() {
   return (
-    <section id="highlights" className="section">
+    <section id="highlights" className="section sky-scrim">
       <div className="container">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Highlights</h2>

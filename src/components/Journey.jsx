@@ -4,7 +4,7 @@ const JourneyECG = lazy(() => import('./JourneyECG'))
 
 export default function Journey() {
   return (
-    <Suspense fallback={<section id="journey" className="section"><div style={{ height: 320 }} /></section>}>
+    <Suspense fallback={<section id="journey" className="section sky-scrim"><div style={{ height: 320 }} /></section>}>
       <JourneyECG />
     </Suspense>
   )

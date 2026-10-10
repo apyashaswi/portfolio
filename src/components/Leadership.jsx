@@ -4,7 +4,7 @@ import { LEADERSHIP } from '../data'
 
 export default function Leadership() {
   return (
-    <section id="leadership" className="section">
+    <section id="leadership" className="section sky-scrim">
       <div className="container-prose">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Leadership &amp; Communities</h2>

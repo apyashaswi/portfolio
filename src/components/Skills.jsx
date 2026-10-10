@@ -12,7 +12,7 @@ function SkillIcon({ name }) {
 export default function Skills({ recruiterMode }) {
   const sectionNum = recruiterMode ? '05' : '07'
   return (
-    <section id="skills" className="section section-alt">
+    <section id="skills" className="section section-alt sky-scrim">
       <div className="container">
         <motion.div className="section-header" {...fadeUp()}>
           <h2 className="section-title">Skills &amp; Tools</h2>

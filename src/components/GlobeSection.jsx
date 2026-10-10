@@ -22,7 +22,7 @@ export default function GlobeSection() {
   }, [load])
 
   return (
-    <section id="globe" className="section section-alt">
+    <section id="globe" className="section section-alt sky-scrim">
       <div className="container">
         <motion.div className="section-header" data-num="05" {...fadeUp()}>
           <h2 className="section-title">Around the World</h2>

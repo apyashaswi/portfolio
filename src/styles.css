@@ -93,7 +93,7 @@ body {
   font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.65;
-  background: var(--bg);
+  /* the page ground (colour + poster) comes from sky.css */
   color: var(--text);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -238,7 +238,7 @@ a, button { cursor: pointer; }
 .container { max-width: 980px; margin: 0 auto; padding: 0 28px; }
 .container-prose { max-width: var(--column); margin: 0 auto; padding: 0 28px; }
 .section { padding: 96px 0; position: relative; }
-.section-alt { background: var(--bg-alt); }
+.section-alt { background: transparent; }   /* the orbital sky is the ground now */
 /* Editorial asterism divider â€” vermillion ornament centered between
    stacked sections, sized to read across the column. */
 .section + .section::before {
@@ -428,7 +428,6 @@ a, button { cursor: pointer; }
   position: relative;
   min-height: calc(100dvh - 90px);
   display: flex; align-items: center;
-  background: var(--bg);
   padding: 140px 0 96px;
   overflow: hidden;
 }
@@ -1375,7 +1374,6 @@ a, button { cursor: pointer; }
 
 /* â”€â”€â”€ FOOTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .footer {
-  background: var(--bg);
   padding: 76px 28px 60px;
   position: relative;
 }
@@ -1816,7 +1814,7 @@ a, button { cursor: pointer; }
 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 
 .ecg-section {
-  background: var(--bg);
+  background: transparent;
 }
 
 /* Monitor frame */
@@ -2198,7 +2196,6 @@ a, button { cursor: pointer; }
 .project-detail {
   min-height: 100dvh;
   padding: 140px 0 80px;
-  background: var(--bg);
 }
 .pd-container { max-width: var(--column); }
 .pd-back {
@@ -2441,6 +2438,9 @@ a, button { cursor: pointer; }
   align-items: center;
 }
 .hero-futurist .hero-grid { position: relative; z-index: 2; }
+
+/* Content wrapper above the fixed sky canvas (src/components/SkyBackground.jsx). */
+.sky-page { position: relative; z-index: 1; }
 
 /* Portrait gains a quiet oat rim so it belongs in the lit 3D space. */
 .hero-futurist .hero-portrait img {
