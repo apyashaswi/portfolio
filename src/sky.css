@@ -1,0 +1,41 @@
+/* sky.css — styles for the orbital sky background. Copy verbatim. */
+
+/* 1. Page base: the poster is the first frame of the scene, shown instantly and kept as the no-WebGL fallback. */
+html, body { background-color: #07080d; }
+body {
+  background-image: url("/sky-poster.jpg");   /* adjust path to wherever the poster is served */
+  background-position: center bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* 2. The canvas: fixed, full-viewport, behind everything, fades in over the poster on first draw. */
+.sky-canvas {
+  position: fixed; inset: 0;
+  width: 100vw; height: 100%;
+  z-index: 0;                       /* all page content must sit above this: position: relative; z-index: 1 */
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+.sky-canvas.on { opacity: 1; }
+
+/* 3. Readability: soft text shadow that strengthens in daylight (value set by sky.js). */
+body { text-shadow: 0 1px 22px var(--sky-glow, transparent); }
+
+/* 4. Readability: a soft dark pool behind each content section, stronger as the sky brightens.
+      Add class "sky-scrim" to each top-level section wrapper (presentational only). */
+.sky-scrim { position: relative; isolation: isolate; }
+.sky-scrim::before {
+  content: ""; position: absolute; inset: 40px -60px; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse 42% 48% at 42% 50%,
+              rgba(10,7,5, calc(.32 + var(--sky-scrim, 0))),
+              rgba(10,7,5, 0) 100%);
+}
+/* The scrim overhangs its section by 60px each side; stop that from causing sideways scroll. */
+.sky-page { overflow-x: clip; }
+
+/* 5. Print: no sky. */
+@media print { .sky-canvas { display: none !important; } body { background: #fff !important; text-shadow: none !important; } .sky-scrim::before { display: none; } }
