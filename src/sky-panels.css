@@ -1,0 +1,63 @@
+/* Frosted reading panels over the orbital sky (owner decision 2026-10-10).
+   sky.css alone keeps the type legible while the sky is dark, but once the
+   sun is up it sits behind the right half of the text column, and copy that
+   was written for a dark page drops below AA. Each section's content column
+   gets a pane of frosted glass instead: drawn on ::before with a negative
+   inset, so layout, type and text colours stay exactly as they were. Its tint
+   follows the sky's brightness through --sky-scrim (set by sky.js: 0 at night,
+   up to 0.55 at the morning peak), so the pane stays a quiet smoked glass in
+   the dark and closes down at sunrise and sunset. The tint never reaches
+   opaque; the blur spreads the sun's core so no bright point sits under a
+   line of type. Values were tuned by measurement (qa/readability.py): every
+   text run on the sky clears AA against the 95th-percentile pixel behind it. */
+
+.sky-scrim > .container,
+.sky-scrim > .container-prose,
+.footer > .footer-inner,
+.trust-strip > .trust-strip-inner,
+.about-figure > figcaption,
+.hero-portrait > figcaption {
+  position: relative;
+  isolation: isolate;
+}
+.sky-scrim > .container::before,
+.sky-scrim > .container-prose::before,
+.footer > .footer-inner::before,
+.trust-strip > .trust-strip-inner::before,
+.about-figure > figcaption::before,
+.hero-portrait > figcaption::before {
+  content: "";
+  position: absolute;
+  inset: -40px 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: rgba(12, 9, 7, min(0.92, calc(0.58 + var(--sky-scrim, 0) * 1.5)));
+  -webkit-backdrop-filter: blur(20px) saturate(1.05);
+          backdrop-filter: blur(20px) saturate(1.05);
+}
+/* the one-line credit strip under the hero: a slim pane, not a sheet */
+.trust-strip > .trust-strip-inner::before { inset: -12px 0; border-radius: 999px; }
+/* the photo caption: shrink-wrap the (centred) line so its pane hugs it */
+.about-figure > figcaption { width: fit-content; margin-inline: auto; }
+.about-figure > figcaption::before,
+.hero-portrait > figcaption::before { inset: -6px -16px; border-radius: 999px; }
+@media (max-width: 720px) {
+  .sky-scrim > .container::before,
+  .sky-scrim > .container-prose::before,
+  .footer > .footer-inner::before { inset: -28px 12px; border-radius: 16px; }
+  .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
+}
+@media print {
+  .sky-scrim > .container::before,
+  .sky-scrim > .container-prose::before,
+  .footer > .footer-inner::before,
+  .trust-strip > .trust-strip-inner::before,
+  .about-figure > figcaption::before,
+  .hero-portrait > figcaption::before { display: none; }
+}
+
+/* .sky-scrim isolates each section, which would trap the globe's fixed hover
+   card inside its section and let the next section paint over it. */
+#globe { z-index: 2; }

@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import './styles.css'
 import './sky.css'
+import './sky-panels.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
