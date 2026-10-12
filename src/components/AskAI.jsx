@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useReducedMotion } from 'framer-motion'
 import { useReducedEffects } from '../effects'
+import { useScrollY } from '../utils'
 import '../ask-ai.css'
 
 /* Our own launcher for the Chatbase assistant, replacing Chatbase's default
@@ -20,6 +22,23 @@ export default function AskAI() {
   const osReduced = useReducedMotion()
   const effectsReduced = useReducedEffects()
   const still = osReduced || effectsReduced
+  // Phones only (CSS): the hero has its own "Ask AP AI" button, so the
+  // round launcher stays out of the hero copy until the hero has scrolled away.
+  // Measured after commit (the hero isn't in the DOM yet during this render),
+  // again on every rAF-throttled scroll, on route changes, and once the
+  // Explorer/Recruiter swap (0.35s exit) has put the new hero in.
+  const y = useScrollY()
+  const { pathname } = useLocation()
+  const [overHero, setOverHero] = useState(false)
+  useEffect(() => {
+    const check = () => {
+      const hero = document.getElementById('hero')
+      setOverHero(!!hero && hero.getBoundingClientRect().bottom > 120)
+    }
+    check()
+    const t = setTimeout(check, 450)
+    return () => clearTimeout(t)
+  }, [y, pathname])
 
   useEffect(() => {
     let mo = null
@@ -47,7 +66,7 @@ export default function AskAI() {
   return (
     <button
       type="button"
-      className={`ask-ai${open ? ' is-open' : ''}${still ? ' is-still' : ''}`}
+      className={`ask-ai${open ? ' is-open' : ''}${still ? ' is-still' : ''}${overHero && !open ? ' is-over-hero' : ''}`}
       onClick={toggle}
       aria-label={open ? 'Close chat with AP AI' : 'Ask AP AI about Yashaswi'}
       aria-expanded={open}

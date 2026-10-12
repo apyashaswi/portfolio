@@ -23,7 +23,7 @@ export default function Leadership() {
               <div className="leadership-body">
                 <div className="leadership-period">
                   {l.period}
-                  {l.current && <span className="leadership-active">Active</span>}
+                  {l.current && l.period !== 'Active' && <span className="leadership-active">Active</span>}
                 </div>
                 <div className="leadership-role">{l.role}</div>
                 <div className="leadership-org">{l.org}</div>

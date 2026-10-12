@@ -12,7 +12,7 @@ export default function About() {
         </motion.div>
 
         <motion.p className="about-lead" {...fadeUp(0.05)}>
-          I'm an Engineering Management graduate student at <span className="about-accent">Northeastern University</span>
+          <span className="about-dropcap">I</span>'m an Engineering Management graduate student at <span className="about-accent">Northeastern University</span>
           {' '}(GPA 3.75, graduating December&nbsp;2026), specializing at the intersection of
           {' '}<em>Data, AI</em>, and <em>Program Management</em>.
         </motion.p>

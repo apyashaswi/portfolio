@@ -85,7 +85,7 @@ function HeroBody({ recruiter }) {
             ) : (
               <>
                 <button className="hero-link hero-link-primary" onClick={openChat}>
-                  Chat with my AI <span aria-hidden="true">→</span>
+                  Ask AP AI <span aria-hidden="true">→</span>
                 </button>
                 <button className="hero-link" onClick={() => go('projects')}>
                   See the work <span aria-hidden="true">→</span>

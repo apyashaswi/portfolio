@@ -49,9 +49,12 @@ export default function App() {
     const attach = () => {
       obs?.disconnect()
       const sections = document.querySelectorAll('section[id]')
+      // The active section is the one crossing the middle of the viewport -- the
+      // same line the sky pins its day phases to. (A 30% visibility threshold
+      // never fires for sections taller than ~3 viewports, so the highlight lagged.)
       obs = new IntersectionObserver(
         entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
-        { threshold: 0.3 }
+        { rootMargin: '-49.5% 0px -49.5% 0px', threshold: 0 }
       )
       sections.forEach(s => obs.observe(s))
     }

@@ -54,6 +54,11 @@
   --radius-sm: 8px;
 }
 
+/* Top bar glass: darkens with the sky's brightness (--sky-scrim, which
+   SkyBackground scopes to these two bars) so masthead and nav text keep AA
+   over the sunrise. Declared here, not on :root, so it resolves per bar. */
+.masthead, .nav { --topbar-glass: rgba(12, 9, 7, min(0.94, calc(0.72 + var(--sky-scrim, 0) * 1.2))); }
+
 /* Paper grain â€” sits above content for newsprint feel. Two layers:
    a coarser turbulent grain (overlay) + a warm sepia wash (soft-light) so the
    whole page reads like ink-on-warm-paper rather than digital pixels. */
@@ -153,9 +158,12 @@ a, button { cursor: pointer; }
 .masthead {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1100;
   height: 44px;
-  background: #1f1a14;
-  border-bottom: 1px solid rgba(240, 226, 197, 0.10);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.28);
+  /* frosted, like the reading panes, so the sky shows through softly; with the
+     scrolled nav below it reads as one bar (same tint, no seam or shadow) */
+  background: var(--topbar-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
+          backdrop-filter: blur(18px) saturate(1.05);
+  border-bottom: 1px solid rgba(240, 226, 197, 0.06);
 }
 .masthead-inner {
   max-width: 1300px;
@@ -344,9 +352,9 @@ a, button { cursor: pointer; }
   transition: background 0.4s, padding 0.4s, border-color 0.4s;
 }
 .nav.scrolled {
-  background: rgba(14, 11, 8, 0.86);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--topbar-glass);
+  backdrop-filter: blur(18px) saturate(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.05);
   border-bottom: 1px solid rgba(235, 223, 198, 0.08);
   padding: 13px 0;
 }
@@ -493,7 +501,7 @@ a, button { cursor: pointer; }
   margin-bottom: 26px;
   letter-spacing: 0.01em;
 }
-.hero-byline-by { font-style: normal; color: var(--ink-dim); margin-right: 4px; }
+.hero-byline-by { font-style: normal; color: var(--ink-muted); margin-right: 4px; }
 .hero-byline-loc { font-style: normal; }
 
 .hero-lead {
@@ -588,7 +596,9 @@ a, button { cursor: pointer; }
   margin-bottom: 24px;
   text-wrap: pretty;
 }
-.about-lead::first-letter {
+/* the drop cap is a span on the "I" alone: ::first-letter also captures the
+   apostrophe that follows it, which left "I'" stuck to the cap */
+.about-lead .about-dropcap {
   font-family: var(--font-display);
   font-size: 4.4em;
   font-weight: 600;
@@ -786,7 +796,9 @@ a, button { cursor: pointer; }
 }
 .exp-company-name {
   font-weight: 700;
-  color: color-mix(in srgb, var(--brand, var(--accent)) 80%, white);
+  /* brand colour lifted toward the cream ink so the name clears AA on the
+     dark ground (full-strength brand colour stays on the logo tile) */
+  color: color-mix(in srgb, var(--brand, var(--accent)) 55%, var(--ink));
 }
 .exp-type-badge, .exp-current-badge {
   font-size: 10px; padding: 2px 9px; border-radius: 12px;
@@ -796,7 +808,7 @@ a, button { cursor: pointer; }
 .exp-current-badge { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(188, 164, 122,.25); }
 .exp-meta { text-align: right; flex-shrink: 0; }
 .exp-period { font-size: 13px; font-weight: 600; color: var(--text-muted); }
-.exp-location { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+.exp-location { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .exp-desc { font-size: 14px; color: var(--text-muted); line-height: 1.72; margin-bottom: 15px; }
 .exp-bullets { display: flex; flex-direction: column; gap: 9px; margin-bottom: 15px; }
 .exp-bullets li {
@@ -1472,7 +1484,7 @@ a, button { cursor: pointer; }
   font-size: 11px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--ink-muted);
 }
 .footer-edition-sep { color: var(--accent); opacity: 0.6; }
 
@@ -1686,7 +1698,7 @@ a, button { cursor: pointer; }
 .tl-hint {
   text-align: center;
   font-size: 11px;
-  color: var(--text-dim);
+  color: var(--text-muted);
   letter-spacing: .08em;
   margin-top: 16px;
 }
@@ -1734,6 +1746,22 @@ a, button { cursor: pointer; }
 
 /* Hide the section watermark "06" â€” its "0" glyph renders as a ghost circle in the top-right */
 
+/* Compact launcher shown until the visitor opens the globe */
+.globe-launch {
+  width: 100%; min-height: 220px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: 36px 24px; font: inherit; color: var(--ink); cursor: pointer; text-align: center;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  background:
+    radial-gradient(60% 120% at 50% 100%, rgba(188, 164, 122, 0.12), transparent 70%),
+    var(--bg-card);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.globe-launch:hover, .globe-launch:focus-visible { border-color: var(--border-hover); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); }
+.globe-launch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.globe-launch-title { font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 500; }
+.globe-launch-sub { font-family: var(--font-serif); font-size: 15px; color: var(--ink-muted); }
+.globe-launch-cta { margin-top: 6px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
 .globe-placeholder {
   height: 650px; display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 14px;
@@ -2529,7 +2557,7 @@ a, button { cursor: pointer; }
 }
 .trust-strip-label {
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--ink-dim);
+  text-transform: uppercase; color: var(--ink-muted);
 }
 .trust-strip-list { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: baseline; }
 .trust-strip-item {
@@ -2574,7 +2602,7 @@ a, button { cursor: pointer; }
 .testimonial-sample {
   position: absolute; top: 14px; right: 14px;
   font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--ink-dim);
+  text-transform: uppercase; color: var(--ink-muted);
   border: 1px solid var(--border); border-radius: 999px; padding: 2px 7px;
 }
 .testimonial-quote {
