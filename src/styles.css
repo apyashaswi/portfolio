@@ -163,7 +163,7 @@ a, button { cursor: pointer; }
   background: var(--topbar-glass);
   -webkit-backdrop-filter: blur(18px) saturate(1.05);
           backdrop-filter: blur(18px) saturate(1.05);
-  border-bottom: 1px solid rgba(240, 226, 197, 0.06);
+  /* no seam: the scrolled nav below carries the bar's single bottom hairline */
 }
 .masthead-inner {
   max-width: 1300px;
@@ -351,11 +351,22 @@ a, button { cursor: pointer; }
   z-index: 1000; padding: 22px 0;
   transition: background 0.4s, padding 0.4s, border-color 0.4s;
 }
-.nav.scrolled {
+/* The scrolled nav's glass lives on ::before, not the nav itself: a
+   backdrop-filter on .nav would become the containing block for the fixed
+   mobile menu (.nav-links, inset: 0) and shrink it to the nav's own box. */
+.nav::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  pointer-events: none;
   background: var(--topbar-glass);
-  backdrop-filter: blur(18px) saturate(1.05);
   -webkit-backdrop-filter: blur(18px) saturate(1.05);
+          backdrop-filter: blur(18px) saturate(1.05);
   border-bottom: 1px solid rgba(235, 223, 198, 0.08);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.nav.scrolled::before { opacity: 1; }
+.nav.scrolled {
   padding: 13px 0;
 }
 .nav-inner {
@@ -1761,7 +1772,11 @@ a, button { cursor: pointer; }
 .globe-launch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .globe-launch-title { font-family: var(--font-display); font-size: clamp(1.4rem, 2.4vw, 1.8rem); font-weight: 500; }
 .globe-launch-sub { font-family: var(--font-serif); font-size: 15px; color: var(--ink-muted); }
-.globe-launch-cta { margin-top: 6px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.globe-launch-cta { margin-top: 6px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: color-mix(in srgb, var(--accent) 70%, var(--ink)); }
+.globe-region:focus { outline: none; }
+.globe-failed { flex-direction: column; gap: 14px; height: 220px; }
+.globe-retry { font: inherit; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink); background: transparent; border: 1px solid var(--border-hover); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.globe-retry:hover, .globe-retry:focus-visible { border-color: var(--accent); }
 .globe-placeholder {
   height: 650px; display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 14px;

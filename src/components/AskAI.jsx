@@ -34,7 +34,7 @@ export default function AskAI({ mode }) {
   const osReduced = useReducedMotion()
   const effectsReduced = useReducedEffects()
   const still = osReduced || effectsReduced
-  // Phones only (CSS): the hero has its own "Ask AP AI" button, so the
+  // Phones only (CSS), Explorer only: that hero has its own "Ask AP AI" button, so the
   // round launcher stays out of the hero copy until the hero has scrolled away.
   // Phones only. Measured after commit (the hero isn't in the DOM yet during
   // render), on every rAF-throttled scroll, on resize, on route changes, and
@@ -45,7 +45,8 @@ export default function AskAI({ mode }) {
   const { pathname } = useLocation()
   const [overHero, setOverHero] = useState(false)
   useEffect(() => {
-    if (!narrow) { setOverHero(false); return }
+    // Recruiter's hero has no chat button, so there the launcher is the only way in.
+    if (!narrow || mode === 'recruiter') { setOverHero(false); return }
     const check = () => {
       const hero = document.getElementById('hero')
       setOverHero(!!hero && hero.getBoundingClientRect().bottom > 120)

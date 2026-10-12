@@ -27,10 +27,6 @@ function ImpactValue({ value }) {
   return <StatCounter target={parseFloat(m[2])} decimals={(m[2].split('.')[1] || '').length} prefix={m[1]} suffix={m[3]} />
 }
 
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({
-  behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-})
-
 export default function Impact() {
   return (
     <section id="impact" className="section impact-section sky-scrim" aria-labelledby="impact-title">
@@ -40,18 +36,22 @@ export default function Impact() {
         </motion.div>
         <ul className="impact-grid">
           {IMPACT.map((it, i) => {
+            // read as one phrase ("<title>: <value>, <label>"), not run-together spans
+            const name = `${it.title}: ${it.value}, ${it.label}`
             const body = (
               <>
-                <span className="impact-card-title">{it.title}</span>
-                <span className="impact-card-value"><ImpactValue value={it.value} /></span>
-                <span className="impact-card-label">{it.label}</span>
+                <span className="impact-card-title" aria-hidden="true">{it.title}</span>
+                <span className="impact-card-value" aria-hidden="true"><ImpactValue value={it.value} /></span>
+                <span className="impact-card-label" aria-hidden="true">{it.label}</span>
               </>
             )
             return (
               <motion.li key={it.id} {...fadeUp(Math.min(i * 0.06, 0.3))}>
+                {/* in-page results are plain anchors: the browser scrolls (smoothly, or
+                    instantly under reduced motion via html's scroll-behavior) and moves focus */}
                 {it.section
-                  ? <button type="button" className="impact-card" onClick={() => scrollTo(it.section)}>{body}</button>
-                  : <Link to={`/projects/${it.id}`} className="impact-card">{body}</Link>}
+                  ? <a href={`#${it.section}`} className="impact-card" aria-label={name}>{body}</a>
+                  : <Link to={`/projects/${it.id}`} className="impact-card" aria-label={name}>{body}</Link>}
               </motion.li>
             )
           })}

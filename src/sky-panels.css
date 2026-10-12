@@ -40,26 +40,32 @@
           backdrop-filter: blur(20px) saturate(1.05);
 }
 /* Section panes dissolve into the sky instead of ending in a box edge. Each
-   reaches --pane-feather past its column on every side and fades out over
-   exactly that band, so the type (inside the column's own 28px padding) sits
-   on full tint while the pane's edge is a soft falloff, not a rectangle. */
+   reaches past its column and fades out over that band: a long fade at the
+   sides (--feather-x, where the sky opens up beside the column) and a short
+   one top and bottom (--feather-y, so the gap between sections stays sky and
+   neighbouring panes don't merge). The type, inside the column's own padding,
+   always sits on full tint. */
 .sky-scrim > .container::before,
 .sky-scrim > .container-prose::before,
 .project-detail > .pd-container::before,
 .footer > .footer-inner::before {
-  --pane-feather: 56px;
-  inset: calc(-8px - var(--pane-feather)) calc(0px - var(--pane-feather));
+  --feather-x: 128px;
+  --feather-y: 44px;
+  inset: calc(-8px - var(--feather-y)) calc(0px - var(--feather-x));
   border: 0;
   border-radius: 0;
   -webkit-mask-image:
-    linear-gradient(90deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent),
-    linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+    linear-gradient(90deg, transparent, #000 var(--feather-x), #000 calc(100% - var(--feather-x)), transparent),
+    linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
   -webkit-mask-composite: source-in;
           mask-image:
-    linear-gradient(90deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent),
-    linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+    linear-gradient(90deg, transparent, #000 var(--feather-x), #000 calc(100% - var(--feather-x)), transparent),
+    linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
           mask-composite: intersect;
 }
+/* the footer column has no inner padding of its own: give its type the same
+   full-tint margin the section columns get from theirs */
+.footer > .footer-inner::before { inset: calc(-8px - var(--feather-y)) calc(-28px - var(--feather-x)); }
 /* the one-line credit strip under the hero: a slim pane, not a sheet. It sits
    on the pre-dawn crest glow, where --sky-scrim is still ~0, so it starts darker. */
 .trust-strip > .trust-strip-inner::before {
@@ -77,21 +83,25 @@
   .sky-scrim > .container-prose::before,
   .project-detail > .pd-container::before,
   .footer > .footer-inner::before {
-    --pane-feather: 40px;
-    inset: calc(-8px - var(--pane-feather)) 0;
-    -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
-            mask-image: linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+    --feather-y: 40px;
+    inset: calc(-8px - var(--feather-y)) 0;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
+            mask-image: linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
   }
+  /* the footer sits inside .footer's 28px side padding: run its pane to the screen edges */
+  .footer > .footer-inner::before { inset: calc(-8px - var(--feather-y)) -28px; }
   .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
   /* Phones stack the portrait above the hero copy, which pushes the copy down
      onto the glowing limb; on desktop it clears the limb and needs no pane. */
   .hero-futurist .hero-text { position: relative; isolation: isolate; }
   .hero-futurist .hero-text::before {
-    content: ""; position: absolute; inset: -24px -16px; z-index: -1; pointer-events: none;
-    border-radius: 16px; border: 1px solid var(--border);
+    /* edge to edge (the hero column has 28px side padding), feathered top and bottom like the section panes */
+    content: ""; position: absolute; inset: -48px -28px; z-index: -1; pointer-events: none;
     background: rgba(12, 9, 7, min(0.92, calc(0.62 + var(--sky-scrim, 0) * 1.5)));
     -webkit-backdrop-filter: blur(20px) saturate(1.05);
             backdrop-filter: blur(20px) saturate(1.05);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+            mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
   }
 }
 @media print {
@@ -122,6 +132,6 @@
   /* entrance animations that never ran (sections below the fold) must not print blank */
   .sky-page * { opacity: 1 !important; transform: none !important; filter: none !important; }
   body::before, body::after { display: none !important; }   /* paper grain */
-  .masthead, .nav, .ask-ai, .scroll-top-btn, .skip-link,
+  .masthead, .nav, .ask-ai, .scroll-top-btn, .skip-link, .globe-launch, .globe-region,
   #chatbase-bubble-window, #chatbase-message-bubbles { display: none !important; }
 }

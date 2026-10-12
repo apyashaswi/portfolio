@@ -8,6 +8,13 @@
   gap: 18px;
 }
 .impact-grid > li { display: flex; }
+/* Title / number / label share row tracks across each row of cards (subgrid),
+   so the numbers line up however the titles and labels wrap. */
+@supports (grid-template-rows: subgrid) {
+  .impact-grid > li { display: grid; grid-row: span 3; grid-template-rows: subgrid; row-gap: 0; }
+  .impact-grid > li > .impact-card { grid-row: span 3; display: grid; grid-template-rows: subgrid; row-gap: 10px; }
+  .impact-card-value { margin-top: 0; align-self: end; }
+}
 .impact-card {
   width: 100%;
   display: flex;
@@ -52,6 +59,7 @@
 .impact-card-label {
   font-family: var(--font-serif);
   font-size: 15px;
+  line-height: 1.35;
   color: var(--ink-muted);
 }
 @media (max-width: 980px) { .impact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
