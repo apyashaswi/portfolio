@@ -62,6 +62,13 @@ export const EXPERIENCE = [
   },
 ]
 
+// Selected-impact results that aren't projects (owner-supplied, 2026-10-08/09).
+// The project results come from each case study's first metric (Impact.jsx).
+export const IMPACT_EXTRA = [
+  { id: 'msig-mapping', title: 'Downstream mapping · MSIG USA', value: '<30 min', label: 'Mapping time, down from 24 hours', section: 'experience', placement: 'first' },
+  { id: 'thesis', title: 'MS thesis · Hybrid ARIMA-LLM forecasting', value: '100%', label: 'Routing accuracy', section: 'research', placement: 'last' },
+]
+
 export const PROJECTS = [
   {
     id: 'spidey',

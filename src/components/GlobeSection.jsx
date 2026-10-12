@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useState } from 'react'
 import { motion } from 'framer-motion'
 import StatCounter from './StatCounter'
 import { fadeUp } from '../utils'
@@ -6,20 +6,10 @@ import { fadeUp } from '../utils'
 const GlobeViz = lazy(() => import('../GlobeViz'))
 
 export default function GlobeSection() {
-  // Defer the heavy three.js / globe.gl chunk (~1.8MB) until the section
-  // nears the viewport — keeps it off the initial page load.
-  const ref = useRef(null)
+  // The three.js / globe.gl chunk (~1.8MB) loads only when the visitor asks
+  // for it: it never weighs on a scroll-through, and the compact launcher
+  // keeps the section short until then.
   const [load, setLoad] = useState(false)
-
-  useEffect(() => {
-    if (load || !ref.current) return
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setLoad(true); obs.disconnect() } },
-      { rootMargin: '400px' }
-    )
-    obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [load])
 
   return (
     <section id="globe" className="section section-alt sky-scrim">
@@ -28,13 +18,17 @@ export default function GlobeSection() {
           <h2 className="section-title">Around the World</h2>
           <p className="section-subtitle">Places that shaped the journey — professional & personal</p>
         </motion.div>
-        <motion.div ref={ref} {...fadeUp(0.1)}>
+        <motion.div {...fadeUp(0.1)}>
           {load ? (
-            <Suspense fallback={<div className="globe-placeholder">Loading globe…</div>}>
+            <Suspense fallback={<div className="globe-placeholder" role="status">Loading globe…</div>}>
               <GlobeViz />
             </Suspense>
           ) : (
-            <div className="globe-placeholder">Loading globe…</div>
+            <button type="button" className="globe-launch" onClick={() => setLoad(true)}>
+              <span className="globe-launch-title">Explore the interactive globe</span>
+              <span className="globe-launch-sub">Loads a 3D map of the places on this page</span>
+              <span className="globe-launch-cta" aria-hidden="true">Open globe →</span>
+            </button>
           )}
         </motion.div>
         <motion.div className="globe-tagline" {...fadeUp(0.2)}>
