@@ -18,41 +18,72 @@ import { useReducedEffects } from '../effects'
      is rebuilt on a new canvas a few times before settling on the poster;
    - the EFFECTS switch never reveals the canvas before its first frame;
    - a viewport resize re-pins the day phases to the sections;
-   - the readability tokens are written in visible steps, not every frame. */
+   - the readability tokens reach only the few elements that read them. */
 
 const MAX_REBUILDS = 3
-const TOKEN_STEP = 0.01
 
 /* sky.js writes --sky-glow and --sky-scrim on <html> on every frame it draws.
-   A custom property on the root restyles the whole document, and while
-   scrolling that alone costs 4x-throttled phones ~100ms a frame (measured).
-   createSky takes a `root` option, so it gets this stand-in: the real <html>
-   for scrollHeight, and a style object that rounds each token to TOKEN_STEP
-   and skips writes that wouldn't change it. The panes move in 1.5% alpha
-   steps, well under what the eye can see; restyles drop to a few dozen per
-   full scroll. */
-function quantizedRoot() {
+   A custom property on the root restyles every element on the page: on a
+   4x-throttled phone that alone took scrolling from 33ms to 80-120ms a frame
+   (measured). createSky takes a `root` option, so it gets this stand-in: the
+   real <html> for scrollHeight, and a style object that sends each token to
+   one rule of a small stylesheet instead:
+   - --sky-scrim lands on the scrim/pane pseudo-elements and the top bar (the
+     only things that read it), so a change restyles a dozen boxes, not the
+     document;
+   - --sky-glow feeds body's text-shadow, which every line of text inherits, so
+     it moves in coarse steps and is applied once scrolling pauses (GLOW_SETTLE_MS),
+     never mid-scroll.
+   Values are rounded and unchanged writes are skipped. */
+const SCRIM_SCOPE = [
+  '.sky-scrim::before', '.sky-scrim > *::before', '.project-detail > *::before',
+  '.footer > *::before', '.trust-strip > *::before', 'figcaption::before',
+  '.hero-text::before', '.masthead', '.nav',
+].join(', ')
+const STEP = { '--sky-scrim': 0.01, '--sky-glow': 0.04 }
+const GLOW_SETTLE_MS = 180
+
+function scopedTokens() {
   const html = document.documentElement
+  const sheet = document.createElement('style')
+  sheet.dataset.sky = 'tokens'
+  document.head.appendChild(sheet)
+  const rules = {
+    '--sky-scrim': sheet.sheet.cssRules[sheet.sheet.insertRule(`${SCRIM_SCOPE} {}`, 0)],
+  }
+  rules['--sky-glow'] = sheet.sheet.cssRules[sheet.sheet.insertRule('body {}', 1)]
   const last = new Map()
-  const round = (n) => (Math.round(n / TOKEN_STEP) * TOKEN_STEP).toFixed(2)
-  const quantize = (value) => {
+  let glowTimer = 0
+  const round = (n, step) => (Math.round(n / step) * step).toFixed(2)
+  const quantize = (name, value) => {
+    const step = STEP[name] ?? 0.01
     const m = /^rgba\((\d+),(\d+),(\d+),([\d.]+)\)$/.exec(value)
-    if (m) return `rgba(${m[1]},${m[2]},${m[3]},${round(+m[4])})`
+    if (m) return `rgba(${m[1]},${m[2]},${m[3]},${round(+m[4], step)})`
     const n = Number(value)
-    return Number.isFinite(n) ? round(n) : value
+    return Number.isFinite(n) ? round(n, step) : value
   }
   return {
     get scrollHeight() { return html.scrollHeight },
     style: {
       setProperty(name, value) {
-        const q = quantize(value)
+        const rule = rules[name]
+        if (!rule) return html.style.setProperty(name, value)
+        const q = quantize(name, value)
         if (last.get(name) === q) return
         last.set(name, q)
-        html.style.setProperty(name, q)
+        if (name === '--sky-glow') {
+          clearTimeout(glowTimer)
+          glowTimer = setTimeout(() => rule.style.setProperty(name, last.get(name) ?? q), GLOW_SETTLE_MS)
+        } else {
+          rule.style.setProperty(name, q)
+        }
       },
       removeProperty(name) {
+        if (name === '--sky-glow') clearTimeout(glowTimer)
         last.delete(name)
-        html.style.removeProperty(name)
+        if (rules[name]) rules[name].style.removeProperty(name)
+        else html.style.removeProperty(name)
+        if (!last.size) sheet.remove()      // destroy() clears both tokens
       },
     },
   }
@@ -104,7 +135,7 @@ export default function SkyBackground() {
       }
       document.body.prepend(canvas)
       canvas.addEventListener('webglcontextlost', onLost)
-      sky = createSky({ canvas, root: quantizedRoot() })
+      sky = createSky({ canvas, root: scopedTokens() })
       // sky.js logs a shader compile error but carries on with an unusable
       // program; without this check that would fade a black canvas over the poster.
       const program = gl && !gl.isContextLost() ? gl.getParameter(gl.CURRENT_PROGRAM) : null

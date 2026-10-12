@@ -39,6 +39,27 @@
   -webkit-backdrop-filter: blur(20px) saturate(1.05);
           backdrop-filter: blur(20px) saturate(1.05);
 }
+/* Section panes dissolve into the sky instead of ending in a box edge. Each
+   reaches --pane-feather past its column on every side and fades out over
+   exactly that band, so the type (inside the column's own 28px padding) sits
+   on full tint while the pane's edge is a soft falloff, not a rectangle. */
+.sky-scrim > .container::before,
+.sky-scrim > .container-prose::before,
+.project-detail > .pd-container::before,
+.footer > .footer-inner::before {
+  --pane-feather: 56px;
+  inset: calc(-8px - var(--pane-feather)) calc(0px - var(--pane-feather));
+  border: 0;
+  border-radius: 0;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent),
+    linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(90deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent),
+    linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+          mask-composite: intersect;
+}
 /* the one-line credit strip under the hero: a slim pane, not a sheet. It sits
    on the pre-dawn crest glow, where --sky-scrim is still ~0, so it starts darker. */
 .trust-strip > .trust-strip-inner::before {
@@ -50,10 +71,17 @@
 .about-figure > figcaption::before,
 .hero-portrait > figcaption::before { inset: -6px -16px; border-radius: 999px; }
 @media (max-width: 720px) {
+  /* phones: the column is the screen, so the pane runs edge to edge and only
+     its top and bottom feather */
   .sky-scrim > .container::before,
   .sky-scrim > .container-prose::before,
   .project-detail > .pd-container::before,
-  .footer > .footer-inner::before { inset: -28px 12px; border-radius: 16px; }
+  .footer > .footer-inner::before {
+    --pane-feather: 40px;
+    inset: calc(-8px - var(--pane-feather)) 0;
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+            mask-image: linear-gradient(180deg, transparent, #000 var(--pane-feather), #000 calc(100% - var(--pane-feather)), transparent);
+  }
   .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
   /* Phones stack the portrait above the hero copy, which pushes the copy down
      onto the glowing limb; on desktop it clears the limb and needs no pane. */
