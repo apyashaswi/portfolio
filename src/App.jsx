@@ -62,13 +62,16 @@ export default function App() {
       sections.forEach(s => obs.observe(s))
     }
     attach()
-    const main = document.getElementById('main')
-    const mo = main && new MutationObserver(attach)
-    mo?.observe(main, { childList: true, subtree: true })
+    // Watch a stable ancestor, not #main itself: the mode swap replaces the
+    // <main> node, and an observer on the old one would never see the new
+    // sections. Re-attach at most once a frame.
+    let moRaf = 0
+    const mo = new MutationObserver(() => { cancelAnimationFrame(moRaf); moRaf = requestAnimationFrame(attach) })
+    mo.observe(document.querySelector('.sky-page') || document.body, { childList: true, subtree: true })
     let resizeRaf = 0
     const onResize = () => { cancelAnimationFrame(resizeRaf); resizeRaf = requestAnimationFrame(attach) }
     window.addEventListener('resize', onResize)
-    return () => { obs?.disconnect(); mo?.disconnect(); cancelAnimationFrame(resizeRaf); window.removeEventListener('resize', onResize) }
+    return () => { obs?.disconnect(); mo.disconnect(); cancelAnimationFrame(moRaf); cancelAnimationFrame(resizeRaf); window.removeEventListener('resize', onResize) }
   }, [mode, isHome, location.pathname])
 
   return (
