@@ -17,28 +17,44 @@ const isChatOpen = () => {
   return !!w && getComputedStyle(w).display !== 'none'
 }
 
-export default function AskAI() {
+const NARROW = '(max-width: 820px)'
+const useNarrow = () => {
+  const [narrow, setNarrow] = useState(() => matchMedia(NARROW).matches)
+  useEffect(() => {
+    const mq = matchMedia(NARROW)
+    const h = () => setNarrow(mq.matches)
+    mq.addEventListener('change', h)
+    return () => mq.removeEventListener('change', h)
+  }, [])
+  return narrow
+}
+
+export default function AskAI({ mode }) {
   const [open, setOpen] = useState(false)
   const osReduced = useReducedMotion()
   const effectsReduced = useReducedEffects()
   const still = osReduced || effectsReduced
   // Phones only (CSS): the hero has its own "Ask AP AI" button, so the
   // round launcher stays out of the hero copy until the hero has scrolled away.
-  // Measured after commit (the hero isn't in the DOM yet during this render),
-  // again on every rAF-throttled scroll, on route changes, and once the
-  // Explorer/Recruiter swap (0.35s exit) has put the new hero in.
-  const y = useScrollY()
+  // Phones only. Measured after commit (the hero isn't in the DOM yet during
+  // render), on every rAF-throttled scroll, on resize, on route changes, and
+  // once an Explorer/Recruiter swap (0.35s exit) has put the new hero in.
+  // Desktop never subscribes to scroll here.
+  const narrow = useNarrow()
+  const y = useScrollY(narrow)
   const { pathname } = useLocation()
   const [overHero, setOverHero] = useState(false)
   useEffect(() => {
+    if (!narrow) { setOverHero(false); return }
     const check = () => {
       const hero = document.getElementById('hero')
       setOverHero(!!hero && hero.getBoundingClientRect().bottom > 120)
     }
     check()
     const t = setTimeout(check, 450)
-    return () => clearTimeout(t)
-  }, [y, pathname])
+    addEventListener('resize', check)
+    return () => { clearTimeout(t); removeEventListener('resize', check) }
+  }, [narrow, y, pathname, mode])
 
   useEffect(() => {
     let mo = null

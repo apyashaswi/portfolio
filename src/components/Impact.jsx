@@ -27,7 +27,9 @@ function ImpactValue({ value }) {
   return <StatCounter target={parseFloat(m[2])} decimals={(m[2].split('.')[1] || '').length} prefix={m[1]} suffix={m[3]} />
 }
 
-const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({
+  behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+})
 
 export default function Impact() {
   return (

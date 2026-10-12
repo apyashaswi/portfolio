@@ -34,7 +34,9 @@ const MAX_REBUILDS = 3
    - --sky-glow feeds body's text-shadow, which every line of text inherits, so
      it moves in coarse steps and is applied once scrolling pauses (GLOW_SETTLE_MS),
      never mid-scroll.
-   Values are rounded and unchanged writes are skipped. */
+   Values are rounded and unchanged writes are skipped. Returns the stand-in
+   root plus dispose(), which the wrapper always calls: sky.js's no-WebGL
+   destroy() never removes the tokens itself. */
 const SCRIM_SCOPE = [
   '.sky-scrim::before', '.sky-scrim > *::before', '.project-detail > *::before',
   '.footer > *::before', '.trust-strip > *::before', 'figcaption::before',
@@ -54,6 +56,17 @@ function scopedTokens() {
   rules['--sky-glow'] = sheet.sheet.cssRules[sheet.sheet.insertRule('body {}', 1)]
   const last = new Map()
   let glowTimer = 0
+  let lastScroll = 0
+  const onScroll = () => { lastScroll = performance.now() }
+  addEventListener('scroll', onScroll, { passive: true })
+  // apply the glow only once the page has actually stopped scrolling
+  const applyGlowWhenSettled = () => {
+    clearTimeout(glowTimer)
+    const wait = GLOW_SETTLE_MS - (performance.now() - lastScroll)
+    if (wait > 0) { glowTimer = setTimeout(applyGlowWhenSettled, wait); return }
+    const v = last.get('--sky-glow')
+    if (v != null) rules['--sky-glow'].style.setProperty('--sky-glow', v)
+  }
   const round = (n, step) => (Math.round(n / step) * step).toFixed(2)
   const quantize = (name, value) => {
     const step = STEP[name] ?? 0.01
@@ -62,7 +75,7 @@ function scopedTokens() {
     const n = Number(value)
     return Number.isFinite(n) ? round(n, step) : value
   }
-  return {
+  const root = {
     get scrollHeight() { return html.scrollHeight },
     style: {
       setProperty(name, value) {
@@ -71,22 +84,22 @@ function scopedTokens() {
         const q = quantize(name, value)
         if (last.get(name) === q) return
         last.set(name, q)
-        if (name === '--sky-glow') {
-          clearTimeout(glowTimer)
-          glowTimer = setTimeout(() => rule.style.setProperty(name, last.get(name) ?? q), GLOW_SETTLE_MS)
-        } else {
-          rule.style.setProperty(name, q)
-        }
+        if (name === '--sky-glow') applyGlowWhenSettled()
+        else rule.style.setProperty(name, q)
       },
       removeProperty(name) {
-        if (name === '--sky-glow') clearTimeout(glowTimer)
         last.delete(name)
         if (rules[name]) rules[name].style.removeProperty(name)
         else html.style.removeProperty(name)
-        if (!last.size) sheet.remove()      // destroy() clears both tokens
       },
     },
   }
+  const dispose = () => {
+    clearTimeout(glowTimer)
+    removeEventListener('scroll', onScroll)
+    sheet.remove()
+  }
+  return { root, dispose }
 }
 
 export default function SkyBackground() {
@@ -96,6 +109,7 @@ export default function SkyBackground() {
 
   useEffect(() => {
     let sky = null
+    let tokens = null
     let canvas = null
     let drawn = false
     let rebuilds = 0
@@ -105,8 +119,10 @@ export default function SkyBackground() {
     const teardown = () => {
       if (canvas) canvas.removeEventListener('webglcontextlost', onLost)
       sky?.destroy()
+      tokens?.dispose()
       canvas?.remove()
       sky = null
+      tokens = null
       canvas = null
       if (window.__sky) delete window.__sky
     }
@@ -135,7 +151,8 @@ export default function SkyBackground() {
       }
       document.body.prepend(canvas)
       canvas.addEventListener('webglcontextlost', onLost)
-      sky = createSky({ canvas, root: scopedTokens() })
+      tokens = scopedTokens()
+      sky = createSky({ canvas, root: tokens.root })
       // sky.js logs a shader compile error but carries on with an unusable
       // program; without this check that would fade a black canvas over the poster.
       const program = gl && !gl.isContextLost() ? gl.getParameter(gl.CURRENT_PROGRAM) : null

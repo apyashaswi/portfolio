@@ -53,8 +53,8 @@
   .footer { padding-bottom: 104px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ask-ai, .ask-ai-avatar { transition: none; }
-  .ask-ai:hover { transform: none; }
+  .ask-ai, .ask-ai-avatar, .ask-ai.is-over-hero { transition: none; }
+  .ask-ai:hover, .ask-ai.is-over-hero { transform: none; }
 }
 
 /* Back-to-top shares the corner: stack it above the launcher. On phones it is

@@ -81,7 +81,7 @@ export default function App() {
         </Routes>
         <Footer />
         <ScrollTop />
-        <AskAI />
+        <AskAI mode={mode} />
       </div>
     </>
   )
