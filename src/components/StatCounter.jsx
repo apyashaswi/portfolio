@@ -3,19 +3,26 @@ import { useInView, useReducedMotion } from 'framer-motion'
 import { useReducedEffects } from '../effects'
 
 // Counts up to `target` the first time it scrolls into view. The DOM always
-// carries the final value too: screen readers get it from the sr-only copy,
-// and print (or any number never scrolled to) shows it because the count-up
-// only starts once the number is actually seen. Reduced motion (OS setting or
-// the EFFECTS switch) skips the count-up entirely.
+// carries the final value too: screen readers read the sr-only copy, print
+// shows that copy (sky-panels.css), and a number never scrolled near keeps its
+// final value. It drops to 0 while still ~200px below the fold, so the reset
+// is never seen, and counts up once actually in view. Reduced motion (OS
+// setting or the EFFECTS switch) skips the count-up entirely.
 export default function StatCounter({ target, suffix = '', decimals = 0, prefix = '' }) {
   const ref = useRef(null)
+  const isNear = useInView(ref, { once: true, margin: '200px' })
   const isInView = useInView(ref, { once: true, margin: '-60px' })
   const still = useReducedMotion() || false
   const effectsOff = useReducedEffects()
   const end = parseFloat(target)
   const [count, setCount] = useState(end)
+  const animate = !still && !effectsOff
   useEffect(() => {
-    if (still || effectsOff || !isInView) { if (still || effectsOff) setCount(end); return }
+    if (animate && isNear && !isInView) setCount(0)   // off screen: prime the count-up
+  }, [animate, isNear, isInView])
+  useEffect(() => {
+    if (!animate) { setCount(end); return }
+    if (!isInView) return
     let raf
     const startTime = performance.now()
     const tick = (now) => {
@@ -23,15 +30,14 @@ export default function StatCounter({ target, suffix = '', decimals = 0, prefix 
       setCount(end * (1 - Math.pow(1 - progress, 3)))
       if (progress < 1) raf = requestAnimationFrame(tick)
     }
-    setCount(0)
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [isInView, end, still, effectsOff])
+  }, [isInView, end, animate])
   const fmt = (n) => `${prefix}${decimals > 0 ? n.toFixed(decimals) : Math.floor(n)}${suffix}`
   return (
     <span ref={ref}>
-      <span aria-hidden="true">{fmt(count)}</span>
-      <span className="sr-only">{fmt(end)}</span>
+      <span className="stat-live" aria-hidden="true">{fmt(count)}</span>
+      <span className="sr-only stat-final">{fmt(end)}</span>
     </span>
   )
 }

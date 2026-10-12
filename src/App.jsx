@@ -49,12 +49,15 @@ export default function App() {
     const attach = () => {
       obs?.disconnect()
       const sections = document.querySelectorAll('section[id]')
-      // The active section is the one crossing the middle of the viewport -- the
-      // same line the sky pins its day phases to. (A 30% visibility threshold
-      // never fires for sections taller than ~3 viewports, so the highlight lagged.)
+      // The active section is the one crossing a thin band at the middle of the
+      // viewport -- the line the sky pins its day phases to. (A 30% visibility
+      // threshold never fires for sections taller than ~3 viewports, so the
+      // highlight lagged.) Margins are in px from the viewport height: rootMargin
+      // percentages are not resolved against height in every engine.
+      const band = Math.max(Math.floor(window.innerHeight / 2) - 4, 0)
       obs = new IntersectionObserver(
         entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id) }),
-        { rootMargin: '-49.5% 0px -49.5% 0px', threshold: 0 }
+        { rootMargin: `-${band}px 0px -${band}px 0px`, threshold: 0 }
       )
       sections.forEach(s => obs.observe(s))
     }
@@ -62,7 +65,10 @@ export default function App() {
     const main = document.getElementById('main')
     const mo = main && new MutationObserver(attach)
     mo?.observe(main, { childList: true, subtree: true })
-    return () => { obs?.disconnect(); mo?.disconnect() }
+    let resizeRaf = 0
+    const onResize = () => { cancelAnimationFrame(resizeRaf); resizeRaf = requestAnimationFrame(attach) }
+    window.addEventListener('resize', onResize)
+    return () => { obs?.disconnect(); mo?.disconnect(); cancelAnimationFrame(resizeRaf); window.removeEventListener('resize', onResize) }
   }, [mode, isHome, location.pathname])
 
   return (

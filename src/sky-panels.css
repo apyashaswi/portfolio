@@ -132,6 +132,9 @@
   /* entrance animations that never ran (sections below the fold) must not print blank */
   .sky-page * { opacity: 1 !important; transform: none !important; filter: none !important; }
   body::before, body::after { display: none !important; }   /* paper grain */
+  /* counters print their final value, never a mid-count number */
+  .stat-live { display: none !important; }
+  .stat-final { position: static !important; width: auto !important; height: auto !important; margin: 0 !important; overflow: visible !important; clip: auto !important; white-space: normal !important; }
   .masthead, .nav, .ask-ai, .scroll-top-btn, .skip-link, .globe-launch, .globe-region,
   #chatbase-bubble-window, #chatbase-message-bubbles { display: none !important; }
 }
