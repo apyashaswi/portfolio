@@ -18,7 +18,7 @@ export default function Masthead({ mode, setMode }) {
   }
 
   return (
-    <div className="masthead">
+    <header className="masthead">
       <div className="masthead-inner">
         <a href="#contact" onClick={toContact} className="masthead-cta">
           <span className="masthead-pip" aria-hidden="true" />
@@ -33,6 +33,6 @@ export default function Masthead({ mode, setMode }) {
           <ModeToggle mode={mode} setMode={setMode} />
         </div>
       </div>
-    </div>
+    </header>
   )
 }
