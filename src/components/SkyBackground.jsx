@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { createSky } from '../lib/sky'
+import { createSky, SKY_FRAGMENT_SHADER } from '../lib/sky'
 import { useReducedEffects } from '../effects'
 
 /* Site-wide orbital sky (src/lib/sky.js, styled by src/sky.css).
@@ -100,6 +100,48 @@ function scopedTokens() {
   return { root, dispose }
 }
 
+/* sky.js compiles its shader synchronously: it asks for COMPILE_STATUS right
+   after compileShader, so the page's main thread waits for the GPU process to
+   finish the compile. With ANGLE on Windows (Direct3D) that froze the page for
+   ~3s on load and held the hero's first paint back to 4s (measured). sky.js
+   stays byte-for-byte, so the wrapper compiles the same program first on a
+   scratch context with KHR_parallel_shader_compile, polling its completion
+   without blocking, and only then lets sky.js run: its compile and link then
+   come out of the browser's program cache. The sources must match sky.js
+   exactly for that cache hit; the vertex shader is copied from sky.js:189.
+   Without the extension (or if it never completes) sky.js simply runs as before.
+   Returns a cancel function. */
+const SKY_VERTEX_SHADER = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'
+const PREWARM_LIMIT_MS = 8000
+
+function prewarmSkyProgram(done) {
+  const scratch = document.createElement('canvas')
+  const gl = scratch.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' })
+  const ext = gl && gl.getExtension('KHR_parallel_shader_compile')
+  if (!ext) { done(); return () => {} }
+  const prog = gl.createProgram()
+  for (const [type, src] of [[gl.VERTEX_SHADER, SKY_VERTEX_SHADER], [gl.FRAGMENT_SHADER, SKY_FRAGMENT_SHADER]]) {
+    const sh = gl.createShader(type)
+    gl.shaderSource(sh, src)
+    gl.compileShader(sh)
+    gl.attachShader(prog, sh)
+  }
+  gl.linkProgram(prog)
+  const started = performance.now()
+  let timer = 0
+  const finish = () => {
+    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    done()
+  }
+  const poll = () => {
+    if (gl.isContextLost() || performance.now() - started > PREWARM_LIMIT_MS ||
+        gl.getProgramParameter(prog, ext.COMPLETION_STATUS_KHR)) finish()
+    else timer = setTimeout(poll, 50)
+  }
+  poll()
+  return () => { clearTimeout(timer); gl.getExtension('WEBGL_lose_context')?.loseContext() }
+}
+
 export default function SkyBackground() {
   const effectsReduced = useReducedEffects()
   const offRef = useRef(effectsReduced)      // read by build(), so a rebuilt sky keeps the switch's state
@@ -176,8 +218,20 @@ export default function SkyBackground() {
     }
     window.addEventListener('resize', onResize)
 
-    build()
+    // The compile still occupies the GPU process, which would hold back the
+    // page's own first frames, so it starts once the page has loaded and
+    // painted (the poster covers the wait; sky.js waits for load anyway).
+    let cancelPrewarm = () => {}
+    let startRaf = 0
+    const startSky = () => {
+      startRaf = requestAnimationFrame(() => { startRaf = requestAnimationFrame(() => { cancelPrewarm = prewarmSkyProgram(build) }) })
+    }
+    if (document.readyState === 'complete') startSky()
+    else window.addEventListener('load', startSky, { once: true })
     return () => {
+      window.removeEventListener('load', startSky)
+      cancelAnimationFrame(startRaf)
+      cancelPrewarm()
       clearTimeout(rebuildTimer)
       cancelAnimationFrame(resizeRaf)
       window.removeEventListener('resize', onResize)
