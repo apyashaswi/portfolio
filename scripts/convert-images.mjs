@@ -1,8 +1,10 @@
-// Generates .webp siblings for the photographic JPGs in public/.
+// Generates .webp siblings for the photographic JPGs in public/, plus smaller
+// widths (-480/-800/-1280.webp, never upscaled) that <Picture> offers through
+// srcset, and src/image-widths.json recording each photo's full width.
 // Originals are kept as <picture> fallbacks. Re-run after adding new photos:
 //   node scripts/convert-images.mjs
 import sharp from 'sharp'
-import { readdir, stat } from 'node:fs/promises'
+import { readdir, stat, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -26,6 +28,8 @@ const TARGETS = new Set([
 ])
 
 const QUALITY = 80
+const SIZES = [480, 800, 1280]
+const widths = {}
 
 let saved = 0
 for (const file of await readdir(publicDir)) {
@@ -33,9 +37,15 @@ for (const file of await readdir(publicDir)) {
   const src = path.join(publicDir, file)
   const out = src.replace(/\.jpe?g$/i, '.webp')
   await sharp(src).webp({ quality: QUALITY }).toFile(out)
+  const { width } = await sharp(src).metadata()
+  widths[file] = width
+  for (const w of SIZES.filter(w => w < width)) {
+    await sharp(src).resize({ width: w }).webp({ quality: QUALITY }).toFile(out.replace(/\.webp$/, `-${w}.webp`))
+  }
   const [a, b] = await Promise.all([stat(src), stat(out)])
   const pct = Math.round((1 - b.size / a.size) * 100)
   saved += a.size - b.size
   console.log(`${file.padEnd(28)} ${(a.size / 1024).toFixed(0)}KB -> ${(b.size / 1024).toFixed(0)}KB webp (-${pct}%)`)
 }
 console.log(`\nTotal saved: ${(saved / 1024).toFixed(0)}KB`)
+await writeFile(fileURLToPath(new URL('../src/image-widths.json', import.meta.url)), JSON.stringify(widths, null, 2) + String.fromCharCode(10))

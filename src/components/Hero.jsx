@@ -95,7 +95,7 @@ function HeroBody({ recruiter }) {
           </motion.div>
         </div>
         <motion.figure className="hero-portrait" {...anim(2)}>
-          <Picture src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" fetchPriority="high" />
+          <Picture src="/APY_with_Paws.jpg" alt="Yashaswi Alur Prasannakumar" loading="eager" fetchPriority="high" sizes="(max-width: 900px) 360px, 400px" />
           <figcaption>Northeastern University, Boston</figcaption>
         </motion.figure>
       </div>
