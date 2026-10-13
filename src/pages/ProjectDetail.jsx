@@ -26,7 +26,7 @@ export default function ProjectDetail() {
   const others = PROJECTS.filter(p => p.id !== project.id).slice(0, 3)
 
   return (
-    <main id="main" className="project-detail">
+    <main id="main" className="project-detail sky-scrim">
       <div className="container pd-container">
         <motion.div {...fadeUp()}>
           <Link to="/" state={{ scrollTo: 'projects' }} className="pd-back">

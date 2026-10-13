@@ -28,7 +28,7 @@ const MAX_REBUILDS = 3
    (measured). createSky takes a `root` option, so it gets this stand-in: the
    real <html> for scrollHeight, and a style object that sends each token to
    one rule of a small stylesheet instead:
-   - --sky-scrim lands on the scrim/pane pseudo-elements and the top bar (the
+   - --sky-scrim lands on the scrim bands, caption pills and the top bar (the
      only things that read it), so a change restyles a dozen boxes, not the
      document;
    - --sky-glow feeds body's text-shadow, which every line of text inherits, so
@@ -38,9 +38,7 @@ const MAX_REBUILDS = 3
    root plus dispose(), which the wrapper always calls: sky.js's no-WebGL
    destroy() never removes the tokens itself. */
 const SCRIM_SCOPE = [
-  '.sky-scrim::before', '.sky-scrim > *::before', '.project-detail > *::before',
-  '.footer > *::before', '.trust-strip > *::before', 'figcaption::before',
-  '.hero-text::before', '.masthead', '.nav',
+  '.sky-scrim::before', 'figcaption::before', '.masthead', '.nav',
 ].join(', ')
 const STEP = { '--sky-scrim': 0.01, '--sky-glow': 0.04 }
 const GLOW_SETTLE_MS = 180

@@ -20,26 +20,26 @@ const milestones = [
 ]
 
 const BADGE_STYLE = {
-  Origin:      { bg:'rgba(188,164,122,0.18)',  color:'#bca47a' },  // oat
-  Education:   { bg:'rgba(125,144,121,0.16)',  color:'#8a9d84' },  // sage
-  Research:    { bg:'rgba(125,144,121,0.16)',  color:'#8a9d84' },  // sage
-  Startup:     { bg:'rgba(188,164,122,0.18)',  color:'#bca47a' },  // oat
-  Travel:      { bg:'rgba(125,144,121,0.16)',  color:'#8a9d84' },  // sage
-  Award:       { bg:'rgba(188,164,122,0.22)',  color:'#bca47a' },  // oat
-  Current:     { bg:'rgba(188,164,122,0.22)',  color:'#bca47a' },  // oat
-  Achievement: { bg:'rgba(188,164,122,0.18)',  color:'#bca47a' },  // oat
-  Milestone:   { bg:'rgba(125,144,121,0.16)',  color:'#8a9d84' },  // sage
-  Future:      { bg:'rgba(179,164,140,0.14)',  color:'#b3a48c' },  // ink-muted (quieter than sage)
+  Origin:      { bg:'rgba(226,192,140,0.18)',  color:'#e2c08c' },  // oat
+  Education:   { bg:'rgba(179,164,140,0.18)',  color:'#c8b89c' },  // warm sand
+  Research:    { bg:'rgba(179,164,140,0.18)',  color:'#c8b89c' },  // warm sand
+  Startup:     { bg:'rgba(226,192,140,0.18)',  color:'#e2c08c' },  // oat
+  Travel:      { bg:'rgba(179,164,140,0.18)',  color:'#c8b89c' },  // warm sand
+  Award:       { bg:'rgba(226,192,140,0.22)',  color:'#e2c08c' },  // oat
+  Current:     { bg:'rgba(226,192,140,0.22)',  color:'#e2c08c' },  // oat
+  Achievement: { bg:'rgba(226,192,140,0.18)',  color:'#e2c08c' },  // oat
+  Milestone:   { bg:'rgba(179,164,140,0.18)',  color:'#c8b89c' },  // warm sand
+  Future:      { bg:'rgba(179,164,140,0.14)',  color:'#b3a48c' },  // ink-muted (quieter than sand)
 }
 
 /* ─── CONSTANTS ──────────────────────────────────────────────────── */
 const BG         = '#3a342c'          // --bg-card: monitor reads as a raised well, not near-black
-const GRID_MINOR = 'rgba(188,164,122,0.07)'
-const GRID_MAJOR = 'rgba(188,164,122,0.16)'
+const GRID_MINOR = 'rgba(243,234,219,0.05)' // half the major grid, so the hierarchy survives
+const GRID_MAJOR = 'rgba(243,234,219,0.10)'
 const LINE_DIM   = '#5e5345'          // --ink-dim: old trail, decorative-only tone
-const LINE_AURA  = 'rgba(188,164,122,0.16)'
-const LINE_MID   = 'rgba(188,164,122,0.55)'
-const LINE_CORE  = '#bca47a'          // --accent (oat)
+const LINE_AURA  = 'rgba(226,192,140,0.16)'
+const LINE_MID   = 'rgba(226,192,140,0.55)'
+const LINE_CORE  = '#e2c08c'          // warm gold, matched to the sky's palette
 const HEAD_CLR   = '#f0e2c5'          // --ink: warm-cream "hot" highlight, not a new hue
 const BASE_SPEED = 0.8                // px / frame at 1×
 const GAP        = 28                 // eraser gap ahead of head (px)
@@ -299,14 +299,14 @@ export default function JourneyECG() {
         // dot
         ctx.beginPath()
         ctx.arc(msX, dotY, ms.featured ? 5.5 : 3.5, 0, Math.PI * 2)
-        ctx.fillStyle   = ms.featured ? '#bca47a' : LINE_CORE
-        ctx.shadowColor = ms.featured ? '#bca47a' : LINE_CORE
+        ctx.fillStyle   = ms.featured ? '#e2c08c' : LINE_CORE
+        ctx.shadowColor = ms.featured ? '#e2c08c' : LINE_CORE
         ctx.shadowBlur  = ms.featured ? 20 : 10
         ctx.fill()
         // year label at bottom
         ctx.font        = 'bold 8px monospace'
-        ctx.fillStyle   = ms.featured ? '#bca47a' : 'rgba(188,164,122,0.9)'
-        ctx.shadowColor = ms.featured ? '#bca47a' : LINE_CORE
+        ctx.fillStyle   = ms.featured ? '#e2c08c' : 'rgba(226,192,140,0.9)'
+        ctx.shadowColor = ms.featured ? '#e2c08c' : LINE_CORE
         ctx.shadowBlur  = 6
         ctx.textAlign   = 'center'
         ctx.fillText(ms.year, msX, H - 4)
@@ -316,10 +316,10 @@ export default function JourneyECG() {
       /* ── scan beam: faint vertical line at head position */
       ctx.save()
       const beamGrad = ctx.createLinearGradient(headX, 0, headX, H)
-      beamGrad.addColorStop(0,   'rgba(188,164,122,0.00)')
-      beamGrad.addColorStop(0.4, 'rgba(188,164,122,0.12)')
-      beamGrad.addColorStop(0.6, 'rgba(188,164,122,0.12)')
-      beamGrad.addColorStop(1,   'rgba(188,164,122,0.00)')
+      beamGrad.addColorStop(0,   'rgba(226,192,140,0.00)')
+      beamGrad.addColorStop(0.4, 'rgba(226,192,140,0.12)')
+      beamGrad.addColorStop(0.6, 'rgba(226,192,140,0.12)')
+      beamGrad.addColorStop(1,   'rgba(226,192,140,0.00)')
       ctx.strokeStyle = beamGrad
       ctx.lineWidth   = 2
       ctx.beginPath()
@@ -528,10 +528,10 @@ function drawStaticTrace(canvas, W, H, bufY) {
     ctx.save()
     ctx.beginPath()
     ctx.arc(msX, dotY, ms.featured ? 5.5 : 3.5, 0, Math.PI * 2)
-    ctx.fillStyle = ms.featured ? '#bca47a' : LINE_CORE
+    ctx.fillStyle = ms.featured ? '#e2c08c' : LINE_CORE
     ctx.fill()
     ctx.font = 'bold 8px monospace'
-    ctx.fillStyle = ms.featured ? '#bca47a' : 'rgba(188,164,122,0.9)'
+    ctx.fillStyle = ms.featured ? '#e2c08c' : 'rgba(226,192,140,0.9)'
     ctx.textAlign = 'center'
     ctx.fillText(ms.year, msX, H - 4)
     ctx.restore()

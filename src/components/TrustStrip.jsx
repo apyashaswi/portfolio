@@ -14,7 +14,7 @@ const AFFILIATIONS = [
 
 export default function TrustStrip() {
   return (
-    <motion.section className="trust-strip" aria-label="Affiliations" {...fadeUp(0.1)}>
+    <motion.section className="trust-strip sky-scrim" aria-label="Affiliations" {...fadeUp(0.1)}>
       <div className="container trust-strip-inner">
         <span className="trust-strip-label">Seen across</span>
         <ul className="trust-strip-list">

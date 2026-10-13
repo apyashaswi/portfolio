@@ -28,13 +28,16 @@ body { text-shadow: 0 1px 22px var(--sky-glow, transparent); }
 /* 4. Readability: a soft dark pool behind each content section, stronger as the sky brightens.
       Add class "sky-scrim" to each top-level section wrapper (presentational only). */
 .sky-scrim { position: relative; isolation: isolate; }
+/* Owner revision 2026-10-13: one continuous soft band behind the content column that
+   scales with the section's height, fades at the sides and ends, and overlaps its
+   neighbours' bands by 80px so consecutive sections read as one column. */
 .sky-scrim::before {
-  content: ""; position: absolute; inset: 40px -60px; z-index: -1; pointer-events: none;
-  background: radial-gradient(ellipse 42% 48% at 42% 50%,
-              rgba(10,7,5, calc(.32 + var(--sky-scrim, 0))),
-              rgba(10,7,5, 0) 100%);
+  content: ""; position: absolute; inset: -40px -80px; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.38 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.38 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 80px, #000 calc(100% - 80px), transparent);
+          mask-image: linear-gradient(180deg, transparent, #000 80px, #000 calc(100% - 80px), transparent);
 }
-/* The scrim overhangs its section by 60px each side; stop that from causing sideways scroll. */
+/* The scrim overhangs its section by 80px each side; stop that from causing sideways scroll. */
 .sky-page { overflow-x: clip; }
 
 /* 5. Print: no sky. */

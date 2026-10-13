@@ -2,7 +2,7 @@
 // A quiet closing line, a handwritten monogram, and a magazine colophon.
 export default function Footer() {
   return (
-    <footer className="footer">
+    <footer className="footer sky-scrim">
       <div className="footer-inner">
         <p className="footer-closing">Thank you for reading.</p>
 

@@ -1,118 +1,46 @@
-/* Frosted reading panels over the orbital sky (owner decision 2026-10-10).
-   sky.css alone keeps the type legible while the sky is dark, but once the
-   sun is up it sits behind the right half of the text column, and copy that
-   was written for a dark page drops below AA. Each section's content column
-   gets a pane of frosted glass instead: drawn on ::before with a negative
-   inset, so layout, type and text colours stay exactly as they were. Its tint
-   follows the sky's brightness through --sky-scrim (set by sky.js: 0 at night,
-   up to 0.55 at the morning peak), so the pane stays a quiet smoked glass in
-   the dark and closes down at sunrise and sunset. The tint never reaches
-   opaque; the blur spreads the sun's core so no bright point sits under a
-   line of type. Values were tuned by measurement (qa/readability.py): every
-   text run on the sky clears AA against the 95th-percentile pixel behind it. */
+/* Reading surfaces over the orbital sky.
+   Owner revision 2026-10-13: sections no longer carry frosted panes; their
+   readability comes from sky.css's .sky-scrim band alone. What stays here are
+   the small surfaces that sit on the sky outside any band: the photo captions
+   (slim pills whose tint follows --sky-scrim, set by sky.js) and the
+   Experience job cards, where the planet's limb passes behind long text. */
 
-.sky-scrim > .container,
-.sky-scrim > .container-prose,
-.project-detail > .pd-container,
-.footer > .footer-inner,
-.trust-strip > .trust-strip-inner,
 .about-figure > figcaption,
 .hero-portrait > figcaption {
   position: relative;
   isolation: isolate;
 }
-.sky-scrim > .container::before,
-.sky-scrim > .container-prose::before,
-.project-detail > .pd-container::before,
-.footer > .footer-inner::before,
-.trust-strip > .trust-strip-inner::before,
 .about-figure > figcaption::before,
 .hero-portrait > figcaption::before {
   content: "";
   position: absolute;
-  inset: -40px 0;
+  inset: -6px -16px;
   z-index: -1;
   pointer-events: none;
-  border-radius: 20px;
+  border-radius: 999px;
   border: 1px solid var(--border);
   background: rgba(12, 9, 7, min(0.92, calc(0.62 + var(--sky-scrim, 0) * 1.5)));
   -webkit-backdrop-filter: blur(20px) saturate(1.05);
           backdrop-filter: blur(20px) saturate(1.05);
 }
-/* Section panes dissolve into the sky instead of ending in a box edge. Each
-   reaches past its column and fades out over that band: a long fade at the
-   sides (--feather-x, where the sky opens up beside the column) and a short
-   one top and bottom (--feather-y, so the gap between sections stays sky and
-   neighbouring panes don't merge). The type, inside the column's own padding,
-   always sits on full tint. */
-.sky-scrim > .container::before,
-.sky-scrim > .container-prose::before,
-.project-detail > .pd-container::before,
-.footer > .footer-inner::before {
-  --feather-x: 128px;
-  --feather-y: 44px;
-  inset: calc(-8px - var(--feather-y)) calc(0px - var(--feather-x));
-  border: 0;
-  border-radius: 0;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent, #000 var(--feather-x), #000 calc(100% - var(--feather-x)), transparent),
-    linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
-  -webkit-mask-composite: source-in;
-          mask-image:
-    linear-gradient(90deg, transparent, #000 var(--feather-x), #000 calc(100% - var(--feather-x)), transparent),
-    linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
-          mask-composite: intersect;
-}
-/* the footer column has no inner padding of its own: give its type the same
-   full-tint margin the section columns get from theirs */
-.footer > .footer-inner::before { inset: calc(-8px - var(--feather-y)) calc(-28px - var(--feather-x)); }
-/* the one-line credit strip under the hero: a slim pane, not a sheet. It sits
-   on the pre-dawn crest glow, where --sky-scrim is still ~0, so it starts darker. */
-.trust-strip > .trust-strip-inner::before {
-  inset: -12px 0; border-radius: 999px;
-  background: rgba(12, 9, 7, min(0.92, calc(0.68 + var(--sky-scrim, 0) * 1.5)));
-}
-/* the photo caption: shrink-wrap the (centred) line so its pane hugs it */
+/* the photo caption: shrink-wrap the (centred) line so its pill hugs it */
 .about-figure > figcaption { width: fit-content; margin-inline: auto; }
-.about-figure > figcaption::before,
-.hero-portrait > figcaption::before { inset: -6px -16px; border-radius: 999px; }
-@media (max-width: 720px) {
-  /* phones: the column is the screen, so the pane runs edge to edge and only
-     its top and bottom feather */
-  .sky-scrim > .container::before,
-  .sky-scrim > .container-prose::before,
-  .project-detail > .pd-container::before,
-  .footer > .footer-inner::before {
-    --feather-y: 40px;
-    inset: calc(-8px - var(--feather-y)) 0;
-    -webkit-mask-image: linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
-            mask-image: linear-gradient(180deg, transparent, #000 var(--feather-y), #000 calc(100% - var(--feather-y)), transparent);
-  }
-  /* the footer sits inside .footer's 28px side padding: run its pane to the screen edges */
-  .footer > .footer-inner::before { inset: calc(-8px - var(--feather-y)) -28px; }
-  .trust-strip > .trust-strip-inner::before { inset: -10px 12px; border-radius: 16px; }
-  /* Phones stack the portrait above the hero copy, which pushes the copy down
-     onto the glowing limb; on desktop it clears the limb and needs no pane. */
-  .hero-futurist .hero-text { position: relative; isolation: isolate; }
-  .hero-futurist .hero-text::before {
-    /* edge to edge (the hero column has 28px side padding), feathered top and bottom like the section panes */
-    content: ""; position: absolute; inset: -48px -28px; z-index: -1; pointer-events: none;
-    background: rgba(12, 9, 7, min(0.92, calc(0.62 + var(--sky-scrim, 0) * 1.5)));
-    -webkit-backdrop-filter: blur(20px) saturate(1.05);
-            backdrop-filter: blur(20px) saturate(1.05);
-    -webkit-mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-            mask-image: linear-gradient(180deg, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-  }
+
+/* Experience job cards (cards only, never the section) */
+.timeline-content {
+  padding: 20px 24px 22px;
+  background: rgba(12, 9, 7, .42);
+  border-radius: 14px;
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
 }
+@media (max-width: 720px) {
+  .timeline-content { padding: 16px 16px 18px; }
+}
+
 @media print {
-  .sky-scrim > .container::before,
-  .sky-scrim > .container-prose::before,
-  .project-detail > .pd-container::before,
-  .footer > .footer-inner::before,
-  .trust-strip > .trust-strip-inner::before,
   .about-figure > figcaption::before,
-  .hero-portrait > figcaption::before,
-  .hero-futurist .hero-text::before { display: none; }
+  .hero-portrait > figcaption::before { display: none; }
 }
 
 /* Print: sky.css drops the sky and paints the page white, so the site's cream

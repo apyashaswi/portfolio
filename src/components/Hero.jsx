@@ -51,7 +51,7 @@ function HeroBody({ recruiter }) {
   })
 
   return (
-    <section id="hero" className={`hero hero-editorial hero-futurist${recruiter ? ' hero-recruiter' : ''}`}>
+    <section id="hero" className={`hero hero-editorial hero-futurist sky-scrim${recruiter ? ' hero-recruiter' : ''}`}>
       <div className="hero-grid container">
         <div className="hero-text">
           <motion.div className="hero-kicker" {...anim(0)}>
