@@ -28,14 +28,29 @@ body { text-shadow: 0 1px 22px var(--sky-glow, transparent); }
 /* 4. Readability: a soft dark pool behind each content section, stronger as the sky brightens.
       Add class "sky-scrim" to each top-level section wrapper (presentational only). */
 .sky-scrim { position: relative; isolation: isolate; }
-/* Owner revision 2026-10-13: one continuous soft band behind the content column that
-   scales with the section's height, fades at the sides and ends, and overlaps its
-   neighbours' bands by 80px so consecutive sections read as one column. */
+/* Owner revision 2026-10-13: one continuous soft band behind the content column,
+   tint .38 + --sky-scrim, fading out over the outer 18% each side and over 80px
+   at its ends. Each section draws its stretch of it. Where two sections meet,
+   both stretches run at full strength right to the shared edge and abut (see
+   sky-panels.css): overlapping two 80px fades dips the combined tint and left a
+   light seam at every boundary (measured: 19% of the sky through the band,
+   37% at the seam). The side fade lives in the mask so the tint itself can
+   ramp vertically where a section needs a deeper floor (--band-deep). */
 .sky-scrim::before {
   content: ""; position: absolute; inset: -40px -80px; z-index: -1; pointer-events: none;
-  background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.38 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.38 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent, #000 80px, #000 calc(100% - 80px), transparent);
-          mask-image: linear-gradient(180deg, transparent, #000 80px, #000 calc(100% - 80px), transparent);
+  --band: calc(.38 + var(--sky-scrim,0));
+  --band-deep: var(--band);
+  --band-top: var(--band);
+  --fade-top: 80px; --fade-bottom: 80px;
+  background: linear-gradient(180deg, rgba(10,7,5,var(--band-top)), rgba(10,7,5,var(--band-deep)) 160px, rgba(10,7,5,var(--band-deep)) calc(100% - 160px), rgba(10,7,5,var(--band)));
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(180deg, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(180deg, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent);
+          mask-composite: intersect;
 }
 /* The scrim overhangs its section by 80px each side; stop that from causing sideways scroll. */
 .sky-page { overflow-x: clip; }

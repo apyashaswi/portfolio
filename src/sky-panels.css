@@ -67,35 +67,32 @@
   #chatbase-bubble-window, #chatbase-message-bubbles { display: none !important; }
 }
 
-/* Deeper band floor where the sun's core sits behind the column. The owner's
-   band (.38 + --sky-scrim, sky.css) holds AA everywhere else; About (the
-   sunrise) and the footer colophon measured 3.1-4.4:1 on it, so their floor is
-   .56. Phones put the whole column over the sun, so they start every band at
-   .50, About and the footer at .66, and the job cards at .56. All tuned with
-   qa/readability.py to clear 4.5:1 against the 95th-percentile sky pixel. */
-#about.sky-scrim::before, .footer.sky-scrim::before {
-  background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.56 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.56 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
-}
-/* case-study pages are one long band, and the limb's bright line crosses their
-   closing links (measured 3.99:1 on .38) */
-.project-detail.sky-scrim::before {
-  background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.50 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.50 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
-}
+/* Joins between sections' bands (sky.css): a section that meets another
+   section runs its band flush to the shared edge, at full strength, so the
+   column reads as one band. Only the outer ends of the column fade. (Without
+   :has() the upper band keeps its 40px fade over the lower one: a faint dark
+   line, never a gap.) */
+.sky-scrim + .sky-scrim::before,
+#main + .footer.sky-scrim::before { top: 0; --fade-top: 0px; }
+.sky-scrim:has(+ .sky-scrim)::before,
+#main:has(+ .footer.sky-scrim) > .sky-scrim:last-child::before { bottom: 0; --fade-bottom: 0px; }
+/* the Seen-across strip sits 48px under the hero: its band covers that margin */
+.trust-strip.sky-scrim::before { top: -48px; }
+
+/* Deeper floor where the sun's core sits behind the column. The owner's .38
+   holds AA everywhere else; About (the sunrise) and the footer colophon
+   measured 3.1-4.4:1 on it, so their tint ramps from the shared edge up to .56
+   over 160px. Case-study pages are one long band whose closing links the
+   limb's bright line crosses (3.99:1 on .38): .50 throughout, and the footer
+   under them starts from that. Phones put the whole column over the sun: every
+   band starts at .50, About and the footer reach .66, job cards are .56. All
+   tuned with qa/readability.py to clear 4.5:1 against the 95th-percentile sky
+   pixel behind each line. */
+#about.sky-scrim::before, .footer.sky-scrim::before { --band-deep: calc(.56 + var(--sky-scrim,0)); }
+.project-detail.sky-scrim::before { --band: calc(.50 + var(--sky-scrim,0)); }
+.project-detail + .footer.sky-scrim::before { --band-top: calc(.50 + var(--sky-scrim,0)); }
 @media (max-width: 720px) {
-  .sky-scrim::before {
-    background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.50 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.50 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
-  }
-  #about.sky-scrim::before, .footer.sky-scrim::before {
-    background: linear-gradient(90deg, rgba(10,7,5,0) 0%, rgba(10,7,5,calc(.66 + var(--sky-scrim,0))) 18%, rgba(10,7,5,calc(.66 + var(--sky-scrim,0))) 82%, rgba(10,7,5,0) 100%);
-  }
+  .sky-scrim::before { --band: calc(.50 + var(--sky-scrim,0)); }
+  #about.sky-scrim::before, .footer.sky-scrim::before { --band-deep: calc(.66 + var(--sky-scrim,0)); }
   .timeline-content { background: rgba(12, 9, 7, .56); }
 }
-
-/* Band continuity at the top of the page. The hero clipped its own band at its
-   bottom edge (overflow: hidden, a leftover of the old 3D scene; nothing in it
-   overflows now), so it clips with a margin instead and its band fades out.
-   The Seen-across strip sits 80px below the hero (its 48px margin plus the
-   hero's own spacing), so its band reaches up across that gap to overlap the
-   hero's by the same 80px every other pair of sections overlaps by. */
-.hero-editorial.sky-scrim { overflow: clip; overflow-clip-margin: 120px; }
-.trust-strip.sky-scrim::before { top: -120px; }

@@ -14,8 +14,10 @@ const AFFILIATIONS = [
 
 export default function TrustStrip() {
   return (
-    <motion.section className="trust-strip sky-scrim" aria-label="Affiliations" {...fadeUp(0.1)}>
-      <div className="container trust-strip-inner">
+    // The reveal moves the row, not the section: the section carries its stretch
+    // of the sky band, which has to stay put under the hero.
+    <section className="trust-strip sky-scrim" aria-label="Affiliations">
+      <motion.div className="container trust-strip-inner" {...fadeUp(0.1)}>
         <span className="trust-strip-label">Seen across</span>
         <ul className="trust-strip-list">
           {AFFILIATIONS.map((a, i) => (
@@ -25,7 +27,7 @@ export default function TrustStrip() {
             </li>
           ))}
         </ul>
-      </div>
-    </motion.section>
+      </motion.div>
+    </section>
   )
 }
