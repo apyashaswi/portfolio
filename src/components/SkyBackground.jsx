@@ -118,7 +118,7 @@ function prewarmSkyProgram(done) {
   const scratch = document.createElement('canvas')
   const gl = scratch.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' })
   const ext = gl && gl.getExtension('KHR_parallel_shader_compile')
-  if (!ext) { done(); return () => {} }
+  if (!ext) { gl?.getExtension('WEBGL_lose_context')?.loseContext(); done(); return () => {} }
   const prog = gl.createProgram()
   for (const [type, src] of [[gl.VERTEX_SHADER, SKY_VERTEX_SHADER], [gl.FRAGMENT_SHADER, SKY_FRAGMENT_SHADER]]) {
     const sh = gl.createShader(type)

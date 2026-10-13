@@ -27,7 +27,7 @@ export default function Highlights() {
                   src={h.img}
                   alt={h.title}
                   className="highlight-img"
-                  sizes="(max-width: 720px) calc(100vw - 56px), 300px"
+                  sizes="(max-width: 540px) calc(100vw - 56px), (max-width: 900px) calc((100vw - 84px) / 2), 290px"
                 />
                 {h.badge && (
                   <span className="highlight-badge">

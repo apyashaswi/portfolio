@@ -2564,7 +2564,7 @@ a, button { cursor: pointer; }
 .effects-toggle.is-reduced .effects-dot { background: var(--ink-dim); box-shadow: none; }
 
 /* Trust strip — affiliation credit line under the hero */
-.trust-strip { margin-top: 48px; padding: 22px 28px; }
+.trust-strip { margin-top: 48px; padding: 22px 0; }   /* the inner .container brings the side padding */
 .trust-strip-inner {
   display: flex; flex-wrap: wrap; align-items: baseline;
   justify-content: center; gap: 10px 18px;
