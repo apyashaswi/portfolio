@@ -1,0 +1,10 @@
+011582e fix(sky): phone hero pane and a darker credit strip
+aa879ae fix(sky): harden the sky integration (Codex review)
+2179b20 feat(sky): frosted reading panes that follow the sky's brightness
+736935b fix(sky): move the section asterism to ::after so the sky scrim can draw
+29198c4 feat(sky): mount the sky behind the whole site and let it show through
+29bd423 feat(sky): add the orbital sky renderer, its stylesheet and poster
+54cf03f refactor(hero): remove the old WebGL hero scene and its HUD
+3b421d7 feat(chat): 'Ask AP AI' launcher with the owner's portrait replaces the Chatbase bubble
+ecbf8b7 content(experience): add the MSIG downstream-mapping bullet
+0750b84 content(about): add '3 US hackathons on the judging panel' to By the numbers
